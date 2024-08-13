@@ -30,6 +30,12 @@ def _print_loss(epoch: int, loss: Tensor) -> None:
     print(f'{epoch=}, loss={loss.item():.4f}')
 
 
+def _gpu(x: Tensor) -> Tensor:
+    device = torch.device('mps' if torch.backends.mps.is_available() else 'cpu')
+    x = x.to(device)
+    return x
+
+
 def train(num_epochs: int):
     """
     Function that trains the neural network
@@ -37,6 +43,11 @@ def train(num_epochs: int):
     inputs, targets = _inputs_and_targets()
 
     model = SimpleNeuralNet()
+
+    # move the model, input, and output tensors to GPU
+    inputs = _gpu(inputs)
+    targets = _gpu(targets)
+    model = _gpu(model)
 
     # define the loss function
     loss_fn = nn.MSELoss()
