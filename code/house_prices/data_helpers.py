@@ -7,7 +7,7 @@ from sklearn.preprocessing import OneHotEncoder, StandardScaler
 from torch import Tensor
 
 
-class DataHelpers:
+class DataHelpers:  # pylint: disable=too-few-public-methods
 
     @staticmethod
     def _categorical_cols() -> list:
@@ -98,7 +98,7 @@ class DataHelpers:
             'GarageAge',
             'MoSinceSold',
         ]
-    
+
     @staticmethod
     def _age(*, df: pd.DataFrame, source_col: str, target_col: str) -> pd.DataFrame:
         current_year: int = dt.datetime.now().year
@@ -109,19 +109,19 @@ class DataHelpers:
         )
         df = df.drop(columns=[source_col])  # remove source column
         return df
-    
+
     @staticmethod
     def _months_since_sold(df: pd.DataFrame) -> pd.DataFrame:
         mo_sold_col: str = 'MoSold'
         yr_sold_col: str = 'YrSold'
-        
+
         def _calculate(row):
             sold_month = row[mo_sold_col]
             sold_year = row[yr_sold_col]
 
             if pd.isnull(sold_month) or pd.isnull(sold_year):
                 return np.nan
-            
+
             sale_date = dt.datetime(
                 year=int(sold_year),
                 month=int(sold_month),
@@ -135,7 +135,7 @@ class DataHelpers:
         df = df.drop(columns=[mo_sold_col, yr_sold_col])
 
         return df
-    
+
     @staticmethod
     def _modify_columns(df: pd.DataFrame) -> pd.DataFrame:
         # replace `YearBuilt` with the age of the house
@@ -154,7 +154,7 @@ class DataHelpers:
         df: pd.DataFrame = pd.read_csv(csv_filepath)
         if df.empty:
             return None
-        
+
         df = cls._modify_columns(df)
 
         # drop the rows where `SalePrice` is null
