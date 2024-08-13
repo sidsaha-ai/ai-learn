@@ -1,6 +1,9 @@
-import torch
-import torch.nn as nn
-from torch import Tensor
+"""
+This file defines a class that represents the neural network
+that we will train.
+"""
+
+from torch import Tensor, nn
 
 
 class SimpleNeuralNet(nn.Module):
@@ -13,7 +16,7 @@ class SimpleNeuralNet(nn.Module):
         super().__init__()
 
         # define the layers
-        self.layer1 = nn.Linear(3, 6)  # input layer takes 3 inputs and feeds 6 outputs to the next layer
+        self.layer1 = nn.Linear(3, 6)  # input layer has 3 inputs and 6 outputs to the next layer
         self.layer2 = nn.Linear(6, 4)  # 6 neurons feeds to 4 neurons in the next layer
         self.layer3 = nn.Linear(4, 2)  # 4 neurons feeds to 2 neurons in the next layer
         self.layer4 = nn.Linear(2, 1)  # output layer takes 2 inputs and outputs 1 output.

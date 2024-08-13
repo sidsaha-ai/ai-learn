@@ -1,10 +1,11 @@
+"""
+The main executable file that will train the neural network.
+"""
 import argparse
 
 import torch
-import torch.nn as nn
-import torch.optim as optim
 from simple_nn.neural_net import SimpleNeuralNet
-from torch import Tensor
+from torch import Tensor, nn, optim
 
 
 def _inputs_and_targets() -> tuple[Tensor, Tensor]:
@@ -24,6 +25,9 @@ def _inputs_and_targets() -> tuple[Tensor, Tensor]:
 
     return (inputs, targets)
 
+def _print_loss(epoch, loss) -> None:
+    print(f'{epoch=}, loss={loss.item():.4f}')
+
 
 def train(num_epochs: int):
     """
@@ -41,16 +45,23 @@ def train(num_epochs: int):
     optimizer = optim.SGD(model.parameters(), lr=learning_rate)
 
     for epoch in range(num_epochs):
-        optimizer.zero_grad()  # before starting back propagation, reset the gradients
-        outputs = model(inputs)  # call the model to get the output
-        loss = loss_fn(outputs, targets)  # compute the loss basis the output of the model and the targets
+        # (IMP): before starting back propagation, reset the gradients
+        optimizer.zero_grad()
+
+        # call the model to get the output
+        outputs = model(inputs)
+
+        # compute the loss basis the outputs of the model and the targets
+        loss = loss_fn(outputs, targets)
 
         loss.backward()  # back propagate
         optimizer.step()  # update the weights of the neural network
 
         # print progress
         if (epoch + 1) % 50 == 0:
-            print(f'{epoch=}, loss={loss.item():.4f}')
+            _print_loss(epoch, loss)
+
+    _print_loss('FINAL', loss)
 
 
 if __name__ == '__main__':
