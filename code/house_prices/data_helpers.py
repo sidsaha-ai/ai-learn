@@ -12,7 +12,7 @@ class DataHelpers:
             'MSSubClass',
             'MSZoning',
         ]
-    
+
     @staticmethod
     def _numerical_cols() -> list:
         return [
@@ -24,8 +24,8 @@ class DataHelpers:
         df: pd.DataFrame = pd.read_csv(csv_filepath)
         if df.empty:
             return None
-        
+
         categorical_cols: list = cls._categorical_cols()
         numerical_cols: list = cls._numerical_cols()
-        
+
         return df
