@@ -4,7 +4,7 @@ The main executable file that will train the neural network.
 import argparse
 
 import torch
-from simple_nn.neural_net import SimpleNeuralNet
+from simple_nn.neural_net import SimpleNeuralNet  # pylint:disable=import-error
 from torch import Tensor, nn, optim
 
 
@@ -24,6 +24,7 @@ def _inputs_and_targets() -> tuple[Tensor, Tensor]:
     ], dtype=torch.float32)
 
     return (inputs, targets)
+
 
 def _print_loss(epoch, loss) -> None:
     print(f'{epoch=}, loss={loss.item():.4f}')
