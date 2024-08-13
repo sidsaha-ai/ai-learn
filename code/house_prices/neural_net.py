@@ -1,7 +1,7 @@
 from torch import Tensor, nn
 
 
-class HousePricesNN(nn.Model):
+class HousePricesNN(nn.Module):
 
     def __init__(self):
         super().__init__()
@@ -19,7 +19,7 @@ class HousePricesNN(nn.Model):
         ]
         self.output_layer = nn.Linear(5, 1)
         self.activate = nn.Tanh()
-    
+
     def forward(self, x: Tensor) -> Tensor:
         for layer in self.layers:
             x = self.activate(layer(x))
