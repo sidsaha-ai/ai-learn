@@ -65,7 +65,7 @@ class DataHelpers:
         return [
             'LotFrontage',
             'LotArea',
-            'MsnVnrArea',
+            'MasVnrArea',
             'BsmtFinSF1',
             'BsmtFinSF2',
             'BsmtUnfSF',
@@ -135,23 +135,56 @@ class DataHelpers:
         df = df.drop(columns=[mo_sold_col, yr_sold_col])
 
         return df
+    
+    @staticmethod
+    def _modify_columns(df: pd.DataFrame) -> pd.DataFrame:
+        # replace `YearBuilt` with the age of the house
+        df = DataHelpers._age(df=df, source_col='YearBuilt', target_col='Age')
+        # replace `YearRemodAdd` with the remodel age of the house
+        df = DataHelpers._age(df=df, source_col='YearRemodAdd', target_col='RemodelAge')
+        # replace `GarageYrBlt` with the age of the garage
+        df = DataHelpers._age(df=df, source_col='GarageYrBlt', target_col='GarageAge')
+        # replace `MoSold` and `YrSold` with the number of months since sold
+        df = DataHelpers._months_since_sold(df)
+
+        return df
 
     @classmethod
-    def make_data(cls, csv_filepath: str) -> Tensor:
+    def make_data(cls, csv_filepath: str) -> tuple[Tensor, Tensor]:
         df: pd.DataFrame = pd.read_csv(csv_filepath)
         if df.empty:
             return None
         
-        # replace `YearBuilt` with the age of the house
-        df = cls._age(df=df, source_col='YearBuilt', target_col='Age')
-        # replace `YearRemodAdd` with the remodel age of the house
-        df = cls._age(df=df, source_col='YearRemodAdd', target_col='RemodelAge')
-        # replace `GarageYrBlt` with the age of the garage
-        df = cls._age(df=df, source_col='GarageYrBlt', target_col='GarageAge')
-        # replace `MoSold` and `YrSold` with the number of months since sold
-        df = cls._months_since_sold(df)
+        df = cls._modify_columns(df)
 
+        # drop the rows where `SalePrice` is null
+        df = df.dropna(subset=['SalePrice'])
+
+        # divide into input data and output data
+        input_df: pd.DataFrame = df.drop(columns=['SalePrice'])
+        output_df: pd.DataFrame = df[['SalePrice']]
+
+        # categorize columns into numerical and categorical
         categorical_cols: list = cls._categorical_cols()
         numerical_cols: list = cls._numerical_cols()
 
-        return df
+        # scaler numerical columns
+        scaler = StandardScaler()
+        numerical_data = pd.DataFrame(
+            scaler.fit_transform(input_df[numerical_cols]),
+        )
+        # one-hot encode categorical columns
+        encoder = OneHotEncoder(sparse_output=False)
+        categorical_data = pd.DataFrame(
+            encoder.fit_transform(input_df[categorical_cols]),
+        )
+
+        input_df = pd.concat(
+            [numerical_data, categorical_data],
+            axis=1,
+        )
+
+        return (
+            torch.tensor(input_df.values, dtype=torch.float32),
+            torch.tensor(output_df.values, dtype=torch.float32),
+        )
