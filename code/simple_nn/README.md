@@ -14,8 +14,8 @@ In this problem, we will create a simple neural network using `pytorch` and trai
 ### Loss Function
 We must use the mean squared error (MSE) as the loss function of the overall neural network.
 
-### Convergence
-We will use the schotastic gradient descent method to converge the neural network.
+### Optimizer
+We will use the schotastic gradient descent method to optimize the neural network.
 
 ### Training
 The neural network will be trained with some input (3 scalars as per the network architecture). You can choose your inputs and target outputs as you wish, but for this task, they must be scalars and not tensors.
