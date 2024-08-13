@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
 import torch.optim as optim
-
+from torch import Tensor
 
 class SimpleNeuralNet(nn.Module):
     """
@@ -20,7 +20,7 @@ class SimpleNeuralNet(nn.Module):
 
         self.activation = nn.Tanh()  # the activation function
 
-    def forward(self, x):
+    def forward(self, x: Tensor):
         """
         Defines how to do the forward pass through the network.
         """
