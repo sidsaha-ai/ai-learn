@@ -26,7 +26,7 @@ def _inputs_and_targets() -> tuple[Tensor, Tensor]:
     return (inputs, targets)
 
 
-def _print_loss(epoch, loss) -> None:
+def _print_loss(epoch: int, loss: Tensor) -> None:
     print(f'{epoch=}, loss={loss.item():.4f}')
 
 
@@ -53,7 +53,7 @@ def train(num_epochs: int):
         outputs = model(inputs)
 
         # compute the loss basis the outputs of the model and the targets
-        loss = loss_fn(outputs, targets)
+        loss: Tensor = loss_fn(outputs, targets)
 
         loss.backward()  # back propagate
         optimizer.step()  # update the weights of the neural network
