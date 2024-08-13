@@ -96,13 +96,9 @@ class DataHelpers:
             'Age',
             'RemodelAge',
             'GarageAge',
+            'MoSinceSold',
         ]
     
-    # TODO: What to do with the following columns?
-    # MoSold: Month Sold
-    # YrSold: Year Sold
-    # SaleType: Type of sale
-
     @staticmethod
     def _age(*, df: pd.DataFrame, source_col: str, target_col: str) -> pd.DataFrame:
         current_year: int = dt.datetime.now().year
@@ -113,6 +109,32 @@ class DataHelpers:
         )
         df = df.drop(columns=[source_col])  # remove source column
         return df
+    
+    @staticmethod
+    def _months_since_sold(df: pd.DataFrame) -> pd.DataFrame:
+        mo_sold_col: str = 'MoSold'
+        yr_sold_col: str = 'YrSold'
+        
+        def _calculate(row):
+            sold_month = row[mo_sold_col]
+            sold_year = row[yr_sold_col]
+
+            if pd.isnull(sold_month) or pd.isnull(sold_year):
+                return np.nan
+            
+            sale_date = dt.datetime(
+                year=int(sold_year),
+                month=int(sold_month),
+                day=1,
+            )
+            num_days: int = (dt.datetime.now() - sale_date).days
+            num_months: int = num_days // 30
+            return num_months
+
+        df['MoSinceSold'] = df.apply(_calculate, axis=1)
+        df = df.drop(columns=[mo_sold_col, yr_sold_col])
+
+        return df
 
     @classmethod
     def make_data(cls, csv_filepath: str) -> Tensor:
@@ -120,12 +142,14 @@ class DataHelpers:
         if df.empty:
             return None
         
-        # modify `YearBuilt` to `Age`
+        # replace `YearBuilt` with the age of the house
         df = cls._age(df=df, source_col='YearBuilt', target_col='Age')
-        # modify `YearRemodAdd` to `RemodelAge`
+        # replace `YearRemodAdd` with the remodel age of the house
         df = cls._age(df=df, source_col='YearRemodAdd', target_col='RemodelAge')
-        # modify `GarageYrBlt` to `GarageAge`
-        df = cls._age(df=df, source_col='GarageAge', target_col='GarageAge')
+        # replace `GarageYrBlt` with the age of the garage
+        df = cls._age(df=df, source_col='GarageYrBlt', target_col='GarageAge')
+        # replace `MoSold` and `YrSold` with the number of months since sold
+        df = cls._months_since_sold(df)
 
         categorical_cols: list = cls._categorical_cols()
         numerical_cols: list = cls._numerical_cols()
