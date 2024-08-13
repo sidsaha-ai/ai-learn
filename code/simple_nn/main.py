@@ -1,11 +1,10 @@
+import argparse
+
 import torch
 import torch.nn as nn
 import torch.optim as optim
-from torch import Tensor
-
 from simple_nn.neural_net import SimpleNeuralNet
-
-import argparse
+from torch import Tensor
 
 
 def _inputs_and_targets() -> tuple[Tensor, Tensor]:

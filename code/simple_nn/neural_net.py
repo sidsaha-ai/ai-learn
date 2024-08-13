@@ -2,6 +2,7 @@ import torch
 import torch.nn as nn
 from torch import Tensor
 
+
 class SimpleNeuralNet(nn.Module):
     """
     Class that defines the neural network architecture. This class defines the layers and
