@@ -48,8 +48,14 @@ mpmath==1.3.0
     # via sympy
 networkx==3.3
     # via torch
+numpy==2.0.1
+    # via
+    #   -r requirements.in
+    #   pandas
 packaging==24.1
     # via build
+pandas==2.2.2
+    # via -r requirements.in
 parso==0.8.4
     # via jedi
 pexpect==4.9.0
@@ -80,8 +86,14 @@ pyproject-hooks==1.1.0
     # via
     #   build
     #   pip-tools
+python-dateutil==2.9.0.post0
+    # via pandas
+pytz==2024.1
+    # via pandas
 six==1.16.0
-    # via asttokens
+    # via
+    #   asttokens
+    #   python-dateutil
 stack-data==0.6.3
     # via ipython
 sympy==1.13.2
@@ -99,6 +111,8 @@ typing-extensions==4.12.2
     #   pydantic
     #   pydantic-core
     #   torch
+tzdata==2024.1
+    # via pandas
 wcwidth==0.2.13
     # via prompt-toolkit
 wheel==0.44.0

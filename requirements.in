@@ -5,3 +5,5 @@ pylint
 flake8
 isort
 pydantic
+pandas
+numpy
