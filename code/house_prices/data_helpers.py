@@ -1,6 +1,6 @@
 import pandas as pd
-from sklearn.preprocessing import OneHotEncoder, StandardScaler
 import torch
+from sklearn.preprocessing import OneHotEncoder, StandardScaler
 from torch import Tensor
 
 
