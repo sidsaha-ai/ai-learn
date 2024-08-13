@@ -1,5 +1,6 @@
 from torch import Tensor, nn
 
+
 class HousePricesNN(nn.Model):
 
     def __init__(self):
