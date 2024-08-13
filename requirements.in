@@ -1,0 +1,9 @@
+ipython
+torch
+pip-tools
+pylint
+flake8
+isort
+pydantic
+pandas
+numpy
