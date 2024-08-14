@@ -9,7 +9,7 @@ import pandas as pd
 import torch
 from sklearn.impute import SimpleImputer
 from sklearn.pipeline import Pipeline
-from sklearn.preprocessing import OneHotEncoder, MinMaxScaler
+from sklearn.preprocessing import MinMaxScaler, OneHotEncoder
 from torch import Tensor
 
 

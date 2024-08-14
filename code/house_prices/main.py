@@ -9,7 +9,7 @@ from house_prices.data_helpers import \
 from house_prices.neural_net import \
     HousePricesNN  # pylint: disable=import-error
 from house_prices.rmse import LogRMSELoss  # pylint: disable=import-error
-from torch import Tensor, optim, nn
+from torch import Tensor, nn, optim
 
 
 def train(num_epochs: int, train_data_file: str) -> None:
