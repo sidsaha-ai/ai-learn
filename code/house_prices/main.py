@@ -23,7 +23,10 @@ def train(num_epochs: int, train_data_file: str) -> None:
     print(f'{inputs.size()}')
     print(f'{targets.size()}')
 
-    model = HousePricesNN()
+    model = HousePricesNN(
+        input_dimension=inputs.shape[1],
+        output_dimension=targets.shape[1],
+    )
     loss_fn = nn.MSELoss(reduction='sum')
     learning_rate: float = 1e-4
     optimizer = optim.Adam(model.parameters(), lr=learning_rate)

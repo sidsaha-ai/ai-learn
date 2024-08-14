@@ -9,13 +9,13 @@ class HousePricesNN(nn.Module):
     The neural network class the defines the architecture and the forward pass mechanism.
     """
 
-    def __init__(self):
+    def __init__(self, input_dimension: int, output_dimension: int):
         super().__init__()
 
-        self.l1 = nn.Linear(33, 500)
+        self.l1 = nn.Linear(input_dimension, 500)
         self.l2 = nn.Linear(500, 1000)
         self.l3 = nn.Linear(1000, 200)
-        self.l4 = nn.Linear(200, 1)
+        self.l4 = nn.Linear(200, output_dimension)
 
     def forward(self, x: Tensor) -> Tensor:
         """
