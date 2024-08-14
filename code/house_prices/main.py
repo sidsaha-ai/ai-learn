@@ -6,6 +6,7 @@ from house_prices.neural_net import HousePricesNN
 from house_prices.rmse import LogRMSELoss
 from torch import Tensor, optim
 
+
 def _print_loss(epoch: int, loss: Tensor) -> None:
     print(f'{epoch=}, loss={loss.item():.4f}')
 
