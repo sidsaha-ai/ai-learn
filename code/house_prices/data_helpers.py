@@ -7,9 +7,9 @@ import datetime as dt
 import numpy as np
 import pandas as pd
 import torch
+from sklearn.impute import SimpleImputer
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
 from torch import Tensor
-from sklearn.impute import SimpleImputer
 
 
 class DataHelpers:  # pylint: disable=too-few-public-methods
