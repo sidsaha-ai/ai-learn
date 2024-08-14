@@ -9,7 +9,7 @@ from house_prices.data_helpers import \
 from house_prices.neural_net import \
     HousePricesNN  # pylint: disable=import-error
 from house_prices.rmse import LogRMSELoss  # pylint: disable=import-error
-from torch import Tensor, optim
+from torch import Tensor, optim, nn
 
 
 def train(num_epochs: int, train_data_file: str) -> None:
@@ -24,8 +24,8 @@ def train(num_epochs: int, train_data_file: str) -> None:
     print(f'{targets.size()}')
 
     model = HousePricesNN()
-    loss_fn = LogRMSELoss()
-    learning_rate: float = 0.7
+    loss_fn = nn.MSELoss(reduction='sum')
+    learning_rate: float = 1e-4
     optimizer = optim.Adam(model.parameters(), lr=learning_rate)
 
     for epoch in range(num_epochs):

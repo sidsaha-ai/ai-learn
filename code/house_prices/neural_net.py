@@ -12,21 +12,18 @@ class HousePricesNN(nn.Module):
     def __init__(self):
         super().__init__()
 
-        # define the layers, the input layer has 333 features
-        self.layers: list = [
-            nn.Linear(333, 128),
-            nn.Linear(128, 256),
-            nn.Linear(256, 256),
-            nn.Linear(256, 256),
-        ]
-        self.output_layer = nn.Linear(256, 1)
-        self.activate = nn.ReLU()
+        self.l1 = nn.Linear(33, 500)
+        self.l2 = nn.Linear(500, 1000)
+        self.l3 = nn.Linear(1000, 200)
+        self.l4 = nn.Linear(200, 1)
 
     def forward(self, x: Tensor) -> Tensor:
         """
         Defines the mechanism of the forward pass.
         """
-        for layer in self.layers:
-            x = self.activate(layer(x).clamp(min=0))
-        x = self.output_layer(x)
-        return x
+        y = self.l1(x).clamp(min=0)
+        y = self.l2(y).clamp(min=0)
+        y = self.l3(y).clamp(min=0)
+        y = self.l4(y)
+        
+        return y

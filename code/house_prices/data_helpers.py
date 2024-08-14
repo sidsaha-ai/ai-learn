@@ -9,7 +9,7 @@ import pandas as pd
 import torch
 from sklearn.impute import SimpleImputer
 from sklearn.pipeline import Pipeline
-from sklearn.preprocessing import OneHotEncoder, StandardScaler
+from sklearn.preprocessing import OneHotEncoder, MinMaxScaler
 from torch import Tensor
 
 
@@ -100,12 +100,11 @@ class DataHelpers:  # pylint: disable=too-few-public-methods
             'ScreenPorch',
             'PoolArea',
             'MiscVal',
-
-            # derived fields
-            'Age',
-            'RemodelAge',
-            'GarageAge',
-            'MoSinceSold',
+            'YearBuilt',
+            'YearRemodAdd',
+            'GarageYrBlt',
+            'MoSold',
+            'YrSold',
         ]
 
     @staticmethod
@@ -145,19 +144,6 @@ class DataHelpers:  # pylint: disable=too-few-public-methods
 
         return df
 
-    @staticmethod
-    def _modify_columns(df: pd.DataFrame) -> pd.DataFrame:
-        # replace `YearBuilt` with the age of the house
-        df = DataHelpers._age(df=df, source_col='YearBuilt', target_col='Age')
-        # replace `YearRemodAdd` with the remodel age of the house
-        df = DataHelpers._age(df=df, source_col='YearRemodAdd', target_col='RemodelAge')
-        # replace `GarageYrBlt` with the age of the garage
-        df = DataHelpers._age(df=df, source_col='GarageYrBlt', target_col='GarageAge')
-        # replace `MoSold` and `YrSold` with the number of months since sold
-        df = DataHelpers._months_since_sold(df)
-
-        return df
-    
     @classmethod
     def make_data(cls, csv_filepath: str) -> tuple[Tensor, Tensor]:
         """
@@ -167,8 +153,6 @@ class DataHelpers:  # pylint: disable=too-few-public-methods
         df: pd.DataFrame = pd.read_csv(csv_filepath)
         if df.empty:
             return None
-
-        df = cls._modify_columns(df)
 
         # drop the rows where `SalePrice` is null
         df = df.dropna(subset=['SalePrice'])
@@ -184,15 +168,20 @@ class DataHelpers:  # pylint: disable=too-few-public-methods
         categorical_cols: list = cls._categorical_cols()
         numerical_cols: list = cls._numerical_cols()
 
-        # impute numerical columns to remove None values
-        imputer = SimpleImputer(strategy='median')
-        input_df[numerical_cols] = imputer.fit_transform(df[numerical_cols])
+        # for numerical columns, impute to fill missing with 0
+        # and apply min-max scaling
+        numeric_pipeline = Pipeline(steps=[
+            ('imputer', SimpleImputer(strategy='constant', fill_value=0)),
+            ('min_max_scaler', MinMaxScaler()),
+        ])
 
-        # scaler numerical columns
-        scaler = StandardScaler()
-        numerical_data = pd.DataFrame(
-            scaler.fit_transform(input_df[numerical_cols]),
+        input_df[numerical_cols] = numeric_pipeline.fit_transform(
+            input_df[numerical_cols],
         )
+        output_df[output_df.columns] = numeric_pipeline.fit_transform(
+            output_df[output_df.columns],
+        )
+
         # one-hot encode categorical columns after imputing
         pipeline = Pipeline(steps=[
             # impute None columns with `missing` value
@@ -204,11 +193,12 @@ class DataHelpers:  # pylint: disable=too-few-public-methods
             pipeline.fit_transform(input_df[categorical_cols]),
         )
 
-        input_df = pd.concat(
-            [numerical_data, categorical_data],
-            axis=1,
-        )
+        # input_df = pd.concat(
+        #     [numerical_data, categorical_data],
+        #     axis=1,
+        # )
 
+        input_df = input_df[numerical_cols]
         return (
             torch.tensor(input_df.values, dtype=torch.float32),
             torch.tensor(output_df.values, dtype=torch.float32),
