@@ -2,9 +2,6 @@
 This defines the class for the data helpers that can be used to read the training and the testing
 data.
 """
-import datetime as dt
-
-import numpy as np
 import pandas as pd
 import torch
 from sklearn.impute import SimpleImputer
@@ -24,7 +21,7 @@ class DataHelpers:  # pylint: disable=too-few-public-methods
             ('imputer', SimpleImputer(strategy='constant', fill_value=0)),
             ('min_max_scaler', MinMaxScaler()),
         ])
-        
+
         self.category_pipeline = Pipeline(steps=[
             ('imputer', SimpleImputer(strategy='constant', fill_value='missing')),
             ('onehot', OneHotEncoder(sparse_output=False, handle_unknown='ignore')),
@@ -129,7 +126,7 @@ class DataHelpers:  # pylint: disable=too-few-public-methods
         df: pd.DataFrame = pd.read_csv(csv_filepath)
         if df.empty:
             return None
-        
+
         # drop the ID column, it's not be used in training
         df = df.drop(columns=['Id'])
         df = df.dropna(subset=['SalePrice'])
@@ -140,7 +137,7 @@ class DataHelpers:  # pylint: disable=too-few-public-methods
         # categorize columns into numerical and categorical
         categorical_cols: list = self._categorical_cols()
         numerical_cols: list = self._numerical_cols()
-        
+
         numerical_input_df = pd.DataFrame(
             self.numeric_pipeline.fit_transform(input_df[numerical_cols]),
             columns=numerical_cols,
@@ -148,30 +145,35 @@ class DataHelpers:  # pylint: disable=too-few-public-methods
 
         categorical_input_df = pd.DataFrame(
             self.category_pipeline.fit_transform(input_df[categorical_cols]),
-            columns=self.category_pipeline.named_steps['onehot'].get_feature_names_out(categorical_cols),
+            columns=self.category_pipeline.named_steps['onehot'].get_feature_names_out(
+                categorical_cols
+            ),
         )
 
         input_df = pd.concat(
             [numerical_input_df, categorical_input_df],
             axis=1,
         )
-        
+
         output_df = pd.DataFrame(
             self.output_pipeline.fit_transform(output_df[output_df.columns]),
             columns=output_df.columns,
         )
-        
+
         input_tensor: Tensor = torch.tensor(input_df.values, dtype=torch.float32)
         output_tensor: Tensor = torch.tensor(output_df.values, dtype=torch.float32)
 
         return (
             input_tensor, output_tensor,
         )
-    
+
     def make_test_data(self, df: pd.DataFrame) -> Tensor:
+        """
+        Function to make the tensor data for evaluation.
+        """
         if df.empty:
             return None
-        
+
         df = df.drop(columns=['Id'])
 
         num_cols: list = self._numerical_cols()

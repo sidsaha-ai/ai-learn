@@ -13,6 +13,9 @@ from torch import Tensor, nn, optim
 
 
 class MainEngine:
+    """
+    The main class that acts as an executable.
+    """
 
     def __init__(self, train_data_file: str, test_data_file: str, num_epochs: int) -> None:
         self.data_helpers: DataHelpers = DataHelpers()
@@ -52,7 +55,7 @@ class MainEngine:
                 utils.print_loss(epoch, loss)
 
         utils.print_loss('FINAL', loss)
-    
+
     def test(self) -> pd.DataFrame:
         """
         Function to run the trained neural network to produce predictions.
@@ -60,8 +63,8 @@ class MainEngine:
         df: pd.DataFrame = pd.read_csv(self.test_data_file)
         if df.empty:
             print('Test data is empty, returning...')
-            return
-        
+            return None
+
         ids: list = df['Id'].values
         inputs: Tensor = self.data_helpers.make_test_data(df)
         print(f'{inputs.size()}')
@@ -72,9 +75,9 @@ class MainEngine:
         predictions: Tensor
         with torch.no_grad():
             predictions = self.model(inputs)
-        
+
         predicted_values = predictions.numpy()
-        predicted_values = self.data_helpers.output_pipeline.named_steps['min_max_scaler'].inverse_transform(predicted_values)
+        predicted_values = self.data_helpers.output_pipeline.named_steps['min_max_scaler'].inverse_transform(predicted_values)  # pylint: disable=line-too-long  # NOQA
 
         res_df: pd.DataFrame = pd.DataFrame(
             predicted_values, columns=['SalePrice'],
@@ -90,10 +93,9 @@ class MainEngine:
         if df.empty:
             print('Dataframe is empty, returning')
             return
-        
+
         utils.make_output_csv(df, filename)
-        
-    
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
@@ -104,7 +106,7 @@ if __name__ == '__main__':
         '--train_data_file', required=True, type=str,
     )
     parser.add_argument(
-        '--test_data_file', required=True, type=str,  # TODO: change to required
+        '--test_data_file', required=True, type=str,
     )
 
     args = parser.parse_args()
@@ -112,9 +114,11 @@ if __name__ == '__main__':
     engine = MainEngine(
         args.train_data_file, args.test_data_file, args.num_epochs,
     )
-    
+
     engine.train()
-    res_df = engine.test()
-    print('=== Some results ===')
-    print(res_df.head(10))
-    engine.output_csv(res_df)
+    result_df = engine.test()
+
+    if result_df:
+        print('=== Some results ===')
+        print(result_df.head(10))
+        engine.output_csv(result_df)
