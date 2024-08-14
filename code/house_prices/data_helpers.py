@@ -18,8 +18,7 @@ class DataHelpers:  # pylint: disable=too-few-public-methods
     Class the defines class methods to read the data files and return tensors.
     """
 
-    @staticmethod
-    def _categorical_cols() -> list:
+    def _categorical_cols(self) -> list:
         return [
             'MSSubClass',
             'MSZoning',
@@ -69,8 +68,7 @@ class DataHelpers:  # pylint: disable=too-few-public-methods
             'SaleCondition',
         ]
 
-    @staticmethod
-    def _numerical_cols() -> list:
+    def _numerical_cols(self) -> list:
         return [
             'LotFrontage',
             'LotArea',
@@ -107,8 +105,7 @@ class DataHelpers:  # pylint: disable=too-few-public-methods
             'YrSold',
         ]
 
-    @classmethod
-    def make_data(cls, csv_filepath: str) -> tuple[Tensor, Tensor]:
+    def make_data(self, csv_filepath: str) -> tuple[Tensor, Tensor]:
         """
         The main function of this class to read the data files and return tensors that can
         be used by the neural network.
@@ -128,8 +125,8 @@ class DataHelpers:  # pylint: disable=too-few-public-methods
         output_df: pd.DataFrame = df[['SalePrice']]
 
         # categorize columns into numerical and categorical
-        categorical_cols: list = cls._categorical_cols()
-        numerical_cols: list = cls._numerical_cols()
+        categorical_cols: list = self._categorical_cols()
+        numerical_cols: list = self._numerical_cols()
 
         # for numerical columns, impute to fill missing with 0
         # and apply min-max scaling

@@ -14,9 +14,11 @@ def train(num_epochs: int, train_data_file: str) -> None:
     Function that trains the neural network.
     """
     # make training data
+    data_helpers = DataHelpers()
+
     inputs: Tensor
     targets: Tensor
-    inputs, targets = DataHelpers.make_data(train_data_file)
+    inputs, targets = data_helpers.make_data(train_data_file)
     print(f'{inputs.size()}')
     print(f'{targets.size()}')
 
