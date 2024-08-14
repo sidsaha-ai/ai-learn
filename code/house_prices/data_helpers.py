@@ -185,7 +185,7 @@ class DataHelpers:  # pylint: disable=too-few-public-methods
             scaler.fit_transform(input_df[numerical_cols]),
         )
         # one-hot encode categorical columns
-        encoder = OneHotEncoder(sparse_output=False)
+        encoder = OneHotEncoder(sparse_output=False, handle_unknown='ignore')
         categorical_data = pd.DataFrame(
             encoder.fit_transform(input_df[categorical_cols]),
         )
