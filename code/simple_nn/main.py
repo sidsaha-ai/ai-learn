@@ -6,6 +6,7 @@ import argparse
 import torch
 from simple_nn.neural_net import SimpleNeuralNet  # pylint:disable=import-error
 from torch import Tensor, nn, optim
+import utils
 
 
 def _inputs_and_targets() -> tuple[Tensor, Tensor]:
@@ -24,10 +25,6 @@ def _inputs_and_targets() -> tuple[Tensor, Tensor]:
     ], dtype=torch.float32)
 
     return (inputs, targets)
-
-
-def _print_loss(epoch: int, loss: Tensor) -> None:
-    print(f'{epoch=}, loss={loss.item():.4f}')
 
 
 def _gpu(x: Tensor) -> Tensor:
@@ -71,9 +68,9 @@ def train(num_epochs: int):
 
         # print progress
         if (epoch + 1) % 50 == 0:
-            _print_loss(epoch, loss)
+            utils.print_loss(epoch, loss)
 
-    _print_loss('FINAL', loss)
+    utils.print_loss('FINAL', loss)
 
 
 if __name__ == '__main__':

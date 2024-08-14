@@ -1,17 +1,20 @@
+"""
+The main function to execute the training of the model and running to produce the final output.
+"""
 import argparse
 
-import torch
-from house_prices.data_helpers import DataHelpers
-from house_prices.neural_net import HousePricesNN
-from house_prices.rmse import LogRMSELoss
+from house_prices.data_helpers import DataHelpers  # pylint: disable=import-error
+from house_prices.neural_net import HousePricesNN  # pylint: disable=import-error
+from house_prices.rmse import LogRMSELoss  # pylint: disable=import-error
 from torch import Tensor, optim
 
-
-def _print_loss(epoch: int, loss: Tensor) -> None:
-    print(f'{epoch=}, loss={loss.item():.4f}')
+import utils
 
 
 def train(num_epochs: int, train_data_file: str) -> None:
+    """
+    Function that trains the neural network.
+    """
     # make training data
     inputs: Tensor
     targets: Tensor
@@ -33,9 +36,9 @@ def train(num_epochs: int, train_data_file: str) -> None:
         optimizer.step()
 
         if (epoch + 1) % 100 == 0:
-            _print_loss(epoch, loss)
-    
-    _print_loss('FINAL', loss)
+            utils.print_loss(epoch, loss)
+
+    utils.print_loss('FINAL', loss)
 
 
 if __name__ == '__main__':
@@ -53,4 +56,3 @@ if __name__ == '__main__':
         args.num_epochs,
         args.train_data_file,
     )
-    
