@@ -18,6 +18,11 @@ class DataHelpers:  # pylint: disable=too-few-public-methods
     Class the defines class methods to read the data files and return tensors.
     """
 
+    def __init__(self) -> None:
+        self.numeric_pipeline: Pipeline = None
+        self.category_pipeline: Pipeline = None
+        self.output_pipeline: Pipeline = None
+
     def _categorical_cols(self) -> list:
         return [
             'MSSubClass',
@@ -130,25 +135,25 @@ class DataHelpers:  # pylint: disable=too-few-public-methods
 
         # for numerical columns, impute to fill missing with 0
         # and apply min-max scaling
-        numeric_pipeline = Pipeline(steps=[
+        self.numeric_pipeline = Pipeline(steps=[
             ('imputer', SimpleImputer(strategy='constant', fill_value=0)),
             ('min_max_scaler', MinMaxScaler()),
         ])
         numerical_input_df = pd.DataFrame(
-            numeric_pipeline.fit_transform(input_df[numerical_cols]),
+            self.numeric_pipeline.fit_transform(input_df[numerical_cols]),
             columns=numerical_cols,
         )
 
         # one-hot encode categorical columns after imputing
-        category_pipeline = Pipeline(steps=[
+        self.category_pipeline = Pipeline(steps=[
             # impute None columns with `missing` value
             ('imputer', SimpleImputer(strategy='constant', fill_value='missing')),
             # then one-hot encode them
             ('onehot', OneHotEncoder(sparse_output=False, handle_unknown='ignore')),
         ])
         categorical_input_df = pd.DataFrame(
-            category_pipeline.fit_transform(input_df[categorical_cols]),
-            columns=category_pipeline.named_steps['onehot'].get_feature_names_out(categorical_cols),
+            self.category_pipeline.fit_transform(input_df[categorical_cols]),
+            columns=self.category_pipeline.named_steps['onehot'].get_feature_names_out(categorical_cols),
         )
 
         input_df = pd.concat(
@@ -157,11 +162,11 @@ class DataHelpers:  # pylint: disable=too-few-public-methods
         )
 
         # apply preprocessing to output also
-        output_pipeline = Pipeline(steps=[
+        self.output_pipeline = Pipeline(steps=[
             ('min_max_scaler', MinMaxScaler()),
         ])
         output_df = pd.DataFrame(
-            output_pipeline.fit_transform(output_df[output_df.columns]),
+            self.output_pipeline.fit_transform(output_df[output_df.columns]),
             columns=output_df.columns,
         )
 
