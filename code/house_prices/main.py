@@ -3,12 +3,13 @@ The main function to execute the training of the model and running to produce th
 """
 import argparse
 
-from house_prices.data_helpers import DataHelpers  # pylint: disable=import-error
-from house_prices.neural_net import HousePricesNN  # pylint: disable=import-error
+import utils
+from house_prices.data_helpers import \
+    DataHelpers  # pylint: disable=import-error
+from house_prices.neural_net import \
+    HousePricesNN  # pylint: disable=import-error
 from house_prices.rmse import LogRMSELoss  # pylint: disable=import-error
 from torch import Tensor, optim
-
-import utils
 
 
 def train(num_epochs: int, train_data_file: str) -> None:

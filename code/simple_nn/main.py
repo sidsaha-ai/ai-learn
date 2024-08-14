@@ -4,9 +4,9 @@ The main executable file that will train the neural network.
 import argparse
 
 import torch
+import utils
 from simple_nn.neural_net import SimpleNeuralNet  # pylint:disable=import-error
 from torch import Tensor, nn, optim
-import utils
 
 
 def _inputs_and_targets() -> tuple[Tensor, Tensor]:
