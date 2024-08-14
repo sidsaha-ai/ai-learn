@@ -133,12 +133,18 @@ class DataHelpers:  # pylint: disable=too-few-public-methods
         # drop the ID column, it's not be used in training
         df = df.drop(columns=['Id'])
 
-        input_df: pd.DataFrame = df.drop(columns=['SalePrice'])
+        is_train_data = True if 'SalePrice' in df.columns else False
+
+        input_df: pd.DataFrame = df
         output_df: pd.DataFrame = pd.DataFrame()
-        
+
         # categorize columns into numerical and categorical
         categorical_cols: list = self._categorical_cols()
         numerical_cols: list = self._numerical_cols()
+        
+        if is_train_data:
+            df = df.dropna(subset=['SalePrice'])
+            input_df = df.drop(columns=['SalePrice'])
 
         numerical_input_df = pd.DataFrame(
             self.numeric_pipeline.fit_transform(input_df[numerical_cols]),
@@ -155,12 +161,7 @@ class DataHelpers:  # pylint: disable=too-few-public-methods
             axis=1,
         )
         
-        is_train_data = True if 'SalePrice' in df.columns else False
-
         if is_train_data:
-            # drop the rows where `SalePrice` is null
-            df = df.dropna(subset=['SalePrice'])
-
             output_df: pd.DataFrame = df[['SalePrice']]
 
             output_df = pd.DataFrame(
