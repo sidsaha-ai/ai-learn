@@ -9,6 +9,7 @@ import utils
 from house_prices.data_helpers import DataHelpers
 from house_prices.neural_net import HousePricesNN
 from torch import Tensor, nn, optim
+import uuid
 
 
 class MainEngine:
@@ -52,7 +53,7 @@ class MainEngine:
 
         utils.print_loss('FINAL', loss)
     
-    def test(self) -> None:
+    def test(self) -> pd.DataFrame:
         """
         Function to run the trained neural network to produce predictions.
         """
@@ -79,8 +80,19 @@ class MainEngine:
             predicted_values, columns=['SalePrice'],
         )
         res_df = pd.DataFrame({'Id': ids}).join(res_df)
-        res_df['SalePrice'] = res_df['SalePrice'].astype(int)
-        print(res_df)
+        return res_df
+
+    def output_csv(self, df: pd.DataFrame) -> None:
+        """
+        Takes the result dataframe and produces the CSV output file.
+        """
+        filename: str = f'./output_{uuid.uuid4()}.csv'
+        if df.empty:
+            print('Dataframe is empty, returning')
+            return
+        
+        utils.make_output_csv(df, filename)
+        
     
 
 if __name__ == '__main__':
@@ -102,4 +114,7 @@ if __name__ == '__main__':
     )
     
     engine.train()
-    engine.test()
+    res_df = engine.test()
+    print('=== Some results ===')
+    print(res_df.head(10))
+    engine.output_csv(res_df)
