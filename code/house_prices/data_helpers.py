@@ -129,17 +129,13 @@ class DataHelpers:  # pylint: disable=too-few-public-methods
         df: pd.DataFrame = pd.read_csv(csv_filepath)
         if df.empty:
             return None
-
-        # drop the rows where `SalePrice` is null
-        df = df.dropna(subset=['SalePrice'])
-
+        
         # drop the ID column, it's not be used in training
         df = df.drop(columns=['Id'])
 
-        # divide into input data and output data
         input_df: pd.DataFrame = df.drop(columns=['SalePrice'])
-        output_df: pd.DataFrame = df[['SalePrice']]
-
+        output_df: pd.DataFrame = pd.DataFrame()
+        
         # categorize columns into numerical and categorical
         categorical_cols: list = self._categorical_cols()
         numerical_cols: list = self._numerical_cols()
@@ -158,13 +154,23 @@ class DataHelpers:  # pylint: disable=too-few-public-methods
             [numerical_input_df, categorical_input_df],
             axis=1,
         )
+        
+        is_train_data = True if 'SalePrice' in df.columns else False
 
-        output_df = pd.DataFrame(
-            self.output_pipeline.fit_transform(output_df[output_df.columns]),
-            columns=output_df.columns,
-        )
+        if is_train_data:
+            # drop the rows where `SalePrice` is null
+            df = df.dropna(subset=['SalePrice'])
+
+            output_df: pd.DataFrame = df[['SalePrice']]
+
+            output_df = pd.DataFrame(
+                self.output_pipeline.fit_transform(output_df[output_df.columns]),
+                columns=output_df.columns,
+            )
+        
+        input_tensor: Tensor = torch.tensor(input_df.values, dtype=torch.float32)
+        output_tensor: Tensor = torch.tensor(output_df.values, dtype=torch.float32) if is_train_data else None
 
         return (
-            torch.tensor(input_df.values, dtype=torch.float32),
-            torch.tensor(output_df.values, dtype=torch.float32),
+            input_tensor, output_tensor,
         )

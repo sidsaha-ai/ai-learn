@@ -49,8 +49,7 @@ class MainEngine:
                 utils.print_loss(epoch, loss)
 
         utils.print_loss('FINAL', loss)
-
-
+    
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
@@ -61,7 +60,7 @@ if __name__ == '__main__':
         '--train_data_file', required=True, type=str,
     )
     parser.add_argument(
-        '--test_data_file', required=False, type=str,  # TODO: change to required
+        '--test_data_file', required=True, type=str,  # TODO: change to required
     )
 
     args = parser.parse_args()
