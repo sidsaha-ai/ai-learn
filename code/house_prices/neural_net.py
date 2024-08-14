@@ -1,7 +1,13 @@
+"""
+This defines the neural network class.
+"""
 from torch import Tensor, nn
 
 
 class HousePricesNN(nn.Module):
+    """
+    The neural network class the defines the architecture and the forward pass mechanism.
+    """
 
     def __init__(self):
         super().__init__()
@@ -21,6 +27,9 @@ class HousePricesNN(nn.Module):
         self.activate = nn.Tanh()
 
     def forward(self, x: Tensor) -> Tensor:
+        """
+        Defines the mechanism of the forward pass.
+        """
         for layer in self.layers:
             x = self.activate(layer(x))
         x = self.output_layer(x)

@@ -1,3 +1,7 @@
+"""
+This defines the class for the data helpers that can be used to read the training and the testing
+data.
+"""
 import datetime as dt
 
 import numpy as np
@@ -8,6 +12,9 @@ from torch import Tensor
 
 
 class DataHelpers:  # pylint: disable=too-few-public-methods
+    """
+    Class the defines class methods to read the data files and return tensors.
+    """
 
     @staticmethod
     def _categorical_cols() -> list:
@@ -26,8 +33,8 @@ class DataHelpers:  # pylint: disable=too-few-public-methods
             'Condition2',
             'BldgType',
             'HouseStyle',
-            'OverallQual',  # TODO: test whether to consider this categorical or numerical data
-            'OverallCond',  # TODO: test whether to consider this categorical or numerical data
+            'OverallQual',  # test whether to consider this categorical or numerical data
+            'OverallCond',  # test whether to consider this categorical or numerical data
             'RoofStyle',
             'RoofMatl',
             'Exterior1st',
@@ -151,6 +158,10 @@ class DataHelpers:  # pylint: disable=too-few-public-methods
 
     @classmethod
     def make_data(cls, csv_filepath: str) -> tuple[Tensor, Tensor]:
+        """
+        The main function of this class to read the data files and return tensors that can
+        be used by the neural network.
+        """
         df: pd.DataFrame = pd.read_csv(csv_filepath)
         if df.empty:
             return None
