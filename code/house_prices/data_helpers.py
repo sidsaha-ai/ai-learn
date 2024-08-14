@@ -178,9 +178,6 @@ class DataHelpers:  # pylint: disable=too-few-public-methods
         numerical_input_df = pd.DataFrame(
             numeric_pipeline.fit_transform(input_df[numerical_cols]),
         )
-        output_df[output_df.columns] = numeric_pipeline.fit_transform(
-            output_df[output_df.columns],
-        )
 
         # one-hot encode categorical columns after imputing
         category_pipeline = Pipeline(steps=[
@@ -189,16 +186,20 @@ class DataHelpers:  # pylint: disable=too-few-public-methods
             # then one-hot encode them
             ('onehot', OneHotEncoder(sparse_output=False, handle_unknown='ignore')),
         ])
-        categorical_data = pd.DataFrame(
+        categorical_input_df = pd.DataFrame(
             category_pipeline.fit_transform(input_df[categorical_cols]),
         )
 
-        # input_df = pd.concat(
-        #     [numerical_data, categorical_data],
-        #     axis=1,
-        # )
+        input_df = pd.concat(
+            [numerical_input_df, categorical_input_df],
+            axis=1,
+        )
 
-        input_df = numerical_input_df
+        # apply pipeline to output also
+        output_df = pd.DataFrame(
+            numeric_pipeline.fit_transform(output_df[output_df.columns]),
+        )
+
         return (
             torch.tensor(input_df.values, dtype=torch.float32),
             torch.tensor(output_df.values, dtype=torch.float32),
