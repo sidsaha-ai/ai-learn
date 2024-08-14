@@ -2,6 +2,7 @@
 The main function to execute the training of the model and running to produce the final output.
 """
 import argparse
+import uuid
 
 import pandas as pd
 import torch
@@ -9,7 +10,6 @@ import utils
 from house_prices.data_helpers import DataHelpers
 from house_prices.neural_net import HousePricesNN
 from torch import Tensor, nn, optim
-import uuid
 
 
 class MainEngine:

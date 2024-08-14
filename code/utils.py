@@ -1,8 +1,8 @@
 """
 This file contains various utility functions.
 """
-from torch import Tensor
 import pandas as pd
+from torch import Tensor
 
 
 def print_loss(epoch: int, loss: Tensor) -> None:
