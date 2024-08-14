@@ -4,10 +4,8 @@ The main function to execute the training of the model and running to produce th
 import argparse
 
 import utils
-from house_prices.data_helpers import \
-    DataHelpers  # pylint: disable=import-error
-from house_prices.neural_net import \
-    HousePricesNN  # pylint: disable=import-error
+from house_prices.data_helpers import DataHelpers
+from house_prices.neural_net import HousePricesNN
 from torch import Tensor, nn, optim
 
 
