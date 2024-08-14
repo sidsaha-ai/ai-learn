@@ -15,7 +15,7 @@ class LogRMSELoss(nn.Module):
         log_y_true: Tensor = torch.log(y_true + self.eps)
 
         # compute the mean squared error
-        mse: Tensor = F.mese_loss(log_y_pred, log_y_true)
+        mse: Tensor = F.mse_loss(log_y_pred, log_y_true)
 
         # compute the root mean squared error
         rmse: Tensor = torch.sqrt(mse)
