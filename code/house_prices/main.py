@@ -8,6 +8,7 @@ from house_prices.data_helpers import DataHelpers
 from house_prices.neural_net import HousePricesNN
 from torch import Tensor, nn, optim
 import torch
+import pandas as pd
 
 
 class MainEngine:
@@ -55,7 +56,13 @@ class MainEngine:
         """
         Function to run the trained neural network to produce predictions.
         """
-        inputs: Tensor = self.data_helpers.make_test_data(self.test_data_file)
+        df: pd.DataFrame = pd.read_csv(self.test_data_file)
+        if df.empty:
+            print('Test data is empty, returning...')
+            return
+        
+        ids: list = df['Id'].values
+        inputs: Tensor = self.data_helpers.make_test_data(df)
         print(f'{inputs.size()}')
 
         # set model to evaluation mode
@@ -67,8 +74,13 @@ class MainEngine:
         
         predicted_values = predictions.numpy()
         predicted_values = self.data_helpers.output_pipeline.named_steps['min_max_scaler'].inverse_transform(predicted_values)
-        
-        print(predicted_values)
+
+        res_df: pd.DataFrame = pd.DataFrame(
+            predicted_values, columns=['SalePrice'],
+        )
+        res_df = pd.DataFrame({'Id': ids}).join(res_df)
+        res_df['SalePrice'] = res_df['SalePrice'].astype(int)
+        print(res_df)
     
 
 if __name__ == '__main__':

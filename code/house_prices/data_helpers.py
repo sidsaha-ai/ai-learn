@@ -168,8 +168,7 @@ class DataHelpers:  # pylint: disable=too-few-public-methods
             input_tensor, output_tensor,
         )
     
-    def make_test_data(self, csv_filepath: str) -> Tensor:
-        df: pd.DataFrame = pd.read_csv(csv_filepath)
+    def make_test_data(self, df: pd.DataFrame) -> Tensor:
         if df.empty:
             return None
         
