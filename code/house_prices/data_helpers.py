@@ -8,6 +8,7 @@ import numpy as np
 import pandas as pd
 import torch
 from sklearn.impute import SimpleImputer
+from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
 from torch import Tensor
 
@@ -192,10 +193,15 @@ class DataHelpers:  # pylint: disable=too-few-public-methods
         numerical_data = pd.DataFrame(
             scaler.fit_transform(input_df[numerical_cols]),
         )
-        # one-hot encode categorical columns
-        encoder = OneHotEncoder(sparse_output=False, handle_unknown='ignore')
+        # one-hot encode categorical columns after imputing
+        pipeline = Pipeline(steps=[
+            # impute None columns with `missing` value
+            ('imputer', SimpleImputer(strategy='constant', fill_value='missing')),
+            # then one-hot encode them
+            ('onehot', OneHotEncoder(sparse_output=False, handle_unknown='ignore')),
+        ])
         categorical_data = pd.DataFrame(
-            encoder.fit_transform(input_df[categorical_cols]),
+            pipeline.fit_transform(input_df[categorical_cols]),
         )
 
         input_df = pd.concat(

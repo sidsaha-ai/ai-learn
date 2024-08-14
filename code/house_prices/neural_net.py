@@ -16,12 +16,12 @@ class HousePricesNN(nn.Module):
         self.layers: list = [
             nn.Linear(333, 666),
             nn.Linear(666, 333),
-            nn.Linear(333, 166),
-            nn.Linear(166, 83),
-            nn.Linear(83, 40),
-            nn.Linear(40, 20),
-            nn.Linear(20, 10),
-            nn.Linear(10, 5),
+            nn.Linear(333, 100),
+            nn.Linear(100, 20),
+            # nn.Linear(83, 40),
+            # nn.Linear(40, 20),
+            nn.Linear(20, 5),
+            # nn.Linear(10, 5),
         ]
         self.output_layer = nn.Linear(5, 1)
         self.activate = nn.Tanh()

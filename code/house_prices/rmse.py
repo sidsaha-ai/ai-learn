@@ -22,8 +22,9 @@ class LogRMSELoss(nn.Module):
         # add the eps so that the value is non-zero, because log(0) is undefined
 
         y_pred = y_pred.clamp(min=self.eps)
+        y_true = y_true.clamp(min=self.eps)
         log_y_pred: Tensor = torch.log(y_pred)
-        log_y_true: Tensor = torch.log(y_true + self.eps)
+        log_y_true: Tensor = torch.log(y_true)
 
         # compute the mean squared error
         mse: Tensor = F.mse_loss(log_y_pred, log_y_true)
