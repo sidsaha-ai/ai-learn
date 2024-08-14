@@ -176,6 +176,7 @@ class DataHelpers:  # pylint: disable=too-few-public-methods
         ])
         numerical_input_df = pd.DataFrame(
             numeric_pipeline.fit_transform(input_df[numerical_cols]),
+            columns=numerical_cols,
         )
 
         # one-hot encode categorical columns after imputing
@@ -187,6 +188,7 @@ class DataHelpers:  # pylint: disable=too-few-public-methods
         ])
         categorical_input_df = pd.DataFrame(
             category_pipeline.fit_transform(input_df[categorical_cols]),
+            columns=category_pipeline.named_steps['onehot'].get_feature_names_out(categorical_cols),
         )
 
         input_df = pd.concat(
@@ -194,9 +196,13 @@ class DataHelpers:  # pylint: disable=too-few-public-methods
             axis=1,
         )
 
-        # apply pipeline to output also
+        # apply preprocessing to output also
+        output_pipeline = Pipeline(steps=[
+            ('min_max_scaler', MinMaxScaler()),
+        ])
         output_df = pd.DataFrame(
-            numeric_pipeline.fit_transform(output_df[output_df.columns]),
+            output_pipeline.fit_transform(output_df[output_df.columns]),
+            columns=output_df.columns,
         )
 
         return (
