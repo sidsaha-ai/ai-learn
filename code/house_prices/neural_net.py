@@ -14,7 +14,7 @@ class HousePricesNN(nn.Module):
 
         # define the layers, the input layer has 333 features
         self.layers: list = [
-            nn.Linear(94, 666),
+            nn.Linear(333, 666),
             nn.Linear(666, 333),
             nn.Linear(333, 166),
             nn.Linear(166, 83),
