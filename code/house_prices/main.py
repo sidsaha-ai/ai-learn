@@ -25,8 +25,8 @@ def train(num_epochs: int, train_data_file: str) -> None:
 
     model = HousePricesNN()
     loss_fn = LogRMSELoss()
-    learning_rate: float = 0.5
-    optimizer = optim.SGD(model.parameters(), lr=learning_rate)
+    learning_rate: float = 0.7
+    optimizer = optim.Adam(model.parameters(), lr=learning_rate)
 
     for epoch in range(num_epochs):
         optimizer.zero_grad()
