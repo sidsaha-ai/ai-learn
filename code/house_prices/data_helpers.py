@@ -121,10 +121,10 @@ class DataHelpers:  # pylint: disable=too-few-public-methods
             'YrSold',
         ]
 
-    def make_data(self, csv_filepath: str) -> tuple[Tensor, Tensor]:
+    def make_training_data(self, csv_filepath: str) -> tuple[Tensor, Tensor]:
         """
         The main function of this class to read the data files and return tensors that can
-        be used by the neural network.
+        be used for training of the neural network.
         """
         df: pd.DataFrame = pd.read_csv(csv_filepath)
         if df.empty:
@@ -132,20 +132,15 @@ class DataHelpers:  # pylint: disable=too-few-public-methods
         
         # drop the ID column, it's not be used in training
         df = df.drop(columns=['Id'])
+        df = df.dropna(subset=['SalePrice'])
 
-        is_train_data = True if 'SalePrice' in df.columns else False
-
-        input_df: pd.DataFrame = df
-        output_df: pd.DataFrame = pd.DataFrame()
+        input_df = df.drop(columns=['SalePrice'])
+        output_df: pd.DataFrame = df[['SalePrice']]
 
         # categorize columns into numerical and categorical
         categorical_cols: list = self._categorical_cols()
         numerical_cols: list = self._numerical_cols()
         
-        if is_train_data:
-            df = df.dropna(subset=['SalePrice'])
-            input_df = df.drop(columns=['SalePrice'])
-
         numerical_input_df = pd.DataFrame(
             self.numeric_pipeline.fit_transform(input_df[numerical_cols]),
             columns=numerical_cols,
@@ -161,16 +156,13 @@ class DataHelpers:  # pylint: disable=too-few-public-methods
             axis=1,
         )
         
-        if is_train_data:
-            output_df: pd.DataFrame = df[['SalePrice']]
-
-            output_df = pd.DataFrame(
-                self.output_pipeline.fit_transform(output_df[output_df.columns]),
-                columns=output_df.columns,
-            )
+        output_df = pd.DataFrame(
+            self.output_pipeline.fit_transform(output_df[output_df.columns]),
+            columns=output_df.columns,
+        )
         
         input_tensor: Tensor = torch.tensor(input_df.values, dtype=torch.float32)
-        output_tensor: Tensor = torch.tensor(output_df.values, dtype=torch.float32) if is_train_data else None
+        output_tensor: Tensor = torch.tensor(output_df.values, dtype=torch.float32)
 
         return (
             input_tensor, output_tensor,

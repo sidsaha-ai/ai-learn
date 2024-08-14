@@ -26,7 +26,7 @@ class MainEngine:
         """
         inputs: Tensor
         targets: Tensor
-        inputs, targets = self.data_helpers.make_data(self.train_data_file)
+        inputs, targets = self.data_helpers.make_training_data(self.train_data_file)
         print(f'{inputs.size()}')
         print(f'{targets.size()}')
 
