@@ -19,9 +19,20 @@ class DataHelpers:  # pylint: disable=too-few-public-methods
     """
 
     def __init__(self) -> None:
-        self.numeric_pipeline: Pipeline = None
-        self.category_pipeline: Pipeline = None
-        self.output_pipeline: Pipeline = None
+        # for numerical columns, impute to fill missing with 0 and apply min-max scaling
+        self.numeric_pipeline = Pipeline(steps=[
+            ('imputer', SimpleImputer(strategy='constant', fill_value=0)),
+            ('min_max_scaler', MinMaxScaler()),
+        ])
+        
+        self.category_pipeline = Pipeline(steps=[
+            ('imputer', SimpleImputer(strategy='constant', fill_value='missing')),
+            ('onehot', OneHotEncoder(sparse_output=False, handle_unknown='ignore')),
+        ])
+
+        self.output_pipeline = Pipeline(steps=[
+            ('min_max_scaler', MinMaxScaler()),
+        ])
 
     def _categorical_cols(self) -> list:
         return [
@@ -133,24 +144,11 @@ class DataHelpers:  # pylint: disable=too-few-public-methods
         categorical_cols: list = self._categorical_cols()
         numerical_cols: list = self._numerical_cols()
 
-        # for numerical columns, impute to fill missing with 0
-        # and apply min-max scaling
-        self.numeric_pipeline = Pipeline(steps=[
-            ('imputer', SimpleImputer(strategy='constant', fill_value=0)),
-            ('min_max_scaler', MinMaxScaler()),
-        ])
         numerical_input_df = pd.DataFrame(
             self.numeric_pipeline.fit_transform(input_df[numerical_cols]),
             columns=numerical_cols,
         )
 
-        # one-hot encode categorical columns after imputing
-        self.category_pipeline = Pipeline(steps=[
-            # impute None columns with `missing` value
-            ('imputer', SimpleImputer(strategy='constant', fill_value='missing')),
-            # then one-hot encode them
-            ('onehot', OneHotEncoder(sparse_output=False, handle_unknown='ignore')),
-        ])
         categorical_input_df = pd.DataFrame(
             self.category_pipeline.fit_transform(input_df[categorical_cols]),
             columns=self.category_pipeline.named_steps['onehot'].get_feature_names_out(categorical_cols),
@@ -161,10 +159,6 @@ class DataHelpers:  # pylint: disable=too-few-public-methods
             axis=1,
         )
 
-        # apply preprocessing to output also
-        self.output_pipeline = Pipeline(steps=[
-            ('min_max_scaler', MinMaxScaler()),
-        ])
         output_df = pd.DataFrame(
             self.output_pipeline.fit_transform(output_df[output_df.columns]),
             columns=output_df.columns,
