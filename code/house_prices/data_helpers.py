@@ -167,3 +167,26 @@ class DataHelpers:  # pylint: disable=too-few-public-methods
         return (
             input_tensor, output_tensor,
         )
+    
+    def make_test_data(self, csv_filepath: str) -> Tensor:
+        df: pd.DataFrame = pd.read_csv(csv_filepath)
+        if df.empty:
+            return None
+        
+        df = df.drop(columns=['Id'])
+
+        num_cols: list = self._numerical_cols()
+        cat_cols: list = self._categorical_cols()
+
+        numerical_df = pd.DataFrame(
+            self.numeric_pipeline.transform(df[num_cols]), columns=num_cols,
+        )
+        categorical_df = pd.DataFrame(
+            self.category_pipeline.transform(df[cat_cols]),
+            columns=self.category_pipeline.named_steps['onehot'].get_feature_names_out(cat_cols),
+        )
+        df = pd.concat(
+            [numerical_df, categorical_df], axis=1,
+        )
+
+        return torch.tensor(df.values, dtype=torch.float32)

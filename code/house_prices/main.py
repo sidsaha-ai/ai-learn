@@ -55,8 +55,7 @@ class MainEngine:
         """
         Function to run the trained neural network to produce predictions.
         """
-        inputs: Tensor
-        inputs, _ = self.data_helpers.make_data(self.test_data_file)
+        inputs: Tensor = self.data_helpers.make_test_data(self.test_data_file)
         print(f'{inputs.size()}')
 
         # set model to evaluation mode
