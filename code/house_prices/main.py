@@ -118,7 +118,7 @@ if __name__ == '__main__':
     engine.train()
     result_df = engine.test()
 
-    if result_df:
+    if result_df is not None:
         print('=== Some results ===')
         print(result_df.head(10))
         engine.output_csv(result_df)
