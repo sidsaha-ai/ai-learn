@@ -175,22 +175,22 @@ class DataHelpers:  # pylint: disable=too-few-public-methods
             ('min_max_scaler', MinMaxScaler()),
         ])
 
-        input_df[numerical_cols] = numeric_pipeline.fit_transform(
-            input_df[numerical_cols],
+        numerical_input_df = pd.DataFrame(
+            numeric_pipeline.fit_transform(input_df[numerical_cols]),
         )
         output_df[output_df.columns] = numeric_pipeline.fit_transform(
             output_df[output_df.columns],
         )
 
         # one-hot encode categorical columns after imputing
-        pipeline = Pipeline(steps=[
+        category_pipeline = Pipeline(steps=[
             # impute None columns with `missing` value
             ('imputer', SimpleImputer(strategy='constant', fill_value='missing')),
             # then one-hot encode them
             ('onehot', OneHotEncoder(sparse_output=False, handle_unknown='ignore')),
         ])
         categorical_data = pd.DataFrame(
-            pipeline.fit_transform(input_df[categorical_cols]),
+            category_pipeline.fit_transform(input_df[categorical_cols]),
         )
 
         # input_df = pd.concat(
@@ -198,7 +198,7 @@ class DataHelpers:  # pylint: disable=too-few-public-methods
         #     axis=1,
         # )
 
-        input_df = input_df[numerical_cols]
+        input_df = numerical_input_df
         return (
             torch.tensor(input_df.values, dtype=torch.float32),
             torch.tensor(output_df.values, dtype=torch.float32),
