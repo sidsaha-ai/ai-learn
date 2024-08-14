@@ -107,43 +107,6 @@ class DataHelpers:  # pylint: disable=too-few-public-methods
             'YrSold',
         ]
 
-    @staticmethod
-    def _age(*, df: pd.DataFrame, source_col: str, target_col: str) -> pd.DataFrame:
-        current_year: int = dt.datetime.now().year
-
-        # add age as target_col
-        df[target_col] = df[source_col].apply(
-            lambda x: current_year - x if pd.notnull(x) else np.nan
-        )
-        df = df.drop(columns=[source_col])  # remove source column
-        return df
-
-    @staticmethod
-    def _months_since_sold(df: pd.DataFrame) -> pd.DataFrame:
-        mo_sold_col: str = 'MoSold'
-        yr_sold_col: str = 'YrSold'
-
-        def _calculate(row):
-            sold_month = row[mo_sold_col]
-            sold_year = row[yr_sold_col]
-
-            if pd.isnull(sold_month) or pd.isnull(sold_year):
-                return np.nan
-
-            sale_date = dt.datetime(
-                year=int(sold_year),
-                month=int(sold_month),
-                day=1,
-            )
-            num_days: int = (dt.datetime.now() - sale_date).days
-            num_months: int = num_days // 30
-            return num_months
-
-        df['MoSinceSold'] = df.apply(_calculate, axis=1)
-        df = df.drop(columns=[mo_sold_col, yr_sold_col])
-
-        return df
-
     @classmethod
     def make_data(cls, csv_filepath: str) -> tuple[Tensor, Tensor]:
         """
