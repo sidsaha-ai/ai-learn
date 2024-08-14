@@ -9,6 +9,7 @@ import pandas as pd
 import torch
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
 from torch import Tensor
+from sklearn.impute import SimpleImputer
 
 
 class DataHelpers:  # pylint: disable=too-few-public-methods
@@ -155,7 +156,7 @@ class DataHelpers:  # pylint: disable=too-few-public-methods
         df = DataHelpers._months_since_sold(df)
 
         return df
-
+    
     @classmethod
     def make_data(cls, csv_filepath: str) -> tuple[Tensor, Tensor]:
         """
@@ -171,6 +172,9 @@ class DataHelpers:  # pylint: disable=too-few-public-methods
         # drop the rows where `SalePrice` is null
         df = df.dropna(subset=['SalePrice'])
 
+        # drop the ID column, it's not be used in training
+        df = df.drop(columns=['Id'])
+
         # divide into input data and output data
         input_df: pd.DataFrame = df.drop(columns=['SalePrice'])
         output_df: pd.DataFrame = df[['SalePrice']]
@@ -178,6 +182,10 @@ class DataHelpers:  # pylint: disable=too-few-public-methods
         # categorize columns into numerical and categorical
         categorical_cols: list = cls._categorical_cols()
         numerical_cols: list = cls._numerical_cols()
+
+        # impute numerical columns to remove None values
+        imputer = SimpleImputer(strategy='median')
+        input_df[numerical_cols] = imputer.fit_transform(df[numerical_cols])
 
         # scaler numerical columns
         scaler = StandardScaler()
