@@ -7,3 +7,5 @@ isort
 pydantic
 pandas
 numpy
+scikit-learn
+matplotlib

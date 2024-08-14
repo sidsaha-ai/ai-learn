@@ -14,6 +14,10 @@ build==1.2.1
     # via pip-tools
 click==8.1.7
     # via pip-tools
+contourpy==1.2.1
+    # via matplotlib
+cycler==0.12.1
+    # via matplotlib
 decorator==5.1.1
     # via ipython
 dill==0.3.8
@@ -24,6 +28,8 @@ filelock==3.15.4
     # via torch
 flake8==7.1.1
     # via -r requirements.in
+fonttools==4.53.1
+    # via matplotlib
 fsspec==2024.6.1
     # via torch
 ipython==8.26.0
@@ -36,8 +42,14 @@ jedi==0.19.1
     # via ipython
 jinja2==3.1.4
     # via torch
+joblib==1.4.2
+    # via scikit-learn
+kiwisolver==1.4.5
+    # via matplotlib
 markupsafe==2.1.5
     # via jinja2
+matplotlib==3.9.2
+    # via -r requirements.in
 matplotlib-inline==0.1.7
     # via ipython
 mccabe==0.7.0
@@ -51,15 +63,23 @@ networkx==3.3
 numpy==2.0.1
     # via
     #   -r requirements.in
+    #   contourpy
+    #   matplotlib
     #   pandas
+    #   scikit-learn
+    #   scipy
 packaging==24.1
-    # via build
+    # via
+    #   build
+    #   matplotlib
 pandas==2.2.2
     # via -r requirements.in
 parso==0.8.4
     # via jedi
 pexpect==4.9.0
     # via ipython
+pillow==10.4.0
+    # via matplotlib
 pip-tools==7.4.1
     # via -r requirements.in
 platformdirs==4.2.2
@@ -82,14 +102,22 @@ pygments==2.18.0
     # via ipython
 pylint==3.2.6
     # via -r requirements.in
+pyparsing==3.1.2
+    # via matplotlib
 pyproject-hooks==1.1.0
     # via
     #   build
     #   pip-tools
 python-dateutil==2.9.0.post0
-    # via pandas
+    # via
+    #   matplotlib
+    #   pandas
 pytz==2024.1
     # via pandas
+scikit-learn==1.5.1
+    # via -r requirements.in
+scipy==1.14.0
+    # via scikit-learn
 six==1.16.0
     # via
     #   asttokens
@@ -98,6 +126,8 @@ stack-data==0.6.3
     # via ipython
 sympy==1.13.2
     # via torch
+threadpoolctl==3.5.0
+    # via scikit-learn
 tomlkit==0.13.0
     # via pylint
 torch==2.4.0
