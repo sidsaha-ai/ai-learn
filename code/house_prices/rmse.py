@@ -11,7 +11,9 @@ class LogRMSELoss(nn.Module):
     def forward(self, y_pred: Tensor, y_true: Tensor) -> Tensor:
         # compute the logarithm of the predicted and true values
         # add the eps so that the value is non-zero, because log(0) is undefined
-        log_y_pred: Tensor = torch.log(y_pred + self.eps)
+
+        y_pred = y_pred.clamp(min=self.eps)
+        log_y_pred: Tensor = torch.log(y_pred)
         log_y_true: Tensor = torch.log(y_true + self.eps)
 
         # compute the mean squared error
