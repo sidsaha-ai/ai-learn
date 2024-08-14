@@ -25,5 +25,5 @@ class HousePricesNN(nn.Module):
         y = self.l2(y).clamp(min=0)
         y = self.l3(y).clamp(min=0)
         y = self.l4(y)
-        
+
         return y

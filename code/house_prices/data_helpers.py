@@ -174,7 +174,6 @@ class DataHelpers:  # pylint: disable=too-few-public-methods
             ('imputer', SimpleImputer(strategy='constant', fill_value=0)),
             ('min_max_scaler', MinMaxScaler()),
         ])
-
         numerical_input_df = pd.DataFrame(
             numeric_pipeline.fit_transform(input_df[numerical_cols]),
         )
