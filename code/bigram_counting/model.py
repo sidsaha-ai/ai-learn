@@ -3,6 +3,7 @@ This file contains the class the defines the bigram language model.
 """
 import string
 
+
 class BigramLM:
     """
     This class defines the model for the Bigram Language Model (LM).
