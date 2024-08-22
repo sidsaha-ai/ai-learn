@@ -1,0 +1,2 @@
+### What is this about?
+In this folder, we walk along with Andrej Kartpathy's lesson on [The spelled-out intro to language modelling: building makemore](https://www.youtube.com/watch?v=PaCmpygFfXo). We will also do the exercises from this lesson in this folder.
