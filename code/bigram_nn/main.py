@@ -1,5 +1,7 @@
 import argparse
 
+from bigram_nn.model import BigramNN
+
 def _read_words(filepath: str) -> list:
     words: list = []
 
@@ -11,9 +13,8 @@ def _read_words(filepath: str) -> list:
 def main(train_data_filepath: str) -> None:
     words: list = _read_words(train_data_filepath)
 
-    print(words)
-    print(f'{len(words)=}')
-
+    bigram_nn = BigramNN(words)
+    bigram_nn.train()
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
