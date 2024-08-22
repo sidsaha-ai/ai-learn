@@ -2,6 +2,7 @@
 This file contains the class the defines the bigram language model.
 """
 import string
+
 import torch
 
 
