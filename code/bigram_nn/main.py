@@ -2,6 +2,7 @@ import argparse
 
 from bigram_nn.model import BigramNN
 
+
 def _read_words(filepath: str) -> list:
     words: list = []
 
