@@ -86,13 +86,30 @@ class BigramLM:
         # letter (column) given an input letter (row).
         self._populate_model_tensor(counts_model)
 
-        print(self.model)
-        for row in range(len(self.ltoi)):
-            print(self.model[row].sum())
-
-
     def predict(self) -> str:
         """
         This method predicts a word based on the trained model.
         """
-        return
+        # start from the first row as it will be dot, continue sampling, and stop on getting a dot
+        word: str = ''
+        current_letter: str = '.'
+
+        while True:
+            # go to the row for the current letter
+            current_letter_index: int = self.ltoi.get(current_letter)
+
+            # sample possible next letter
+            next_letter_index: int = torch.multinomial(
+                self.model[current_letter_index],
+                num_samples=1,  # select one letter
+                replacement=True,
+            ).item()
+            next_letter: str = self.itol.get(next_letter_index)
+
+            if next_letter == '.':
+                break
+
+            word = f'{word}{next_letter}'
+            current_letter = next_letter
+
+        return word

@@ -24,7 +24,14 @@ def main(
     words: list = _read_words(train_data_filepath)
 
     bigram_lm: BigramLM = BigramLM(input_words=words)
+
+    # train the model
     bigram_lm.train()
+
+    # let's predict 20 words
+    for _ in range(20):
+        word: str = bigram_lm.predict()
+        print(word)
 
 
 if __name__ == '__main__':
