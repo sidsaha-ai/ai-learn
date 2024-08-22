@@ -24,8 +24,7 @@ def main(
     words: list = _read_words(train_data_filepath)
 
     bigram_lm: BigramLM = BigramLM(input_words=words)
-    print(f'{bigram_lm.itol=}')
-    print(f'{bigram_lm.ltoi=}')
+    bigram_lm.train()
 
 
 if __name__ == '__main__':
