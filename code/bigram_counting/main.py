@@ -1,19 +1,22 @@
-import pandas as pd
 import argparse
+
+from bigram_counting.model import BigramLM
 
 
 def _read_words(filepath: str) -> list:
     # reads the file to load all the words in the train dataset.
     words: list = open(filepath).read().splitlines()
-    return words
+    return [w.lower() for w in words]  # make all words to lower case
 
 
 def main(
     train_data_filepath: str,
 ) -> None:
     words: list = _read_words(train_data_filepath)
-    print(words[0:10])
-    print(len(words))
+
+    bigram_lm: BigramLM = BigramLM(input_words=words)
+    print(f'{bigram_lm.itol=}')
+    print(f'{bigram_lm.ltoi=}')
 
 
 if __name__ == '__main__':
