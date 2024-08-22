@@ -25,16 +25,22 @@ class BigramLM:
         """
         # the first letter is the delimiter character
         letters: list = ['.']
-        
+
         # add all lowercase letters
-        letters += [letter for letter in string.ascii_lowercase]
-        
+        letters += list(string.ascii_lowercase)
+
         for index, letter in enumerate(letters):
             self.ltoi[letter] = index
             self.itol[index] = letter
-        
-    
+
     def train(self) -> None:
         """
         This method trains the model and creates the tensor with the probabilities on pair-wise characters.
         """
+        return
+
+    def predict(self) -> str:
+        """
+        This method predicts a word based on the trained model.
+        """
+        return
