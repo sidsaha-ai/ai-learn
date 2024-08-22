@@ -36,13 +36,13 @@ class BigramLM:
         for index, letter in enumerate(letters):
             self.ltoi[letter] = index
             self.itol[index] = letter
-        
+
     def _init_model_tensor(self) -> None:
         size: int = len(self.ltoi)  # the number of letters
 
         # init the model with zeros
         self.model = torch.zeros((size, size), dtype=torch.float64)
-    
+
     def _make_counts_model(self) -> torch.Tensor:
         """
         Counts the bigram and makes and returns a tensor containing counts of the bigrams.
@@ -59,9 +59,9 @@ class BigramLM:
                 l1_index: int = self.ltoi.get(l1)
                 l2_index: int = self.ltoi.get(l2)
                 counts_model[l1_index, l2_index] += 1
-        
+
         return counts_model
-    
+
     def _populate_model_tensor(self, counts_model: torch.Tensor) -> None:
         """
         Convert the counts_model to probabilities row-wise.
@@ -70,7 +70,7 @@ class BigramLM:
         # for row in range(size):
         #     for col in range(size):
         #         self.model[row, col] = counts_model[row, col] / counts_model[row].sum()
-        
+
         # a shorter way to write the above for-loops
         self.model = counts_model.float().div(counts_model.sum(dim=1, keepdims=True))
 
