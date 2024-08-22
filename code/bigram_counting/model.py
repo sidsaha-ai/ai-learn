@@ -86,7 +86,7 @@ class BigramLM:
         # correspond to next letter. so, we are looking for the probability of the next
         # letter (column) given an input letter (row).
         self._populate_model_tensor(counts_model)
-    
+
     def loss(self) -> float:
         """
         This method finds the loss of the model.
@@ -100,14 +100,14 @@ class BigramLM:
         # find the bigrams and take the probabilities of those bigrams.
         for word in self.input_words:
             word = f'.{word}.'
-            
+
             for l1, l2 in zip(word, word[1:]):
                 l1_index: int = self.ltoi.get(l1)
                 l2_index: int = self.ltoi.get(l2)
 
                 loss += torch.log(self.model[l1_index, l2_index])
                 num += 1
-        
+
         loss = (-1) * loss  # negative of the log
         loss = loss / num  # average out the loss
 
