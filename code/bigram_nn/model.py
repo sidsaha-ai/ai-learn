@@ -55,8 +55,8 @@ class BigramNN:
         # so, we will one-hot encode the inputs and targets
         
         # `num_classes` in the number of classes possible, so the universe of letters
-        inputs = F.one_hot(inputs, num_classes=len(self.ltoi))
-        targets = F.one_hot(targets, num_classes=len(self.ltoi))
+        inputs = F.one_hot(inputs, num_classes=len(self.ltoi))  # pylint: disable=not-callable
+        targets = F.one_hot(targets, num_classes=len(self.ltoi))  # pylint: disable=not-callable
         print(f'{inputs.dtype=}')
         print(f'{inputs.shape=}')
         print(f'{targets.dtype=}')
