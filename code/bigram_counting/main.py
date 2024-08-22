@@ -33,6 +33,10 @@ def main(
         word: str = bigram_lm.predict()
         print(word)
 
+    # now let's print the loss of the model
+    loss: float = bigram_lm.loss()
+    print(f'Loss = {loss:.4f}')
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
