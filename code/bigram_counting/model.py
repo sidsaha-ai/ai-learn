@@ -19,7 +19,7 @@ class BigramLM:
         self.model: torch.Tensor = None  # the model tensor
 
         self._make_stoi()
-        self._init_tensor()
+        self._init_model_tensor()
 
     def _make_stoi(self) -> None:
         """
@@ -36,28 +36,54 @@ class BigramLM:
             self.ltoi[letter] = index
             self.itol[index] = letter
         
-    def _init_tensor(self) -> None:
+    def _init_model_tensor(self) -> None:
         size: int = len(self.ltoi)  # the number of letters
 
         # init the model with zeros
-        self.model = torch.zeros((size, size), dtype=torch.int)
+        self.model = torch.zeros((size, size), dtype=torch.float64)
+    
+    def _make_counts_model(self) -> torch.Tensor:
+        """
+        Counts the bigram and makes and returns a tensor containing counts of the bigrams.
+        """
+        size = len(self.ltoi)
+        counts_model: torch.Tensor = torch.zeros((size, size), dtype=torch.int)
+
+        for word in self.input_words:
+            # add dot delimiter to the word
+            word = f'.{word}.'
+
+            # iterate over the bigrams and increment count in the counts model
+            for l1, l2 in zip(word, word[1:]):
+                l1_index: int = self.ltoi.get(l1)
+                l2_index: int = self.ltoi.get(l2)
+                counts_model[l1_index, l2_index] += 1
+        
+        return counts_model
+    
+    def _populate_model_tensor(self, counts_model: torch.Tensor) -> None:
+        """
+        Convert the counts_model to probabilities row-wise.
+        """
+        size: int = len(self.ltoi)
+
+        for row in range(size):
+            for col in range(size):
+                self.model[row, col] = counts_model[row, col] / counts_model[row].sum()
 
     def train(self) -> None:
         """
         This method trains the model and creates the tensor with the probabilities on pair-wise characters.
         """
-        # count bigrams and add count to the model tensor
-        for word in self.input_words:
-            # add dot delimiter to thew w
-            word = f'.{word}.'
+        # init an intermediate integer tensor for keeping counts
+        counts_model: torch.Tensor = self._make_counts_model()
 
-            # iterate over the bigrams and increment count over the model tensor
-            for l1, l2 in zip(word, word[1:]):
-                l1_index: int = self.ltoi.get(l1)
-                l2_index: int = self.ltoi.get(l2)
-                self.model[l1_index, l2_index] += 1
-        
-        print(self.model)
+        # now convert the counts to probabilities row-wise
+        # we do it row-wise because each row corresponds to an input letter and the columns
+        # correspond to next letter. so, we are looking for the probability of the next
+        # letter (column) given an input letter (row).
+        self._populate_model_tensor(counts_model)
+
 
     def predict(self) -> str:
         """
