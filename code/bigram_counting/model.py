@@ -65,11 +65,13 @@ class BigramLM:
         """
         Convert the counts_model to probabilities row-wise.
         """
-        size: int = len(self.ltoi)
-
-        for row in range(size):
-            for col in range(size):
-                self.model[row, col] = counts_model[row, col] / counts_model[row].sum()
+        # size: int = len(self.ltoi)
+        # for row in range(size):
+        #     for col in range(size):
+        #         self.model[row, col] = counts_model[row, col] / counts_model[row].sum()
+        
+        # a shorter way to write the above for-loops
+        self.model = counts_model.float().div(counts_model.sum(dim=1, keepdims=True))
 
     def train(self) -> None:
         """
@@ -83,6 +85,10 @@ class BigramLM:
         # correspond to next letter. so, we are looking for the probability of the next
         # letter (column) given an input letter (row).
         self._populate_model_tensor(counts_model)
+
+        print(self.model)
+        for row in range(len(self.ltoi)):
+            print(self.model[row].sum())
 
 
     def predict(self) -> str:
