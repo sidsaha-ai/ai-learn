@@ -6,7 +6,7 @@ from torch.nn import functional as F
 
 
 class BigramNN:
-    
+
     def __init__(self, input_words: list) -> None:
         super().__init__()
         self.input_words = input_words
@@ -20,7 +20,7 @@ class BigramNN:
         self.targets: Tensor = None  # output data for training
 
         self.weights: Tensor = None  # the one-layer neural network
-    
+
     def _make_ltoi(self) -> None:
         letters: list = ['.']
 
@@ -29,18 +29,18 @@ class BigramNN:
         for index, letter in enumerate(letters):
             self.ltoi[letter] = index
             self.itol[index] = letter
-    
+
     def _make_inputs_and_targets(self) -> None:
         inputs: list = []
         targets: list = []
 
         for word in self.input_words:
             word = f'.{word}.'  # add delimiter
-            
+
             for l1, l2 in zip(word, word[1:]):
                 inputs.append(self.ltoi.get(l1))
                 targets.append(self.ltoi.get(l2))
-        
+
         self.inputs: Tensor = torch.tensor(inputs)
         self.targets: Tensor = torch.tensor(targets)
 
@@ -53,14 +53,14 @@ class BigramNN:
         # convert the tensors to float for neural net processing
         self.inputs = self.inputs.float()
         self.targets = self.targets.float()
-    
+
     def _pred(self, inputs: Tensor) -> Tensor:
         # Calculates the probabilities based on the current weights
         logits: Tensor = inputs @ self.weights
         probs: Tensor = F.softmax(logits, dim=1)
 
         return probs
-    
+
     def train(self, num_epochs: int) -> None:
         """
         This trains the model based on the `input_words`.
@@ -90,7 +90,7 @@ class BigramNN:
             loss.backward()
 
             self.weights.data += (-learning_rate) * self.weights.grad
-    
+
     def predict(self) -> str:
         """
         Predict a word based on the trained model.
@@ -113,7 +113,7 @@ class BigramNN:
             next_letter: str = self.itol.get(next_letter_index)
             if next_letter == '.':
                 break
-            
+
             res = f'{res}{next_letter}'
             current_letter = next_letter
 

@@ -8,7 +8,7 @@ def _read_words(filepath: str) -> list:
 
     with open(filepath, encoding='utf-8') as f:
         words = f.read().splitlines()
-    
+
     return [w.lower() for w in words]
 
 def main(train_data_filepath: str, num_epochs: int) -> None:
