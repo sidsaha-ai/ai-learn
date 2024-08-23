@@ -37,10 +37,20 @@ class BigramNN:
         
         t_inputs: torch.Tensor = torch.tensor(inputs)
         t_targets: torch.Tensor = torch.tensor(targets)
+
+        # in the `inputs` and `targets`, the indices actually represent letters and we are going to predict letters
+        # as output. Letters can be considered to be categorical data, in that sense (and not numerical data).
+        # so, we will one-hot encode the inputs and targets
+        t_inputs = F.one_hot(t_inputs, num_classes=len(self.ltoi))
+        t_targets = F.one_hot(t_targets, num_classes=len(self.ltoi))
+
+        # convert the tensors to float for neural net processing
+        t_inputs = t_inputs.float()
+        t_targets = t_targets.float()
         
         return t_inputs, t_targets
     
-    def train(self) -> None:
+    def train(self, num_epochs: int) -> None:
         """
         This trains the model based on the `input_words`.
         """
@@ -50,14 +60,27 @@ class BigramNN:
         targets: torch.Tensor = None
         inputs, targets = self._make_inputs_and_targets()
 
-        # in the `inputs` and `targets`, the indices actually represent letters and we are going to predict letters
-        # as output. Letters can be considered to be categorical data, in that sense (and not numerical data).
-        # so, we will one-hot encode the inputs and targets
-        
-        # `num_classes` in the number of classes possible, so the universe of letters
-        inputs = F.one_hot(inputs, num_classes=len(self.ltoi))  # pylint: disable=not-callable
-        targets = F.one_hot(targets, num_classes=len(self.ltoi))  # pylint: disable=not-callable
-        print(f'{inputs.dtype=}')
-        print(f'{inputs.shape=}')
-        print(f'{targets.dtype=}')
-        print(f'{targets.shape=}')
+        # init weights (parameters of the model) with random numbers
+        size: tuple[int, int] = (inputs.shape[1], targets.shape[1])
+        weights: torch.Tensor = torch.randn(size, requires_grad=True)
+
+        learning_rate: float = 50
+
+        for epoch in range(num_epochs):
+            # make one neural net layer with `weights`
+            logits: torch.Tensor = inputs @ weights
+            probs: torch.Tensor = F.softmax(logits, dim=1)
+
+            # find loss (negative log likelihood)
+            loss: torch.Tensor = F.nll_loss(
+                torch.log(probs), targets.argmax(dim=1),
+            )
+            print(f'{epoch=}, Loss: {loss.item()}')
+
+            # now do gradient descent on the weights
+            weights.grad = None
+            loss.backward()
+
+            # update weights
+            with torch.no_grad():
+                weights += (-learning_rate) * weights.grad
