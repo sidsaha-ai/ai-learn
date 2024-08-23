@@ -78,9 +78,7 @@ class KBigramNN:
 
         while True:
             xenc = F.one_hot(torch.tensor([ix]), num_classes=len(self.ltoi)).float()
-            logits = xenc @ self.weights
-            counts = logits.exp()
-            probs = counts / counts.sum(1, keepdims=True)
+            probs = self._pred(xenc)
 
             ix = torch.multinomial(probs, num_samples=1, replacement=True).item()
             out.append(
