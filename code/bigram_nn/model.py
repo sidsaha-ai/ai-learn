@@ -115,5 +115,6 @@ class BigramNN:
                 break
             
             res = f'{res}{next_letter}'
+            current_letter = next_letter
 
         return res
