@@ -53,7 +53,9 @@ class KBigramNN:
             logits = self.inputs @ self.weights
             counts = logits.exp()
             probs = counts / counts.sum(1, keepdims=True)
-            loss = -probs[torch.arange(self.num), self.targets].log().mean() + 0.01*(self.weights**2).mean()
+            loss = F.nll_loss(
+                torch.log(probs), self.targets,
+            )
             print(f'{epoch=}, Loss: {loss.item()}')
 
             self.weights.grad = None
