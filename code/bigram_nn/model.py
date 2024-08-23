@@ -2,6 +2,7 @@ import string
 
 import torch
 from torch.nn import functional as F
+from torch import Tensor
 
 
 class BigramNN:
@@ -15,7 +16,7 @@ class BigramNN:
 
         self._make_ltoi()
 
-        self.weights: torch.Tensor = None  # the one-layer neural network
+        self.weights: Tensor = None  # the one-layer neural network
     
     def _make_ltoi(self) -> None:
         letters: list = ['.']
@@ -26,7 +27,7 @@ class BigramNN:
             self.ltoi[letter] = index
             self.itol[index] = letter
     
-    def _make_inputs_and_targets(self) -> tuple[torch.Tensor, torch.Tensor]:
+    def _make_inputs_and_targets(self) -> tuple[Tensor, Tensor]:
         inputs: list = []
         targets: list = []
 
@@ -37,8 +38,8 @@ class BigramNN:
                 inputs.append(self.ltoi.get(l1))
                 targets.append(self.ltoi.get(l2))
         
-        t_inputs: torch.Tensor = torch.tensor(inputs)
-        t_targets: torch.Tensor = torch.tensor(targets)
+        t_inputs: Tensor = torch.tensor(inputs)
+        t_targets: Tensor = torch.tensor(targets)
 
         # in the `inputs` and `targets`, the indices actually represent letters and we are going to predict letters
         # as output. Letters can be considered to be categorical data, in that sense (and not numerical data).
@@ -52,14 +53,21 @@ class BigramNN:
         
         return t_inputs, t_targets
     
+    def _pred(self, inputs: Tensor) -> Tensor:
+        # Calculates the probabilities based on the current weights
+        logits: Tensor = inputs @ self.weights
+        probs: Tensor = F.softmax(logits, dim=1)
+
+        return probs
+    
     def train(self, num_epochs: int) -> None:
         """
         This trains the model based on the `input_words`.
         """
         # make a list of input characters (to integers) that represents the first letter of the bigram
         # make a list of target characters (to integers) that represents the second letter of the bigram
-        inputs: torch.Tensor = None
-        targets: torch.Tensor = None
+        inputs: Tensor = None
+        targets: Tensor = None
         inputs, targets = self._make_inputs_and_targets()
 
         # init weights (parameters of the model) with random numbers
@@ -70,11 +78,10 @@ class BigramNN:
 
         for epoch in range(num_epochs):
             # make one neural net layer with `weights`
-            logits: torch.Tensor = inputs @ self.weights
-            probs: torch.Tensor = F.softmax(logits, dim=1)
+            probs: Tensor = self._pred(inputs)
 
             # find loss (negative log likelihood)
-            loss: torch.Tensor = F.nll_loss(
+            loss: Tensor = F.nll_loss(
                 torch.log(probs), targets.argmax(dim=1),
             )
             print(f'{epoch=}, Loss: {loss.item()}')
