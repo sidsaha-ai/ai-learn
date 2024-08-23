@@ -16,7 +16,6 @@ class KBigramNN:
         self.inputs: Tensor = None
         self.targets: Tensor = None
         self.weights: Tensor = None
-        self.num = 0
 
         self._make_ltoi()
     
@@ -39,8 +38,6 @@ class KBigramNN:
 
         self.inputs = torch.tensor(inputs)
         self.targets = torch.tensor(targets)
-
-        self.num = self.inputs.nelement()
 
         self.inputs = F.one_hot(self.inputs, num_classes=27).float()
     
