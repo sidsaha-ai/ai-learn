@@ -30,7 +30,7 @@ class BigramNN:
             self.ltoi[letter] = index
             self.itol[index] = letter
     
-    def _make_inputs_and_targets(self) -> tuple[Tensor, Tensor]:
+    def _make_inputs_and_targets(self) -> None:
         inputs: list = []
         targets: list = []
 
