@@ -46,8 +46,7 @@ class KBigramNN:
     
     def _pred(self, inputs: Tensor) -> Tensor:
         logits = inputs @ self.weights
-        counts = logits.exp()
-        probs = counts / counts.sum(1, keepdims=True)
+        probs = F.softmax(logits, dim=1)
         
         return probs
     
