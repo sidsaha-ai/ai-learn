@@ -80,6 +80,7 @@ class BigramNN:
         self.weights = torch.randn(size, requires_grad=True)
 
         learning_rate: float = 50
+        regularization_rate: float = 0.01
 
         for epoch in range(num_epochs):
             # make one neural net layer with `weights`
@@ -88,7 +89,7 @@ class BigramNN:
             # find loss
             loss: Tensor = F.nll_loss(
                 torch.log(probs), self.targets.argmax(dim=1),
-            )
+            ) + (regularization_rate * (self.weights ** 2).mean())
             print(f'{epoch=}, Loss: {loss.item():.4f}')
 
             # now do gradient descent on the weights
