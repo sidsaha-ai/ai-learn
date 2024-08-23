@@ -40,8 +40,10 @@ class KBigramNN:
         self.targets = torch.tensor(targets)
 
         self.inputs = F.one_hot(self.inputs, num_classes=len(self.ltoi))
+        self.targets = F.one_hot(self.targets, num_classes=len(self.ltoi))
 
         self.inputs = self.inputs.float()
+        self.targets = self.targets.float()
     
     def _pred(self, inputs: Tensor) -> Tensor:
         logits = inputs @ self.weights
@@ -52,7 +54,7 @@ class KBigramNN:
     def train(self, num_epochs: int) -> None:
         self._make_inputs_and_targets()
 
-        size = (self.inputs.shape[1], self.inputs.shape[1])
+        size = (self.inputs.shape[1], self.targets.shape[1])
         self.weights = torch.randn(size, requires_grad=True)
 
         learning_rate = 50
@@ -61,7 +63,7 @@ class KBigramNN:
             probs = self._pred(self.inputs)
 
             loss = F.nll_loss(
-                torch.log(probs), self.targets,
+                torch.log(probs), self.targets.argmax(dim=1),
             )
             print(f'{epoch=}, Loss: {loss.item()}')
 
