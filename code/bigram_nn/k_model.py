@@ -39,7 +39,7 @@ class KBigramNN:
         self.inputs = torch.tensor(inputs)
         self.targets = torch.tensor(targets)
 
-        self.inputs = F.one_hot(self.inputs, num_classes=27).float()
+        self.inputs = F.one_hot(self.inputs, num_classes=len(self.ltoi)).float()
     
     def _pred(self, inputs: Tensor) -> Tensor:
         logits = inputs @ self.weights
@@ -70,7 +70,7 @@ class KBigramNN:
         out = []
 
         while True:
-            xenc = F.one_hot(torch.tensor([ix]), num_classes=27).float()
+            xenc = F.one_hot(torch.tensor([ix]), num_classes=len(self.ltoi)).float()
             logits = xenc @ self.weights
             counts = logits.exp()
             probs = counts / counts.sum(1, keepdims=True)
