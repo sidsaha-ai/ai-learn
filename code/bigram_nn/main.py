@@ -1,6 +1,7 @@
 import argparse
 
 from bigram_nn.model import BigramNN
+from bigram_nn.k_model import KBigramNN
 
 
 def _read_words(filepath: str) -> list:
@@ -14,7 +15,7 @@ def _read_words(filepath: str) -> list:
 def main(train_data_filepath: str, num_epochs: int) -> None:
     words: list = _read_words(train_data_filepath)
 
-    bigram_nn = BigramNN(words)
+    bigram_nn = KBigramNN(words)
     bigram_nn.train(num_epochs)
 
     for _ in range(10):
