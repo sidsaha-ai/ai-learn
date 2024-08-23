@@ -1,3 +1,6 @@
+"""
+The Bigram model made using neural network.
+"""
 import string
 
 import torch
@@ -6,6 +9,9 @@ from torch.nn import functional as F
 
 
 class BigramNN:
+    """
+    The Bigram model based on a single layer neural network.
+    """
 
     def __init__(self, input_words: list) -> None:
         super().__init__()
@@ -47,8 +53,8 @@ class BigramNN:
         # in the `inputs` and `targets`, the indices actually represent letters and we are going to predict letters
         # as output. Letters can be considered to be categorical data, in that sense (and not numerical data).
         # so, we will one-hot encode the inputs and targets
-        self.inputs = F.one_hot(self.inputs, num_classes=len(self.ltoi))
-        self.targets = F.one_hot(self.targets, num_classes=len(self.ltoi))
+        self.inputs = F.one_hot(self.inputs, num_classes=len(self.ltoi))  # pylint: disable=not-callable
+        self.targets = F.one_hot(self.targets, num_classes=len(self.ltoi))  # pylint: disable=not-callable
 
         # convert the tensors to float for neural net processing
         self.inputs = self.inputs.float()
@@ -101,7 +107,7 @@ class BigramNN:
         while True:
             # make an input tensor with current letter to predict next letter.
             inputs: Tensor = torch.tensor([self.ltoi.get(current_letter)], dtype=torch.int64)
-            inputs = F.one_hot(inputs, num_classes=len(self.ltoi))
+            inputs = F.one_hot(inputs, num_classes=len(self.ltoi))  # pylint: disable=not-callable
             inputs = inputs.float()
 
             probs: Tensor = self._pred(inputs)

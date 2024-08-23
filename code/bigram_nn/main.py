@@ -1,3 +1,6 @@
+"""
+The main executable file.
+"""
 import argparse
 
 from bigram_nn.model import BigramNN
@@ -11,7 +14,11 @@ def _read_words(filepath: str) -> list:
 
     return [w.lower() for w in words]
 
+
 def main(train_data_filepath: str, num_epochs: int) -> None:
+    """
+    The main executable function.
+    """
     words: list = _read_words(train_data_filepath)
 
     bigram_nn = BigramNN(words)
@@ -20,6 +27,7 @@ def main(train_data_filepath: str, num_epochs: int) -> None:
     for _ in range(10):
         word: str = bigram_nn.predict()
         print(word)
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
