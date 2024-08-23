@@ -17,6 +17,10 @@ def main(train_data_filepath: str, num_epochs: int) -> None:
     bigram_nn = BigramNN(words)
     bigram_nn.train(num_epochs)
 
+    for _ in range(10):
+        word: str = bigram_nn.predict()
+        print(word)
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument(

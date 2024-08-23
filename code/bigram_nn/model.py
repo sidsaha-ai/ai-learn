@@ -92,3 +92,34 @@ class BigramNN:
             # update weights
             with torch.no_grad():
                 self.weights += (-learning_rate) * self.weights.grad
+    
+    def predict(self) -> str:
+        """
+        Predict a word based on the trained model.
+        """
+        res: str = ''
+        current_letter: str = '.'
+
+        while True:
+            # make an input tensor with current letter to predict next letter.
+            inputs: Tensor = torch.tensor([self.ltoi.get(current_letter)], dtype=torch.int64)
+            inputs = F.one_hot(inputs, num_classes=len(self.ltoi))
+            inputs = inputs.float()
+
+            logits = inputs @ self.weights
+            counts = logits.exp()
+            probs = counts / counts.sum(1, keepdims=True)
+
+            # probs: Tensor = self._pred(inputs)
+
+            # pick a sample based on the probability as the next letter
+            next_letter_index: int = torch.multinomial(
+                probs, num_samples=1, replacement=True,
+            ).item()
+            next_letter: str = self.itol.get(next_letter_index)
+            if next_letter == '.':
+                break
+            
+            res = f'{res}{next_letter}'
+
+        return res
