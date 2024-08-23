@@ -50,7 +50,8 @@ class KBigramNN:
     def train(self, num_epochs: int) -> None:
         self._make_inputs_and_targets()
 
-        self.weights = torch.randn((27, 27), requires_grad=True)
+        size = (self.inputs.shape[1], self.inputs.shape[1])
+        self.weights = torch.randn(size, requires_grad=True)
 
         for epoch in range(num_epochs):
             probs = self._pred(self.inputs)
