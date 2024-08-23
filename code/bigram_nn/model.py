@@ -14,6 +14,8 @@ class BigramNN:
         self.itol: dict = {}  # map of integer to letter
 
         self._make_ltoi()
+
+        self.weights: torch.Tensor = None  # the one-layer neural network
     
     def _make_ltoi(self) -> None:
         letters: list = ['.']
@@ -62,13 +64,13 @@ class BigramNN:
 
         # init weights (parameters of the model) with random numbers
         size: tuple[int, int] = (inputs.shape[1], targets.shape[1])
-        weights: torch.Tensor = torch.randn(size, requires_grad=True)
+        self.weights = torch.randn(size, requires_grad=True)
 
         learning_rate: float = 50
 
         for epoch in range(num_epochs):
             # make one neural net layer with `weights`
-            logits: torch.Tensor = inputs @ weights
+            logits: torch.Tensor = inputs @ self.weights
             probs: torch.Tensor = F.softmax(logits, dim=1)
 
             # find loss (negative log likelihood)
@@ -78,9 +80,9 @@ class BigramNN:
             print(f'{epoch=}, Loss: {loss.item()}')
 
             # now do gradient descent on the weights
-            weights.grad = None
+            self.weights.grad = None
             loss.backward()
 
             # update weights
             with torch.no_grad():
-                weights += (-learning_rate) * weights.grad
+                self.weights += (-learning_rate) * self.weights.grad
