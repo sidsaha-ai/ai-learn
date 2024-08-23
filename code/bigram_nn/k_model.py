@@ -39,7 +39,9 @@ class KBigramNN:
         self.inputs = torch.tensor(inputs)
         self.targets = torch.tensor(targets)
 
-        self.inputs = F.one_hot(self.inputs, num_classes=len(self.ltoi)).float()
+        self.inputs = F.one_hot(self.inputs, num_classes=len(self.ltoi))
+
+        self.inputs = self.inputs.float()
     
     def _pred(self, inputs: Tensor) -> Tensor:
         logits = inputs @ self.weights
@@ -57,6 +59,7 @@ class KBigramNN:
 
         for epoch in range(num_epochs):
             probs = self._pred(self.inputs)
+
             loss = F.nll_loss(
                 torch.log(probs), self.targets,
             )
