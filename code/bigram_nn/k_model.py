@@ -53,6 +53,8 @@ class KBigramNN:
         size = (self.inputs.shape[1], self.inputs.shape[1])
         self.weights = torch.randn(size, requires_grad=True)
 
+        learning_rate = 50
+
         for epoch in range(num_epochs):
             probs = self._pred(self.inputs)
             loss = F.nll_loss(
@@ -63,7 +65,7 @@ class KBigramNN:
             self.weights.grad = None
             loss.backward()
 
-            self.weights.data += -50 * self.weights.grad
+            self.weights.data += (-learning_rate) * self.weights.grad
     
     def predict(self) -> str:
         ix = 0
