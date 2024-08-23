@@ -16,6 +16,9 @@ class BigramNN:
 
         self._make_ltoi()
 
+        self.inputs: Tensor = None  # input data for training
+        self.targets: Tensor = None  # output data for training
+
         self.weights: Tensor = None  # the one-layer neural network
     
     def _make_ltoi(self) -> None:
@@ -38,20 +41,18 @@ class BigramNN:
                 inputs.append(self.ltoi.get(l1))
                 targets.append(self.ltoi.get(l2))
         
-        t_inputs: Tensor = torch.tensor(inputs)
-        t_targets: Tensor = torch.tensor(targets)
+        self.inputs: Tensor = torch.tensor(inputs)
+        self.targets: Tensor = torch.tensor(targets)
 
         # in the `inputs` and `targets`, the indices actually represent letters and we are going to predict letters
         # as output. Letters can be considered to be categorical data, in that sense (and not numerical data).
         # so, we will one-hot encode the inputs and targets
-        t_inputs = F.one_hot(t_inputs, num_classes=len(self.ltoi))
-        t_targets = F.one_hot(t_targets, num_classes=len(self.ltoi))
+        self.inputs = F.one_hot(self.inputs, num_classes=len(self.ltoi))
+        self.targets = F.one_hot(self.targets, num_classes=len(self.ltoi))
 
         # convert the tensors to float for neural net processing
-        t_inputs = t_inputs.float()
-        t_targets = t_targets.float()
-        
-        return t_inputs, t_targets
+        self.inputs = self.inputs.float()
+        self.targets = self.targets.float()
     
     def _pred(self, inputs: Tensor) -> Tensor:
         # Calculates the probabilities based on the current weights
@@ -66,25 +67,23 @@ class BigramNN:
         """
         # make a list of input characters (to integers) that represents the first letter of the bigram
         # make a list of target characters (to integers) that represents the second letter of the bigram
-        inputs: Tensor = None
-        targets: Tensor = None
-        inputs, targets = self._make_inputs_and_targets()
+        self._make_inputs_and_targets()
 
         # init weights (parameters of the model) with random numbers
-        size: tuple[int, int] = (inputs.shape[1], targets.shape[1])
+        size: tuple[int, int] = (self.inputs.shape[1], self.targets.shape[1])
         self.weights = torch.randn(size, requires_grad=True)
 
         learning_rate: float = 50
 
         for epoch in range(num_epochs):
             # make one neural net layer with `weights`
-            probs: Tensor = self._pred(inputs)
+            probs: Tensor = self._pred(self.inputs)
 
-            # find loss (negative log likelihood)
+            # find loss
             loss: Tensor = F.nll_loss(
-                torch.log(probs), targets.argmax(dim=1),
+                torch.log(probs), self.targets.argmax(dim=1),
             )
-            print(f'{epoch=}, Loss: {loss.item()}')
+            print(f'{epoch=}, Loss: {loss.item():.4f}')
 
             # now do gradient descent on the weights
             self.weights.grad = None
