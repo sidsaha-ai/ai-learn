@@ -106,11 +106,7 @@ class BigramNN:
             inputs = F.one_hot(inputs, num_classes=len(self.ltoi))
             inputs = inputs.float()
 
-            logits = inputs @ self.weights
-            counts = logits.exp()
-            probs = counts / counts.sum(1, keepdims=True)
-
-            # probs: Tensor = self._pred(inputs)
+            probs: Tensor = self._pred(inputs)
 
             # pick a sample based on the probability as the next letter
             next_letter_index: int = torch.multinomial(
