@@ -89,9 +89,7 @@ class BigramNN:
             self.weights.grad = None
             loss.backward()
 
-            # update weights
-            with torch.no_grad():
-                self.weights += (-learning_rate) * self.weights.grad
+            self.weights.data += (-learning_rate) * self.weights.grad
     
     def predict(self) -> str:
         """

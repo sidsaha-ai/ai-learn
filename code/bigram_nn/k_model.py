@@ -31,8 +31,8 @@ class KBigramNN:
         inputs, targets = [], []
 
         for word in self.input_words:
-            chs = ['.'] + list(word) + ['.']
-            for l1, l2 in zip(chs, chs[1:]):
+            word = f'.{word}.'
+            for l1, l2 in zip(word, word[1:]):
                 inputs.append(self.ltoi.get(l1))
                 targets.append(self.ltoi.get(l2))
 
