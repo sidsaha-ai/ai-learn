@@ -21,6 +21,7 @@ def main(train_data_filepath: str) -> None:
     words = _read_words(train_data_filepath)
 
     model = TrigramCountingModel(words)
+    model.train()
 
 
 if __name__ == '__main__':
