@@ -2,6 +2,7 @@
 The main file which will start the execution.
 """
 import argparse
+from trigram_counting.model import TrigramCountingModel
 
 
 def _read_words(filepath: str) -> list:
@@ -18,7 +19,8 @@ def main(train_data_filepath: str) -> None:
     The main executable function.
     """
     words = _read_words(train_data_filepath)
-    print(words)
+
+    model = TrigramCountingModel(words)
 
 
 if __name__ == '__main__':
