@@ -125,3 +125,28 @@ class BigramNN:
             current_letter = next_letter
 
         return res
+
+    def loss(self) -> float:
+        loss: float = 0
+        num: int = 0
+
+        for word in self.input_words:
+            word = f'.{word}.'
+            
+            for l1, l2 in zip(word, word[1:]):
+                ix1: int = self.ltoi.get(l1)
+                ix2: int = self.ltoi.get(l2)
+
+                inputs: Tensor = torch.tensor([ix1], dtype=torch.int64)
+                inputs = F.one_hot(inputs, num_classes=len(self.ltoi))
+                inputs = inputs.float()
+
+                probs: Tensor = self._pred(inputs)
+
+                loss += torch.log(probs[0, ix2])  # get the probability of the target index
+                num += 1
+        
+        loss = (-1) * loss  # negative log
+        loss = loss / num
+
+        return loss
