@@ -21,7 +21,13 @@ def main(train_data_filepath: str) -> None:
     words = _read_words(train_data_filepath)
 
     model = TrigramCountingModel(words)
+    print('training...')
     model.train()
+    print('training completed.')
+
+    for _ in range(10):
+        word: str = model.predict()
+        print(word)
 
 
 if __name__ == '__main__':

@@ -45,4 +45,28 @@ class TrigramCountingModel:
         # across the 3rd dimension (which represents the counts)
         self.model = counts_model.float().div(counts_model.sum(dim=2, keepdims=True))
         self.model[torch.isnan(self.model)] = 0
-        print(self.model)
+    
+    def predict(self) -> str:
+        word: str = ''
+        l1: str = '.'  # the first letter of the trigram
+        l2: str = '.'  # the second letter of the trigram
+
+        while True:
+            ix1: int = self.ltoi.get(l1)
+            ix2: int = self.ltoi.get(l2)
+            
+            pred_ix: int = torch.multinomial(
+                self.model[ix1, ix2], num_samples=1, replacement=True,
+            ).item()
+            pred_l: str = self.itol.get(pred_ix)
+            
+            if pred_l == '.':
+                break
+
+            word = f'{word}{pred_l}'
+
+            # change current trigram
+            l1 = l2
+            l2 = pred_l
+        
+        return word
