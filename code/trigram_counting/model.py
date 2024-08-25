@@ -1,3 +1,6 @@
+"""
+Defines the Trigram model built by counting.
+"""
 import string
 
 import torch
@@ -16,7 +19,7 @@ class TrigramCountingModel:
         # init a 3D model with zeros
         size: int = len(self.ltoi)
         self.model: Tensor = torch.zeros((size, size, size), dtype=torch.float)
-    
+
     def _make_mappings(self) -> None:
         # function to make mappings between letters and integers
         letters: dict = ['.'] + list(string.ascii_lowercase)
@@ -24,7 +27,7 @@ class TrigramCountingModel:
         for index, letter in enumerate(letters):
             self.ltoi[letter] = index
             self.itol[index] = letter
-    
+
     def train(self) -> None:
         """
         Method to train the model.
@@ -42,12 +45,12 @@ class TrigramCountingModel:
                 l3_index: int = self.ltoi.get(l3)
 
                 counts_model[l1_index, l2_index, l3_index] += 1
-        
+
         # now that the counts are created, take the probability of the counts
         # across the 3rd dimension (which represents the counts)
         self.model = counts_model.float().div(counts_model.sum(dim=2, keepdims=True))
         self.model[torch.isnan(self.model)] = 0
-    
+
     def predict(self) -> str:
         word: str = ''
         l1: str = '.'  # the first letter of the trigram
@@ -56,12 +59,12 @@ class TrigramCountingModel:
         while True:
             ix1: int = self.ltoi.get(l1)
             ix2: int = self.ltoi.get(l2)
-            
+
             pred_ix: int = torch.multinomial(
                 self.model[ix1, ix2], num_samples=1, replacement=True,
             ).item()
             pred_l: str = self.itol.get(pred_ix)
-            
+
             if pred_l == '.':
                 break
 
@@ -70,7 +73,7 @@ class TrigramCountingModel:
             # change current trigram
             l1 = l2
             l2 = pred_l
-        
+
         return word
 
     def loss(self) -> float:
@@ -90,7 +93,7 @@ class TrigramCountingModel:
 
                 loss += torch.log(self.model[ix1, ix2, ix3])
                 num += 1
-        
+
         loss = (-1) * loss  # negative log
         loss = loss / num
 
