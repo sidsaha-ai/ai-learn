@@ -127,12 +127,15 @@ class BigramNN:
         return res
 
     def loss(self) -> float:
+        """
+        Finds the loss across the entire input data.
+        """
         loss: float = 0
         num: int = 0
 
         for word in self.input_words:
             word = f'.{word}.'
-            
+
             for l1, l2 in zip(word, word[1:]):
                 ix1: int = self.ltoi.get(l1)
                 ix2: int = self.ltoi.get(l2)
@@ -145,7 +148,7 @@ class BigramNN:
 
                 loss += torch.log(probs[0, ix2])  # get the probability of the target index
                 num += 1
-        
+
         loss = (-1) * loss  # negative log
         loss = loss / num
 

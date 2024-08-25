@@ -8,6 +8,9 @@ from torch import Tensor
 
 
 class TrigramCountingModel:
+    """
+    The Trigram counting model.
+    """
 
     def __init__(self, input_words: list) -> None:
         self.input_words: list = input_words
@@ -52,6 +55,9 @@ class TrigramCountingModel:
         self.model[torch.isnan(self.model)] = 0
 
     def predict(self) -> str:
+        """
+        Method to predict a word from the model.
+        """
         word: str = ''
         l1: str = '.'  # the first letter of the trigram
         l2: str = '.'  # the second letter of the trigram

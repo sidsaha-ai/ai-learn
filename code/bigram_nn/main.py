@@ -27,7 +27,7 @@ def main(train_data_filepath: str, num_epochs: int) -> None:
     for _ in range(10):
         word: str = bigram_nn.predict()
         print(word)
-    
+
     loss: float = bigram_nn.loss()
     print(f'Loss: {loss:.4f}')
 
