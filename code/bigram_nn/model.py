@@ -141,7 +141,7 @@ class BigramNN:
                 ix2: int = self.ltoi.get(l2)
 
                 inputs: Tensor = torch.tensor([ix1], dtype=torch.int64)
-                inputs = F.one_hot(inputs, num_classes=len(self.ltoi))
+                inputs = F.one_hot(inputs, num_classes=len(self.ltoi))  # pylint: disable=not-callable
                 inputs = inputs.float()
 
                 probs: Tensor = self._pred(inputs)
