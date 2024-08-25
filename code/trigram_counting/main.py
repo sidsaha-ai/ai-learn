@@ -2,6 +2,7 @@
 The main file which will start the execution.
 """
 import argparse
+
 from trigram_counting.model import TrigramCountingModel
 
 

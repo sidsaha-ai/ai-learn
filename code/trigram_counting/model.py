@@ -1,6 +1,8 @@
-import torch
 import string
+
+import torch
 from torch import Tensor
+
 
 class TrigramCountingModel:
 
