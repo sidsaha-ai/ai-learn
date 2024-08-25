@@ -70,3 +70,26 @@ class TrigramCountingModel:
             l2 = pred_l
         
         return word
+
+    def loss(self) -> float:
+        """
+        This method finds the loss across the input data.
+        """
+        loss: float = 0
+        num: int = 0
+
+        for word in self.input_words:
+            word = f'..{word}.'
+
+            for l1, l2, l3 in zip(word, word[1:], word[2:]):
+                ix1: int = self.ltoi.get(l1)
+                ix2: int = self.ltoi.get(l2)
+                ix3: int = self.ltoi.get(l3)
+
+                loss += torch.log(self.model[ix1, ix2, ix3])
+                num += 1
+        
+        loss = (-1) * loss  # negative log
+        loss = loss / num
+
+        return loss

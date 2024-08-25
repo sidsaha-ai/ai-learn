@@ -25,9 +25,12 @@ def main(train_data_filepath: str) -> None:
     model.train()
     print('training completed.')
 
-    for _ in range(10):
+    for _ in range(20):
         word: str = model.predict()
         print(word)
+
+    loss: float = model.loss()
+    print(f'Loss = {loss:.4f}')
 
 
 if __name__ == '__main__':
