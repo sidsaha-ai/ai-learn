@@ -1,8 +1,17 @@
 import argparse
 
+def _read_words(filepath: str) -> list:
+    words: list = []
+
+    with open(filepath, encoding='utf-8') as f:
+        words = f.read().splitlines()
+    
+    words = [w.strip().lower() for w in words]
+    return words
+
 def main(train_data_filepath: str, num_epochs: int) -> None:
-    print(f'{train_data_filepath=}')
-    print(f'{num_epochs=}')
+    words: list = _read_words(train_data_filepath)
+    print(f'Num words: {len(words)}')
 
 
 if __name__ == '__main__':
