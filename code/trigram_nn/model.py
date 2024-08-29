@@ -3,6 +3,7 @@ This file implements the trigram model using neural network.
 """
 
 import string
+
 import torch
 from torch import Tensor
 from torch.nn import functional as F

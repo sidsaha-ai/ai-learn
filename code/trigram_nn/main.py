@@ -2,6 +2,7 @@ import argparse
 
 from trigram_nn.model import TrigramNN
 
+
 def _read_words(filepath: str) -> list:
     words: list = []
 
