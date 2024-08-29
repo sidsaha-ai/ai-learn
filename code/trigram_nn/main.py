@@ -18,6 +18,10 @@ def main(train_data_filepath: str, num_epochs: int) -> None:
     model = TrigramNN(words)
     model.train(num_epochs)
 
+    for _ in range(10):
+        word: str = model.predict()
+        print(word)
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument(

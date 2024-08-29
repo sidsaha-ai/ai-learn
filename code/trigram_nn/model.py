@@ -119,4 +119,39 @@ class TrigramNN:
 
             self.weights_1.data += (-learning_rate) * self.weights_1.grad
             self.weights_2.data += (-learning_rate) * self.weights_2.grad
+    
+    def predict(self) -> str:
+        """
+        Generate a prediction from the model.
+        """
+        res: str = ''
         
+        l1: str = '.'
+        l2: str = '.'
+
+        while True:
+            # make tensors for current input letters
+            l1_input: Tensor = torch.tensor([self.ltoi.get(l1)], dtype=torch.int64)
+            l2_input: Tensor = torch.tensor([self.ltoi.get(l2)], dtype=torch.int64)
+            
+            # one-hot encode them, concat them, and turn to float
+            t_l1_input: Tensor = F.one_hot(l1_input, num_classes=len(self.ltoi))
+            t_l2_input: Tensor = F.one_hot(l2_input, num_classes=len(self.itol))
+            inputs: Tensor = torch.cat(
+                (t_l1_input, t_l2_input), dim=1,
+            )
+            inputs = inputs.float()
+
+            probs: Tensor = self._pred(inputs)
+
+            l3_ix: int = torch.multinomial(probs, num_samples=1, replacement=True).item()
+            l3: str = self.itol.get(l3_ix)
+
+            res = f'{res}{l3}'
+
+            if l3 == '.':
+                break
+
+            l1, l2 = l2, l3
+        
+        return res
