@@ -68,8 +68,16 @@ class TrigramNN:
         # make the tensors float so that they can be used in training.
         self.inputs = self.inputs.float()
         self.targets = self.targets.float()
+    
+    def _pred(self, inputs: Tensor) -> Tensor:
+        """
+        Find predictions based on the inputs passed and the weights trained.
+        """
+        logits = inputs @ self.weights
+        probs: Tensor = F.softmax(logits, dim=1)
+        return probs
 
-    def train(self) -> None:
+    def train(self, num_epochs: int) -> None:
         """
         This method trains the neural network.
         """
@@ -80,4 +88,17 @@ class TrigramNN:
             self.inputs.shape[1], self.targets.shape[1],
         )
         self.weights = torch.randn(size, requires_grad=True)
+
+        for epoch in range(num_epochs):
+            # forward pass
+            probs: Tensor = self._pred(self.inputs)
+            # find the loss
+            loss = F.nll_loss(torch.log(probs), self.targets.argmax(dim=1))
+            print(f'Epoch: {epoch}, Loss: {loss:.4f}')
+
+            # backward pass
+            learning_rate: float = 50
+            self.weights.grad = None
+            loss.backward()
+            self.weights.data += (-learning_rate) * self.weights.grad 
         
