@@ -16,6 +16,7 @@ def main(train_data_filepath: str, num_epochs: int) -> None:
     print(f'Num words: {len(words)}')
 
     model = TrigramNN(words)
+    model.train()
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
