@@ -166,3 +166,27 @@ class TrigramNN:
             l1, l2 = l2, l3
         
         return res
+    
+    def loss(self) -> float:
+        """
+        Find the loss across the entire input data.
+        """
+        loss: float = 0
+        num: int = 0
+
+        for word in self.input_words:
+            word = f'..{word}.'
+
+            for l1, l2, l3 in zip(word, word[1:], word[2:]):
+                inputs: Tensor = self._generate_input_from_two_letters(l1, l2)
+                probs: Tensor = self._pred(inputs)
+
+                loss += torch.log(
+                    probs[0, self.ltoi.get(l3)],
+                )
+                num += 1
+        
+        loss = (-1) * loss  # negative loss
+        loss = loss / num  # average negative loss
+
+        return loss
