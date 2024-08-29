@@ -21,6 +21,9 @@ class TrigramNN:
         # the inputs and targets tensor for training the neural network
         self.inputs: Tensor = None
         self.targets: Tensor = None
+
+        # the weights of the neural network
+        self.weights: Tensor = None
     
     def _make_char_int_mappings(self) -> None:
         letters: list = ['.'] + list(string.ascii_lowercase)
@@ -62,8 +65,19 @@ class TrigramNN:
             (t_l1_inputs, t_l2_inputs), dim=1,
         )
 
+        # make the tensors float so that they can be used in training.
+        self.inputs = self.inputs.float()
+        self.targets = self.targets.float()
+
     def train(self) -> None:
         """
         This method trains the neural network.
         """
         self._make_training_data()
+
+        # init with random weights
+        size: tuple[int, int] = (
+            self.inputs.shape[1], self.targets.shape[1],
+        )
+        self.weights = torch.randn(size, requires_grad=True)
+        
