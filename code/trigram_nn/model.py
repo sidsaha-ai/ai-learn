@@ -120,6 +120,24 @@ class TrigramNN:
             self.weights_1.data += (-learning_rate) * self.weights_1.grad
             self.weights_2.data += (-learning_rate) * self.weights_2.grad
     
+    def _generate_input_from_two_letters(self, l1: str, l2: str) -> Tensor:
+        l1_input: Tensor = torch.tensor(
+            [self.ltoi.get(l1)], dtype=torch.int64,
+        )
+        l2_input: Tensor = torch.tensor(
+            [self.ltoi.get(l2)], dtype=torch.int64,
+        )
+
+        # one-hot encode them, concat them, and turn to float
+        t_l1_input: Tensor = F.one_hot(l1_input, num_classes=len(self.ltoi))
+        t_l2_input: Tensor = F.one_hot(l2_input, num_classes=len(self.ltoi))
+        inputs = torch.cat(
+            (t_l1_input, t_l2_input), dim=1,
+        )
+        inputs = inputs.float()
+
+        return inputs
+
     def predict(self) -> str:
         """
         Generate a prediction from the model.
@@ -131,16 +149,9 @@ class TrigramNN:
 
         while True:
             # make tensors for current input letters
-            l1_input: Tensor = torch.tensor([self.ltoi.get(l1)], dtype=torch.int64)
-            l2_input: Tensor = torch.tensor([self.ltoi.get(l2)], dtype=torch.int64)
-            
-            # one-hot encode them, concat them, and turn to float
-            t_l1_input: Tensor = F.one_hot(l1_input, num_classes=len(self.ltoi))
-            t_l2_input: Tensor = F.one_hot(l2_input, num_classes=len(self.itol))
-            inputs: Tensor = torch.cat(
-                (t_l1_input, t_l2_input), dim=1,
+            inputs = self._generate_input_from_two_letters(
+                l1, l2,
             )
-            inputs = inputs.float()
 
             probs: Tensor = self._pred(inputs)
 
