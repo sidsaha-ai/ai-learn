@@ -16,7 +16,7 @@ def _read_words(filepath: str) -> list:
     return words
 
 
-def main(train_data_filepath: str, batch_size: int,num_epochs: int) -> None:
+def main(train_data_filepath: str, batch_size: int, num_epochs: int) -> None:
     """
     The main method to start execution.
     """

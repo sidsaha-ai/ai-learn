@@ -9,7 +9,7 @@ from torch import Tensor
 from torch.nn import functional as F
 
 
-class NGramModel:
+class NGramModel:  # pylint: disable=too-many-instance-attributes
     """
     This is the model implementation for an N-gram character model.
     """
@@ -23,7 +23,7 @@ class NGramModel:
         self.itol: dict = {}
         self._make_mappings()
 
-        self.input_words = self.input_words[0:10]  # TODO: remove this
+        # self.input_words = self.input_words[0:10]
 
         # make inputs and targets
         self.inputs: Tensor = None
@@ -40,7 +40,7 @@ class NGramModel:
         # parameters of the neural network
         self.parameters = []
         self._init_neural_net()
-    
+
     def _make_mappings(self) -> None:
         """
         This method makes mappings between each letter and a corresponding number and vice-versa.
@@ -50,11 +50,11 @@ class NGramModel:
         for ix, l in enumerate(letters):
             self.ltoi[l] = ix
             self.itol[ix] = l
-        
+
     def _make_ngrams(self) -> list[tuple]:
         """
         Creates n-gram inputs and targets. For e.g., let's say a word is "emma", then for a batch size of 2,
-        the n-grams would be like - 
+        the n-grams would be like -
         [
             (.., e),
             (.e, m),
@@ -75,9 +75,9 @@ class NGramModel:
                 res.append(
                     (inputs, targets),
                 )
-        
+
         return res
-    
+
     def _make_inputs_and_targets(self) -> None:
         """
         Creates an input and output tensor with integer mappings of letters.
@@ -88,7 +88,7 @@ class NGramModel:
 
         for input_ngram, target_letter in ngrams:
             inputs.append(
-                [self.ltoi.get(l) for l in input_ngram],
+                [self.ltoi.get(letter) for letter in input_ngram],
             )
             targets.append(
                 self.ltoi.get(target_letter),
@@ -96,12 +96,12 @@ class NGramModel:
 
         self.inputs = torch.tensor(inputs)
         self.targets = torch.tensor(targets)
-    
+
     def _init_embeddings(self) -> None:
         """
         This methods inits the embeddings for the input letters that will be trained.
         Embeddings are way to represent the universe of inputs in a "small space" that are trained
-        so that "similar inputs" end up nearby in that space. 
+        so that "similar inputs" end up nearby in that space.
 
         In this character model, the universe of letters has 27 characters. Let's represent them
         with 2 integers. So, we will create a random tensor of shape 27*2. 27 is the universe of letters
@@ -114,7 +114,7 @@ class NGramModel:
         self.embeddings = torch.randn(
             (num_letters, embedding_size), dtype=torch.float, requires_grad=True,
         )
-    
+
     def _init_neural_net(self) -> None:
         """
         This method inits the layers of the neural network.
@@ -138,7 +138,6 @@ class NGramModel:
         self.parameters = [
             self.embeddings, self.weights_1, self.bias_1, self.weights_2, self.bias_2,
         ]
-        
 
     def train(self, num_epochs: int) -> None:
         """
@@ -151,7 +150,7 @@ class NGramModel:
                 embs.shape[0], (embs.shape[1] * embs.shape[2]),
             )
             embs = embs.view(view_size)
-            
+
             # layer 1
             l1_logits: Tensor = (embs @ self.weights_1) + self.bias_1
             # apply the tanh
