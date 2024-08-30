@@ -32,13 +32,14 @@ class NGramModel:
 
         # init the embeddings for the input
         self.embeddings: Tensor = None
-        self._init_embeddings()
-
         # neural network layers
         self.weights_1: Tensor = None
         self.bias_1: Tensor = None
         self.weights_2: Tensor = None
         self.bias_2: Tensor = None
+        # parameters of the neural network
+        self.parameters = []
+        self._init_neural_net()
     
     def _make_mappings(self) -> None:
         """
@@ -111,44 +112,63 @@ class NGramModel:
 
         # init a random embedding.
         self.embeddings = torch.randn(
-            (num_letters, embedding_size), dtype=torch.float,
+            (num_letters, embedding_size), dtype=torch.float, requires_grad=True,
         )
+    
+    def _init_neural_net(self) -> None:
+        """
+        This method inits the layers of the neural network.
+        """
+        self._init_embeddings()
 
-    def train(self, num_epcohs: int) -> None:
+        # layer 1
+        size: tuple[int, int] = (
+            self.inputs.shape[1] * self.embeddings.shape[1], 100,
+        )
+        self.weights_1 = torch.randn(size, dtype=torch.float, requires_grad=True)
+        self.bias_1 = torch.randn(self.weights_1.shape[1], dtype=torch.float, requires_grad=True)
+
+        # layer 2
+        size = (
+            self.weights_1.shape[1], len(self.ltoi),
+        )
+        self.weights_2 = torch.randn(size, dtype=torch.float, requires_grad=True)
+        self.bias_2 = torch.randn(self.weights_2.shape[1], dtype=torch.float, requires_grad=True)
+
+        self.parameters = [
+            self.embeddings, self.weights_1, self.bias_1, self.weights_2, self.bias_2,
+        ]
+        
+
+    def train(self, num_epochs: int) -> None:
         """
         This method will train the model.
         """
-        # get the embeddings of the inputs
-        embs: Tensor = self.embeddings[self.inputs]
-        view_size: tuple[int, int] = (
-            embs.shape[0], (embs.shape[1] * embs.shape[2]),
-        )
-        embs = embs.view(view_size)
-        
-        # layer 1
-        self.weights_1 = torch.randn(
-            (embs.shape[1], 100), dtype=torch.float,
-        )
-        self.bias_1 = torch.randn(
-            self.weights_1.shape[1], dtype=torch.float,
-        )
-        l1_logits: Tensor = (embs @ self.weights_1) + self.bias_1
+        for epoch in range(num_epochs):
+            # get the embeddings of the inputs
+            embs: Tensor = self.embeddings[self.inputs]
+            view_size: tuple[int, int] = (
+                embs.shape[0], (embs.shape[1] * embs.shape[2]),
+            )
+            embs = embs.view(view_size)
+            
+            # layer 1
+            l1_logits: Tensor = (embs @ self.weights_1) + self.bias_1
+            # apply the tanh
+            l1_output: Tensor = F.tanh(l1_logits)
 
-        # apply the
-        l1_output: Tensor = F.tanh(l1_logits)
+            # layer 2
+            logits: Tensor = (l1_output @ self.weights_2) + self.bias_2
 
-        # layer 2
-        self.weights_2 = torch.randn(
-            (self.weights_1.shape[1], len(self.ltoi)), dtype=torch.float,
-        )
-        self.bias_2 = torch.randn(
-            self.weights_2.shape[1], dtype=torch.float,
-        )
-        logits: Tensor = (l1_output @ self.weights_2) + self.bias_2
+            # let's find loss
+            loss = F.cross_entropy(logits, self.targets)
+            print(f'#{epoch}: Loss: {loss.item():.4f}')
 
-        # let's find loss
-        loss = F.cross_entropy(logits, self.targets)
-        print(f'Loss: {loss.item():.4f}')
+            # back propagation
+            loss.backward()
+            learning_rate: float = 0.1
+            for p in self.parameters:
+                p.data += (-learning_rate) * p.grad
 
     def predict(self) -> None:
         """
