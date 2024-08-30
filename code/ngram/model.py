@@ -2,10 +2,11 @@
 This contains the model implementation for the N-gram character model.
 """
 
+import string
+
 import torch
 from torch import Tensor
 from torch.nn import functional as F
-import string
 
 
 class NGramModel:

@@ -5,6 +5,7 @@ import argparse
 
 from ngram.model import NGramModel
 
+
 def _read_words(filepath: str) -> list:
     words: list = []
 
