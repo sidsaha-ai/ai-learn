@@ -3,6 +3,7 @@ The main file to start execution.
 """
 import argparse
 
+
 def main(train_data_filepath: str, num_epochs: int) -> None:
     print(f'{train_data_filepath=}')
     print(f'{num_epochs=}')
