@@ -23,10 +23,12 @@ class NGramModel:
         self.itol: dict = {}
         self._make_mappings()
 
-        # make input and output n-grams
-        ngrams: list[tuple] = self._make_ngrams()
-        for n_gram in ngrams:
-            print(f'{n_gram}')
+        self.input_words = self.input_words[0:10]  # TODO: remove this
+
+        # make input and targets
+        inputs, targets = self._make_inputs_and_targets()
+        print(f'{inputs.shape=}')
+        print(f'{targets.shape=}')
     
     def _make_mappings(self) -> None:
         """
@@ -52,8 +54,10 @@ class NGramModel:
         """
         res: list[tuple] = []
 
-        for word in self.input_words[0:2]:
-            word = '.' * self.batch_size + word + '.'
+        for word in self.input_words:
+            # pad appropriately at the beginning with dots
+            word = ('.' * self.batch_size) + word + '.'
+
             for i in range(len(word) - self.batch_size):
                 inputs = word[i:i + self.batch_size]
                 targets = word[i + self.batch_size]
@@ -62,6 +66,27 @@ class NGramModel:
                 )
         
         return res
+    
+    def _make_inputs_and_targets(self) -> tuple[Tensor, Tensor]:
+        """
+        Creates an input and output tensor with integer mappings of letters.
+        """
+        ngrams: list[tuple] = self._make_ngrams()
+        inputs: list = []
+        targets: list = []
+
+        for input_ngram, target_letter in ngrams:
+            inputs.append(
+                [self.ltoi.get(l) for l in input_ngram],
+            )
+            targets.append(
+                self.ltoi.get(target_letter),
+            )
+
+        t_inputs: Tensor = torch.tensor(inputs)
+        t_targets: Tensor = torch.tensor(targets)
+
+        return t_inputs, t_targets    
 
     def train(self, num_epcohs: int) -> None:
         """
