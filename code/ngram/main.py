@@ -16,13 +16,13 @@ def _read_words(filepath: str) -> list:
     return words
 
 
-def main(train_data_filepath: str, num_epochs: int) -> None:
+def main(train_data_filepath: str, batch_size: int,num_epochs: int) -> None:
     """
     The main method to start execution.
     """
     words: list = _read_words(train_data_filepath)
 
-    model = NGramModel(words)
+    model = NGramModel(words, batch_size)
     model.train(num_epochs)
 
 
@@ -32,6 +32,9 @@ if __name__ == '__main__':
         '--train_data_filepath', required=True, type=str,
     )
     parser.add_argument(
+        '--batch_size', required=True, type=int,
+    )
+    parser.add_argument(
         '--num_epochs', required=True, type=int,
     )
 
@@ -39,5 +42,6 @@ if __name__ == '__main__':
 
     main(
         args.train_data_filepath,
+        args.batch_size,
         args.num_epochs,
     )
