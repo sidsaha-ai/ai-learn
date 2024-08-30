@@ -11,7 +11,7 @@ def _read_words(filepath: str) -> list:
 
     with open(filepath, encoding='utf-8') as f:
         words = f.read().splitlines()
-    
+
     words = [w.lower().strip() for w in words]
     return words
 
