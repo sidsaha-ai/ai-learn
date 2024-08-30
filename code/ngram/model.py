@@ -25,10 +25,15 @@ class NGramModel:
 
         self.input_words = self.input_words[0:10]  # TODO: remove this
 
-        # make input and targets
-        inputs, targets = self._make_inputs_and_targets()
-        print(f'{inputs.shape=}')
-        print(f'{targets.shape=}')
+        # make inputs and targets
+        self.inputs: Tensor = None
+        self.targets: Tensor = None
+        self._make_inputs_and_targets()
+        print(f'{self.inputs.shape=}')
+        print(f'{self.targets.shape=}')
+
+        self.embeddings: Tensor = None
+        self._init_embeddings()
     
     def _make_mappings(self) -> None:
         """
@@ -67,7 +72,7 @@ class NGramModel:
         
         return res
     
-    def _make_inputs_and_targets(self) -> tuple[Tensor, Tensor]:
+    def _make_inputs_and_targets(self) -> None:
         """
         Creates an input and output tensor with integer mappings of letters.
         """
@@ -83,10 +88,27 @@ class NGramModel:
                 self.ltoi.get(target_letter),
             )
 
-        t_inputs: Tensor = torch.tensor(inputs)
-        t_targets: Tensor = torch.tensor(targets)
+        self.inputs = torch.tensor(inputs)
+        self.targets = torch.tensor(targets)
+    
+    def _init_embeddings(self) -> None:
+        """
+        This methods inits the embeddings for the input letters that will be trained.
+        Embeddings are way to represent the universe of inputs in a "small space" that are trained
+        so that "similar inputs" end up nearby in that space. 
 
-        return t_inputs, t_targets    
+        In this character model, the universe of letters has 27 characters. Let's represent them
+        with 2 integers. So, we will create a random tensor of shape 27*2. 27 is the universe of letters
+        and 2 is the embedding for each letter.
+        """
+        num_letters: int = len(self.ltoi)
+        embedding_size: int = 2  # each letter is represented by 2 integers
+
+        # init a random embedding.
+        self.embeddings = torch.randn(
+            (num_letters, embedding_size), dtype=torch.float,
+        )
+        print(f'{self.embeddings.shape=}')
 
     def train(self, num_epcohs: int) -> None:
         """
