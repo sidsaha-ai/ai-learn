@@ -16,7 +16,18 @@ class NGramModel:
 
     def __init__(self, input_words: list) -> None:
         self.input_words: list = input_words
-        print(f'Num of words: {len(self.input_words)}')
+
+        # map each letter to a number
+        self.ltoi: dict = {}
+        self.itol: dict = {}
+        self._make_mappings()
+    
+    def _make_mappings(self) -> None:
+        letters: list = ['.'] + list(string.ascii_lowercase)
+
+        for ix, l in enumerate(letters):
+            self.ltoi[l] = ix
+            self.itol[ix] = l
 
     def train(self, num_epcohs: int) -> None:
         """
