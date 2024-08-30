@@ -152,9 +152,7 @@ class NGramModel:  # pylint: disable=too-many-instance-attributes
             embs = embs.view(view_size)
 
             # layer 1
-            l1_logits: Tensor = (embs @ self.weights_1) + self.bias_1
-            # apply the tanh
-            l1_output: Tensor = F.tanh(l1_logits)
+            l1_output = F.tanh((embs @ self.weights_1) + self.bias_1)
 
             # layer 2
             logits: Tensor = (l1_output @ self.weights_2) + self.bias_2
@@ -164,6 +162,8 @@ class NGramModel:  # pylint: disable=too-many-instance-attributes
             print(f'#{epoch}: Loss: {loss.item():.4f}')
 
             # back propagation
+            for p in self.parameters:
+                p.grad = None
             loss.backward()
             learning_rate: float = 0.1
             for p in self.parameters:
