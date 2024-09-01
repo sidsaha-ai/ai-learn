@@ -192,7 +192,7 @@ class NGramModel:  # pylint: disable=too-many-instance-attributes
 
             # layer 2
             logits: Tensor = (l1_output @ self.weights_2) + self.bias_2
-            
+
             # take softmax to convert logits to probabilities
             probs: Tensor = F.softmax(logits, dim=1)
 
@@ -205,5 +205,5 @@ class NGramModel:  # pylint: disable=too-many-instance-attributes
 
             # shift input
             input_letters = input_letters[0:len(input_letters) - 1] + [sample]
-    
+
         return res
