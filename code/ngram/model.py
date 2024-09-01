@@ -165,12 +165,45 @@ class NGramModel:  # pylint: disable=too-many-instance-attributes
             for p in self.parameters:
                 p.grad = None
             loss.backward()
-            learning_rate: float = 0.1
+            lr: float = 0.1
             for p in self.parameters:
-                p.data += (-learning_rate) * p.grad
+                p.data -= lr * p.grad
 
-    def predict(self) -> None:
+    def predict(self) -> str:
         """
         This methods predicts a word from the trained model.
         """
-        return
+        res: str = ''
+
+        # we initially start with dots (according to batch size) and sample from the network.
+        input_letters: list = ['.'] * self.batch_size
+        input_letters = [self.ltoi.get(letter) for letter in input_letters]
+
+        while True:
+            # make embeddings for this input
+            embs: Tensor = self.embeddings[input_letters]
+            view_size: tuple[int, int] = (
+                1, (embs.shape[0] * embs.shape[1]),
+            )
+            embs = embs.view(view_size)
+
+            # layer 1
+            l1_output: Tensor = F.tanh(embs @ self.weights_1) + self.bias_1
+
+            # layer 2
+            logits: Tensor = (l1_output @ self.weights_2) + self.bias_2
+            
+            # take softmax to convert logits to probabilities
+            probs: Tensor = F.softmax(logits, dim=1)
+
+            # sample from the probabilities
+            sample = torch.multinomial(probs, num_samples=1, replacement=True).item()
+
+            res += self.itol.get(sample)
+            if self.itol.get(sample) == '.':
+                break
+
+            # shift input
+            input_letters = input_letters[0:len(input_letters) - 1] + [sample]
+    
+        return res
