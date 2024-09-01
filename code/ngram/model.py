@@ -138,8 +138,12 @@ class NGramModel:  # pylint: disable=too-many-instance-attributes
         self.parameters = [
             self.embeddings, self.weights_1, self.bias_1, self.weights_2, self.bias_2,
         ]
-    
+
     def _mini_batch(self) -> tuple[Tensor, Tensor]:
+        """
+        This method finds a random mini-batch of the inputs and targets and returns
+        them for training.
+        """
         input_size: int = self.inputs.shape[0]
 
         # take 5% of the input size as the minibatch
@@ -149,7 +153,7 @@ class NGramModel:  # pylint: disable=too-many-instance-attributes
         # random permutation of indices
         indices = torch.randperm(self.inputs.size(0))
         batch_indices = indices[0:minibatch_size]
-        
+
         inputs_minibatch: Tensor = self.inputs[batch_indices]
         targets_minibatch: Tensor = self.targets[batch_indices]
 
@@ -161,7 +165,8 @@ class NGramModel:  # pylint: disable=too-many-instance-attributes
         """
         print('Training...')
         for epoch in range(num_epochs):
-            # Know-how: The training loop takes a quite some time, because we process all the inputs
+            # ** Know-how **
+            # The training loop takes a quite some time, because we process all the inputs
             # at once. Instead of training every loop on the entire input dataset, we can sample
             # from the input dataset to create a "mini-batch" and train an epoch on that mini-batch.
             # The next epoch will train on another random mini-batch.
@@ -184,8 +189,8 @@ class NGramModel:  # pylint: disable=too-many-instance-attributes
 
             # let's find loss
             loss = F.cross_entropy(logits, targets_minibatch)
-            
-            if epoch % 100 == 0:
+
+            if epoch % 500 == 0:
                 print(f'#{epoch}: Loss: {loss.item():.4f}')
 
             # back propagation
@@ -195,7 +200,7 @@ class NGramModel:  # pylint: disable=too-many-instance-attributes
             lr: float = 0.1
             for p in self.parameters:
                 p.data -= lr * p.grad
-        
+
         print(f'Loss: {loss.item():.4f}')
 
     def predict(self) -> str:
