@@ -138,14 +138,39 @@ class NGramModel:  # pylint: disable=too-many-instance-attributes
         self.parameters = [
             self.embeddings, self.weights_1, self.bias_1, self.weights_2, self.bias_2,
         ]
+    
+    def _mini_batch(self) -> tuple[Tensor, Tensor]:
+        input_size: int = self.inputs.shape[0]
+
+        # take 5% of the input size as the minibatch
+        percent: int = 5
+        minibatch_size = int((percent * input_size) / 100)
+
+        # random permutation of indices
+        indices = torch.randperm(self.inputs.size(0))
+        batch_indices = indices[0:minibatch_size]
+        
+        inputs_minibatch: Tensor = self.inputs[batch_indices]
+        targets_minibatch: Tensor = self.targets[batch_indices]
+
+        return inputs_minibatch, targets_minibatch
 
     def train(self, num_epochs: int) -> None:
         """
         This method will train the model.
         """
+        print('Training...')
         for epoch in range(num_epochs):
+            # Know-how: The training loop takes a quite some time, because we process all the inputs
+            # at once. Instead of training every loop on the entire input dataset, we can sample
+            # from the input dataset to create a "mini-batch" and train an epoch on that mini-batch.
+            # The next epoch will train on another random mini-batch.
+            inputs_minibatch: Tensor = None
+            targets_minibatch: Tensor = None
+            inputs_minibatch, targets_minibatch = self._mini_batch()
+
             # get the embeddings of the inputs
-            embs: Tensor = self.embeddings[self.inputs]
+            embs: Tensor = self.embeddings[inputs_minibatch]
             view_size: tuple[int, int] = (
                 embs.shape[0], (embs.shape[1] * embs.shape[2]),
             )
@@ -158,8 +183,10 @@ class NGramModel:  # pylint: disable=too-many-instance-attributes
             logits: Tensor = (l1_output @ self.weights_2) + self.bias_2
 
             # let's find loss
-            loss = F.cross_entropy(logits, self.targets)
-            print(f'#{epoch}: Loss: {loss.item():.4f}')
+            loss = F.cross_entropy(logits, targets_minibatch)
+            
+            if epoch % 100 == 0:
+                print(f'#{epoch}: Loss: {loss.item():.4f}')
 
             # back propagation
             for p in self.parameters:
@@ -168,6 +195,8 @@ class NGramModel:  # pylint: disable=too-many-instance-attributes
             lr: float = 0.1
             for p in self.parameters:
                 p.data -= lr * p.grad
+        
+        print(f'Loss: {loss.item():.4f}')
 
     def predict(self) -> str:
         """
