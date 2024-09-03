@@ -168,23 +168,30 @@ class NGramModel:  # pylint: disable=too-many-instance-attributes
         """
         self._init_embeddings()
 
+        # make the weights and biases close to zero.
+        # the last layer is made to ~0 so that the initial loss is not very high.
+        # the other layers are made ~0 so that tanh is "not saturated".
+
         # layer 1
         size: tuple[int, int] = (
             self.train_inputs.shape[1] * self.embeddings.shape[1], 500,
         )
-        self.weights_1 = torch.randn(size, dtype=torch.float, requires_grad=True)
-        self.bias_1 = torch.randn(self.weights_1.shape[1], dtype=torch.float, requires_grad=True)
+        self.weights_1 = torch.randn(size, dtype=torch.float) * 0.01
+        self.bias_1 = torch.randn(self.weights_1.shape[1], dtype=torch.float) * 0.01
 
         # layer 2
         size = (
             self.weights_1.shape[1], len(self.ltoi),
         )
-        self.weights_2 = torch.randn(size, dtype=torch.float, requires_grad=True)
-        self.bias_2 = torch.randn(self.weights_2.shape[1], dtype=torch.float, requires_grad=True)
+        self.weights_2 = torch.randn(size, dtype=torch.float) * 0.01
+        self.bias_2 = torch.randn(self.weights_2.shape[1], dtype=torch.float) * 0.01
 
         self.parameters = [
             self.embeddings, self.weights_1, self.bias_1, self.weights_2, self.bias_2,
         ]
+        # all parameters require gradient
+        for p in self.parameters:
+            p.requires_grad = True
 
     def _mini_batch(self) -> tuple[Tensor, Tensor]:
         """
@@ -309,9 +316,6 @@ class NGramModel:  # pylint: disable=too-many-instance-attributes
         have varied.
         """
         epochs: list = range(1, len(losses) + 1)
-
-        # let's plot the log of losses for more discernability.
-        losses = torch.log(torch.tensor(losses)).tolist()
 
         plt.figure(figsize=(10, 6))
         plt.plot(epochs, losses)
