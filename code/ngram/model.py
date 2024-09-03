@@ -170,7 +170,7 @@ class NGramModel:  # pylint: disable=too-many-instance-attributes
         This method will train the model.
         """
         print('Training...')
-        
+
         losses: list = []  # to record the loss during each training
 
         for epoch in range(num_epochs):
@@ -261,10 +261,10 @@ class NGramModel:  # pylint: disable=too-many-instance-attributes
         have varied.
         """
         epochs: list = range(1, len(losses) + 1)
-        
+
         # let's plot the log of losses for more discernability.
         losses = torch.log(torch.tensor(losses)).tolist()
-        
+
         plt.figure(figsize=(10, 6))
         plt.plot(epochs, losses)
         plt.xlabel('Epoch')
@@ -292,5 +292,5 @@ class NGramModel:  # pylint: disable=too-many-instance-attributes
                 xytext=(0, 10),
                 ha='center',
             )
-        
+
         plt.show()
