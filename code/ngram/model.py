@@ -2,6 +2,7 @@
 This contains the model implementation for the N-gram character model.
 """
 
+import random
 import string
 
 import matplotlib.pyplot as plt
@@ -27,10 +28,19 @@ class NGramModel:  # pylint: disable=too-many-instance-attributes
 
         # self.input_words = self.input_words[0:10]
 
-        # make inputs and targets
-        self.inputs: Tensor = None
-        self.targets: Tensor = None
-        self._make_inputs_and_targets()
+        # make inputs and targets dataset
+        self.train_inputs: Tensor = None
+        self.train_targets: Tensor = None
+        
+        # make dev dataset
+        self.dev_inputs: Tensor = None
+        self.dev_targets: Tensor = None
+
+        # make test dataset
+        self.test_inputs: Tensor = None
+        self.test_targets: Tensor = None
+
+        self._make_datasets()
 
         # init the embeddings for the input
         self.embeddings: Tensor = None
@@ -80,7 +90,7 @@ class NGramModel:  # pylint: disable=too-many-instance-attributes
 
         return res
 
-    def _make_inputs_and_targets(self) -> None:
+    def _make_datasets(self) -> None:
         """
         Creates an input and output tensor with integer mappings of letters.
         """
@@ -96,8 +106,27 @@ class NGramModel:  # pylint: disable=too-many-instance-attributes
                 self.ltoi.get(target_letter),
             )
 
-        self.inputs = torch.tensor(inputs)
-        self.targets = torch.tensor(targets)
+        # make random indexes for training dataset, dev dataset, and test dataset.
+        indexes = list(range(len(inputs)))
+        random.shuffle(indexes)
+
+        train_end = int(0.8 * len(indexes))  # 80%
+        dev_end = train_end + int(0.1 * len(indexes))  # 10%
+
+        train_inputs: list = inputs[0:train_end]
+        dev_inputs: list = inputs[train_end:dev_end]
+        test_inputs: list = inputs[dev_end:]
+
+        train_targets: list = targets[0:train_end]
+        dev_targets: list = targets[train_end:dev_end]
+        test_targets: list = targets[dev_end:]
+
+        self.train_inputs = torch.tensor(train_inputs)
+        self.dev_inputs = torch.tensor(dev_inputs)
+        self.test_inputs = torch.tensor(test_inputs)
+        self.train_targets = torch.tensor(train_targets)
+        self.dev_targets = torch.tensor(dev_targets)
+        self.test_targets = torch.tensor(test_targets)
 
     def _init_embeddings(self) -> None:
         """
@@ -129,7 +158,7 @@ class NGramModel:  # pylint: disable=too-many-instance-attributes
 
         # layer 1
         size: tuple[int, int] = (
-            self.inputs.shape[1] * self.embeddings.shape[1], 500,
+            self.train_inputs.shape[1] * self.embeddings.shape[1], 500,
         )
         self.weights_1 = torch.randn(size, dtype=torch.float, requires_grad=True)
         self.bias_1 = torch.randn(self.weights_1.shape[1], dtype=torch.float, requires_grad=True)
@@ -150,18 +179,18 @@ class NGramModel:  # pylint: disable=too-many-instance-attributes
         This method finds a random mini-batch of the inputs and targets and returns
         them for training.
         """
-        input_size: int = self.inputs.shape[0]
+        input_size: int = self.train_inputs.shape[0]
 
         # take 5% of the input size as the minibatch
         percent: int = 5
         minibatch_size = int((percent * input_size) / 100)
 
         # random permutation of indices
-        indices = torch.randperm(self.inputs.size(0))
+        indices = torch.randperm(self.train_inputs.size(0))
         batch_indices = indices[0:minibatch_size]
 
-        inputs_minibatch: Tensor = self.inputs[batch_indices]
-        targets_minibatch: Tensor = self.targets[batch_indices]
+        inputs_minibatch: Tensor = self.train_inputs[batch_indices]
+        targets_minibatch: Tensor = self.train_targets[batch_indices]
 
         return inputs_minibatch, targets_minibatch
 
