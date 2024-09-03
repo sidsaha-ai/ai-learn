@@ -4,12 +4,11 @@ This contains the model implementation for the N-gram character model.
 
 import string
 
+import matplotlib.pyplot as plt
 import torch
+from sklearn.manifold import TSNE
 from torch import Tensor
 from torch.nn import functional as F
-
-import matplotlib.pyplot as plt
-from sklearn.manifold import TSNE
 
 
 class NGramModel:  # pylint: disable=too-many-instance-attributes
