@@ -28,6 +28,12 @@ def main(train_data_filepath: str, batch_size: int, num_epochs: int) -> None:
     train_loss: float = model.train_loss()
     print(f'Overall training loss: {train_loss:.4f}')
 
+    dev_loss: float = model.dev_loss()
+    print(f'Dev Loss: {dev_loss:.4f}')
+
+    test_loss: float = model.test_loss()
+    print(f'Test Loss: {test_loss:.4f}')
+
     for _ in range(20):
         word: str = model.predict()
         print(word)

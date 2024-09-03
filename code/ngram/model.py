@@ -350,6 +350,32 @@ class NGramModel:  # pylint: disable=too-many-instance-attributes
 
         return self.loss(inputs, targets)
 
+    def dev_loss(self) -> float:
+        """
+        Returns the loss over the dev dataset.
+        """
+        inputs: list[list[str]] = [
+            [self.itol.get(i) for i in inner]
+            for inner in self.dev_input_letters
+        ]
+        targets: list[str] = [
+            self.itol.get(o) for o in self.dev_target_letters
+        ]
+        return self.loss(inputs, targets)
+
+    def test_loss(self) -> float:
+        """
+        Returns the loss over the test dataset.
+        """
+        inputs: list[list[str]] = [
+            [self.itol.get(i) for i in inner]
+            for inner in self.test_input_letters
+        ]
+        targets: list[str] = [
+            self.itol.get(o) for o in self.test_target_letters
+        ]
+        return self.loss(inputs, targets)
+
     def loss(self, inputs: list[list[str]], targets: list[str]) -> float:
         """
         This method finds the loss over the trained neural network with the
