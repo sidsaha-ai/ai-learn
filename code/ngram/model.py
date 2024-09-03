@@ -156,6 +156,12 @@ class NGramModel:  # pylint: disable=too-many-instance-attributes
             (num_letters, embedding_size), dtype=torch.float, requires_grad=True,
         )
 
+        # instead of a random embedding, let's have a uniform embedding (ovveride)
+        self.embeddings = torch.empty(
+            (num_letters, embedding_size), dtype=torch.float, requires_grad=True,
+        )
+        torch.nn.init.uniform_(self.embeddings, a=-0.1, b=0.1)
+
     def _init_neural_net(self) -> None:
         """
         This method inits the layers of the neural network.
