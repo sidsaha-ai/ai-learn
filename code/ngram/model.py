@@ -245,6 +245,25 @@ class NGramModel:  # pylint: disable=too-many-instance-attributes
         print(f'Loss: {loss.item():.4f}')
         self.plot_training_loss(losses)
         self.plot_embeddings()
+    
+    def _pred(self, input_letters: list) -> Tensor:
+        """
+        Runs the input letters through a forward pass of the neural network
+        and returns the probability tensor.
+        """
+        input_encodings: list = [self.ltoi.get(letter) for letter in input_letters]
+        
+        embs: Tensor = self.embeddings[input_encodings]
+        view_size: tuple[int, int] = (
+            1, (embs.shape[0] * embs.shape[1]),
+        )
+        embs = embs.view(view_size)
+
+        l1_output: Tensor = torch.tanh((embs @ self.weights_1) + self.bias_1)
+        logits: Tensor = (l1_output @ self.weights_2) + self.bias_2
+        probs: Tensor = F.softmax(logits, dim=1)
+
+        return probs
 
     def predict(self) -> str:
         """
@@ -254,24 +273,9 @@ class NGramModel:  # pylint: disable=too-many-instance-attributes
 
         # we initially start with dots (according to batch size) and sample from the network.
         input_letters: list = ['.'] * self.batch_size
-        input_letters = [self.ltoi.get(letter) for letter in input_letters]
 
         while True:
-            # make embeddings for this input
-            embs: Tensor = self.embeddings[input_letters]
-            view_size: tuple[int, int] = (
-                1, (embs.shape[0] * embs.shape[1]),
-            )
-            embs = embs.view(view_size)
-
-            # layer 1
-            l1_output: Tensor = torch.tanh(embs @ self.weights_1) + self.bias_1
-
-            # layer 2
-            logits: Tensor = (l1_output @ self.weights_2) + self.bias_2
-
-            # take softmax to convert logits to probabilities
-            probs: Tensor = F.softmax(logits, dim=1)
+            probs: Tensor = self._pred(input_letters)
 
             # sample from the probabilities
             sample = torch.multinomial(probs, num_samples=1, replacement=True).item()
@@ -281,7 +285,7 @@ class NGramModel:  # pylint: disable=too-many-instance-attributes
                 break
 
             # shift input
-            input_letters = input_letters[1:] + [sample]
+            input_letters = input_letters[1:] + [self.itol.get(sample)]
 
         return res
 
