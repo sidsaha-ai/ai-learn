@@ -29,14 +29,20 @@ class NGramModel:  # pylint: disable=too-many-instance-attributes
         # self.input_words = self.input_words[0:10]
 
         # make inputs and targets dataset
+        self.train_input_letters: list = None
+        self.train_target_letters: list = None
         self.train_inputs: Tensor = None
         self.train_targets: Tensor = None
         
         # make dev dataset
+        self.dev_input_letters: list = None
+        self.dev_target_letters: list = None
         self.dev_inputs: Tensor = None
         self.dev_targets: Tensor = None
 
         # make test dataset
+        self.test_input_letters: list = None
+        self.test_target_letters: list = None
         self.test_inputs: Tensor = None
         self.test_targets: Tensor = None
 
@@ -113,20 +119,20 @@ class NGramModel:  # pylint: disable=too-many-instance-attributes
         train_end = int(0.8 * len(indexes))  # 80%
         dev_end = train_end + int(0.1 * len(indexes))  # 10%
 
-        train_inputs: list = inputs[0:train_end]
-        dev_inputs: list = inputs[train_end:dev_end]
-        test_inputs: list = inputs[dev_end:]
+        self.train_input_letters = inputs[0:train_end]
+        self.dev_input_letters = inputs[train_end:dev_end]
+        self.test_input_letters = inputs[dev_end:]
 
-        train_targets: list = targets[0:train_end]
-        dev_targets: list = targets[train_end:dev_end]
-        test_targets: list = targets[dev_end:]
+        self.train_target_letters = targets[0:train_end]
+        self.dev_target_letters = targets[train_end:dev_end]
+        self.test_target_letters = targets[dev_end:]
 
-        self.train_inputs = torch.tensor(train_inputs)
-        self.dev_inputs = torch.tensor(dev_inputs)
-        self.test_inputs = torch.tensor(test_inputs)
-        self.train_targets = torch.tensor(train_targets)
-        self.dev_targets = torch.tensor(dev_targets)
-        self.test_targets = torch.tensor(test_targets)
+        self.train_inputs = torch.tensor(self.train_input_letters)
+        self.dev_inputs = torch.tensor(self.dev_input_letters)
+        self.test_inputs = torch.tensor(self.test_input_letters)
+        self.train_targets = torch.tensor(self.train_target_letters)
+        self.dev_targets = torch.tensor(self.dev_target_letters)
+        self.test_targets = torch.tensor(self.test_target_letters)
 
     def _init_embeddings(self) -> None:
         """
@@ -329,3 +335,41 @@ class NGramModel:  # pylint: disable=too-many-instance-attributes
             )
 
         plt.show()
+    
+    def train_loss(self) -> float:
+        """
+        Returns the loss over the training dataset.
+        """
+        inputs: list[list[str]] = [
+            [self.itol.get(i) for i in inner]
+            for inner in self.train_input_letters
+        ]
+        targets: list[str] = [
+            self.itol.get(o) for o in self.train_target_letters
+        ]
+
+        return self.loss(inputs, targets)
+
+
+    def loss(self, inputs: list[list[str]], targets: list[str]) -> float:
+        """
+        This method finds the loss over the trained neural network with the
+        supplied inputs and targets.
+        """
+        loss: float = 0
+        num: float = 0
+
+        for ix, input_letters in enumerate(inputs):
+            target: str = targets[ix]
+
+            probs: Tensor = self._pred(input_letters)
+            loss += torch.log(
+                probs[0, self.ltoi.get(target)],
+            )
+            num += 1
+        
+        # return average negative loss
+        loss = (-1) * loss
+        loss = loss / num
+        
+        return loss

@@ -25,6 +25,9 @@ def main(train_data_filepath: str, batch_size: int, num_epochs: int) -> None:
     model = NGramModel(words, batch_size)
     model.train(num_epochs)
 
+    train_loss: float = model.train_loss()
+    print(f'Overall training loss: {train_loss}')
+
     for _ in range(20):
         word: str = model.predict()
         print(word)
