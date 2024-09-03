@@ -172,6 +172,7 @@ class NGramModel:  # pylint: disable=too-many-instance-attributes
         print('Training...')
 
         losses: list = []  # to record the loss during each training
+        lr_decay_percent: int = 80
 
         for epoch in range(num_epochs):
             # ** Know-how **
@@ -207,7 +208,8 @@ class NGramModel:  # pylint: disable=too-many-instance-attributes
             for p in self.parameters:
                 p.grad = None
             loss.backward()
-            lr: float = 0.1
+
+            lr: float = 0.1 if epoch <= int((lr_decay_percent * num_epochs) / 100) else 0.001
             for p in self.parameters:
                 p.data -= lr * p.grad
 
