@@ -258,6 +258,7 @@ class NGramModel:  # pylint: disable=too-many-instance-attributes
         self.plot_training_loss(losses)
         self.plot_embeddings()
 
+    @torch.no_grad()
     def _pred(self, input_letters: list) -> Tensor:
         """
         Runs the input letters through a forward pass of the neural network
