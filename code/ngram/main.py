@@ -26,7 +26,7 @@ def main(train_data_filepath: str, batch_size: int, num_epochs: int) -> None:
     model.train(num_epochs)
 
     train_loss: float = model.train_loss()
-    print(f'Overall training loss: {train_loss}')
+    print(f'Overall training loss: {train_loss:.4f}')
 
     for _ in range(20):
         word: str = model.predict()
