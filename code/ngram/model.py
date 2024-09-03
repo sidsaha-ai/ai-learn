@@ -9,6 +9,7 @@ from torch import Tensor
 from torch.nn import functional as F
 
 import matplotlib.pyplot as plt
+from sklearn.manifold import TSNE
 
 
 class NGramModel:  # pylint: disable=too-many-instance-attributes
@@ -110,7 +111,11 @@ class NGramModel:  # pylint: disable=too-many-instance-attributes
         and 2 is the embedding for each letter.
         """
         num_letters: int = len(self.ltoi)
-        embedding_size: int = 2  # each letter is represented by 2 integers
+
+        # while experimenting, we found that for embeddings of size-2, letters
+        # were all clustered together, so there was no good learning. So, we are increasing the
+        # embeddings size,
+        embedding_size: int = 20  # each letter is represented by 20 integers
 
         # init a random embedding.
         self.embeddings = torch.randn(
@@ -125,7 +130,7 @@ class NGramModel:  # pylint: disable=too-many-instance-attributes
 
         # layer 1
         size: tuple[int, int] = (
-            self.inputs.shape[1] * self.embeddings.shape[1], 100,
+            self.inputs.shape[1] * self.embeddings.shape[1], 500,
         )
         self.weights_1 = torch.randn(size, dtype=torch.float, requires_grad=True)
         self.bias_1 = torch.randn(self.weights_1.shape[1], dtype=torch.float, requires_grad=True)
@@ -271,22 +276,22 @@ class NGramModel:  # pylint: disable=too-many-instance-attributes
         """
         This plots the embeddings. This will only work if the embeddings are of 2 dimensions.
         """
+        embeddings = self.embeddings.detach().numpy()
+
+        tsne = TSNE(n_components=2, random_state=42, perplexity=5)
+        reduced_embeddings = tsne.fit_transform(embeddings)
+
         plt.figure(figsize=(12, 8))
-
         for letter, index in self.ltoi.items():
-            x, y = self.embeddings[index, :]
-
-            # x and y have gradients attached to them, so we need to detach before
-            # we can plot them.
-            x = x.detach().numpy()
-            y = y.detach().numpy()
+            x, y = reduced_embeddings[index, :]
 
             plt.scatter(x, y)
-            plt.text(
-                x + 0.02,
-                y + 0.02,
+            plt.annotate(
                 letter,
-                fontsize=9,
+                (x, y),
+                textcoords='offset points',
+                xytext=(0, 10),
+                ha='center',
             )
         
         plt.show()
