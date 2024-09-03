@@ -33,7 +33,7 @@ class NGramModel:  # pylint: disable=too-many-instance-attributes
         self.train_target_letters: list = None
         self.train_inputs: Tensor = None
         self.train_targets: Tensor = None
-        
+
         # make dev dataset
         self.dev_input_letters: list = None
         self.dev_target_letters: list = None
@@ -251,14 +251,14 @@ class NGramModel:  # pylint: disable=too-many-instance-attributes
         print(f'Loss: {loss.item():.4f}')
         self.plot_training_loss(losses)
         self.plot_embeddings()
-    
+
     def _pred(self, input_letters: list) -> Tensor:
         """
         Runs the input letters through a forward pass of the neural network
         and returns the probability tensor.
         """
         input_encodings: list = [self.ltoi.get(letter) for letter in input_letters]
-        
+
         embs: Tensor = self.embeddings[input_encodings]
         view_size: tuple[int, int] = (
             1, (embs.shape[0] * embs.shape[1]),
@@ -335,7 +335,7 @@ class NGramModel:  # pylint: disable=too-many-instance-attributes
             )
 
         plt.show()
-    
+
     def train_loss(self) -> float:
         """
         Returns the loss over the training dataset.
@@ -349,7 +349,6 @@ class NGramModel:  # pylint: disable=too-many-instance-attributes
         ]
 
         return self.loss(inputs, targets)
-
 
     def loss(self, inputs: list[list[str]], targets: list[str]) -> float:
         """
@@ -367,9 +366,9 @@ class NGramModel:  # pylint: disable=too-many-instance-attributes
                 probs[0, self.ltoi.get(target)],
             )
             num += 1
-        
+
         # return average negative loss
         loss = (-1) * loss
         loss = loss / num
-        
+
         return loss
