@@ -114,7 +114,7 @@ class NGramModel:  # pylint: disable=too-many-instance-attributes
         # while experimenting, we found that for embeddings of size-2, letters
         # were all clustered together, so there was no good learning. So, we are increasing the
         # embeddings size,
-        embedding_size: int = 20  # each letter is represented by 20 integers
+        embedding_size: int = 10  # each letter is represented by 10 integers
 
         # init a random embedding.
         self.embeddings = torch.randn(
@@ -191,7 +191,7 @@ class NGramModel:  # pylint: disable=too-many-instance-attributes
             embs = embs.view(view_size)
 
             # layer 1
-            l1_output = F.tanh((embs @ self.weights_1) + self.bias_1)
+            l1_output = torch.tanh((embs @ self.weights_1) + self.bias_1)
 
             # layer 2
             logits: Tensor = (l1_output @ self.weights_2) + self.bias_2
@@ -234,7 +234,7 @@ class NGramModel:  # pylint: disable=too-many-instance-attributes
             embs = embs.view(view_size)
 
             # layer 1
-            l1_output: Tensor = F.tanh(embs @ self.weights_1) + self.bias_1
+            l1_output: Tensor = torch.tanh(embs @ self.weights_1) + self.bias_1
 
             # layer 2
             logits: Tensor = (l1_output @ self.weights_2) + self.bias_2
@@ -250,7 +250,7 @@ class NGramModel:  # pylint: disable=too-many-instance-attributes
                 break
 
             # shift input
-            input_letters = input_letters[0:len(input_letters) - 1] + [sample]
+            input_letters = input_letters[1:] + [sample]
 
         return res
 
