@@ -236,7 +236,7 @@ class NGramModel:  # pylint: disable=too-many-instance-attributes
             loss = F.cross_entropy(logits, targets_minibatch)
             losses.append(loss.item())
 
-            if epoch % 500 == 0:
+            if epoch % 1000 == 0:
                 print(f'#{epoch}: Loss: {loss.item():.4f}')
 
             # back propagation
