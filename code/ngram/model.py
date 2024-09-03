@@ -8,6 +8,8 @@ import torch
 from torch import Tensor
 from torch.nn import functional as F
 
+import matplotlib.pyplot as plt
+
 
 class NGramModel:  # pylint: disable=too-many-instance-attributes
     """
@@ -164,6 +166,9 @@ class NGramModel:  # pylint: disable=too-many-instance-attributes
         This method will train the model.
         """
         print('Training...')
+        
+        losses: list = []  # to record the loss during each training
+
         for epoch in range(num_epochs):
             # ** Know-how **
             # The training loop takes a quite some time, because we process all the inputs
@@ -189,6 +194,7 @@ class NGramModel:  # pylint: disable=too-many-instance-attributes
 
             # let's find loss
             loss = F.cross_entropy(logits, targets_minibatch)
+            losses.append(loss.item())
 
             if epoch % 500 == 0:
                 print(f'#{epoch}: Loss: {loss.item():.4f}')
@@ -202,6 +208,8 @@ class NGramModel:  # pylint: disable=too-many-instance-attributes
                 p.data -= lr * p.grad
 
         print(f'Loss: {loss.item():.4f}')
+        self.plot_training_loss(losses)
+        self.plot_embeddings()
 
     def predict(self) -> str:
         """
@@ -241,3 +249,44 @@ class NGramModel:  # pylint: disable=too-many-instance-attributes
             input_letters = input_letters[0:len(input_letters) - 1] + [sample]
 
         return res
+
+    def plot_training_loss(self, losses: list) -> None:
+        """
+        This method is used for experimentation. This takes the list of losses
+        got during training and plots them in a graph to visualize how the losses
+        have varied.
+        """
+        epochs: list = range(1, len(losses) + 1)
+        
+        # let's plot the log of losses for more discernability.
+        losses = torch.log(torch.tensor(losses)).tolist()
+        
+        plt.figure(figsize=(10, 6))
+        plt.plot(epochs, losses)
+        plt.xlabel('Epoch')
+        plt.ylabel('Loss')
+        plt.show()
+
+    def plot_embeddings(self) -> None:
+        """
+        This plots the embeddings. This will only work if the embeddings are of 2 dimensions.
+        """
+        plt.figure(figsize=(12, 8))
+
+        for letter, index in self.ltoi.items():
+            x, y = self.embeddings[index, :]
+
+            # x and y have gradients attached to them, so we need to detach before
+            # we can plot them.
+            x = x.detach().numpy()
+            y = y.detach().numpy()
+
+            plt.scatter(x, y)
+            plt.text(
+                x + 0.02,
+                y + 0.02,
+                letter,
+                fontsize=9,
+            )
+        
+        plt.show()
