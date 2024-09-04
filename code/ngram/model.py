@@ -162,7 +162,7 @@ class NGramModel:  # pylint: disable=too-many-instance-attributes
             (num_letters, embedding_size), dtype=torch.float, requires_grad=True,
         )
         torch.nn.init.uniform_(self.embeddings, a=-0.1, b=0.1)
-    
+
     def _init_layer_1(self) -> None:
         """
         Method to initialize the first layer of the neural network.
@@ -183,7 +183,7 @@ class NGramModel:  # pylint: disable=too-many-instance-attributes
 
         # Bias is made small by multiplying with "near zero" to sqaush the activation.
         self.bias_1 = torch.randn(self.weights_1.shape[1], dtype=torch.float) * 0.01
-    
+
     def _init_layer_2(self) -> None:
         """
         Method to initialize the second layer of the neural network.
