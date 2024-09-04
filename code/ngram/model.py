@@ -168,7 +168,7 @@ class NGramModel:  # pylint: disable=too-many-instance-attributes
         Method to initialize the first layer of the neural network.
         """
         size: tuple[int, int] = (
-            self.train_inputs.shape[1] * self.embeddings.shape[1], 500,
+            self.train_inputs.shape[1] * self.embeddings.shape[1], 200,
         )
 
         # ** Tip **
