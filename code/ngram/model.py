@@ -270,12 +270,16 @@ class NGramModel:  # pylint: disable=too-many-instance-attributes
         """
         Executes the layer 1.
         """
+        # linear layer
         outputs: Tensor = (inputs @ self.weights_1) + self.bias_1
 
         mean: Tensor = outputs.mean(dim=0, keepdim=True) if is_train else self.batch_norm_final_mean
         std: Tensor = outputs.std(dim=0, keepdim=True) if is_train else self.batch_norm_final_std
 
+        # batch normalization layer
         outputs = self.batch_norm_gain * (outputs - mean) / std + self.batch_norm_bias
+
+        # non-linearity layer
         outputs = torch.tanh(outputs)
 
         if is_train:
