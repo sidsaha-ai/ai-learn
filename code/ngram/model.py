@@ -51,9 +51,15 @@ class NGramModel:  # pylint: disable=too-many-instance-attributes
 
         # init the embeddings for the input
         self.embeddings: Tensor = None
-        # neural network layers
+        # layer 1
         self.weights_1: Tensor = None
         self.bias_1: Tensor = None
+        # batch normalization layer
+        self.batch_norm_gain: Tensor = None
+        self.batch_norm_bias: Tensor = None
+        self.batch_norm_final_mean: Tensor = None
+        self.batch_norm_final_std: Tensor = None
+        # layer 2
         self.weights_2: Tensor = None
         self.bias_2: Tensor = None
         # parameters of the neural network
@@ -183,6 +189,23 @@ class NGramModel:  # pylint: disable=too-many-instance-attributes
 
         # Bias is made small by multiplying with "near zero" to sqaush the activation.
         self.bias_1 = torch.randn(self.weights_1.shape[1], dtype=torch.float) * 0.01
+    
+    def _init_batch_norm_layer(self) -> None:
+        """
+        This method initializes a batch normalization layer. What is it and why is it required?
+        A batch normalization layer is generally placed in any layer that goes through a non-linearity
+        like tanh and applied before applying the tanh. This is required to normalize the output of the layer
+        to a Gaussian distribution. However, we only want to force the Gaussian structure for the first
+        time and then let neural network learn the distribution.
+
+        Batch normalization is applied by subtracting each element with the total mean of the batch and dividing
+        by the standard deviation of the batch.
+        """
+        self.batch_norm_gain = torch.ones((1, self.weights_1.shape[1]))
+        self.batch_norm_bias = torch.zeros((1, self.weights_1.shape[1]))
+
+        self.batch_norm_final_mean = torch.ones((1, self.weights_1.shape[1]))
+        self.batch_norm_final_std = torch.zeros((1, self.weights_1.shape[1]))
 
     def _init_layer_2(self) -> None:
         """
@@ -205,6 +228,7 @@ class NGramModel:  # pylint: disable=too-many-instance-attributes
         """
         self._init_embeddings()
         self._init_layer_1()
+        self._init_batch_norm_layer()
         self._init_layer_2()
 
         self.parameters = [
@@ -233,6 +257,39 @@ class NGramModel:  # pylint: disable=too-many-instance-attributes
         targets_minibatch: Tensor = self.train_targets[batch_indices]
 
         return inputs_minibatch, targets_minibatch
+    
+    @torch.no_grad()
+    def update_batch_norm(self, mean: Tensor, std: Tensor) -> None:
+        """
+        Updates the batch norm final mean and std during training.
+        """
+        self.batch_norm_final_mean = (0.99 * self.batch_norm_final_mean) + (0.01 * mean)
+        self.batch_norm_final_std = (0.99 * self.batch_norm_final_std) + (0.01 * std)
+
+    def run_layer_1(self, input: Tensor, is_train: bool) -> Tensor:
+        """
+        Executes the layer 1.
+        """
+        output: Tensor = (input @ self.weights_1) + self.bias_1
+
+        mean: Tensor = output.mean(dim=0, keepdim=True) if is_train else self.batch_norm_final_mean
+        std: Tensor = output.std(dim=0, keepdim=True) if is_train else self.batch_norm_final_std
+        
+        output = self.batch_norm_gain * (output - mean) / std + self.batch_norm_bias
+        output = torch.tanh(output)
+
+        if is_train:
+            self.update_batch_norm(mean, std)
+
+        return output
+    
+    def run_layer_2(self, input: Tensor) -> Tensor:
+        """
+        Executes the layer 2.
+        """
+        output: Tensor = (input @ self.weights_2) + self.bias_2
+
+        return output
 
     def train(self, num_epochs: int) -> None:
         """
@@ -260,11 +317,8 @@ class NGramModel:  # pylint: disable=too-many-instance-attributes
             )
             embs = embs.view(view_size)
 
-            # layer 1
-            l1_output = torch.tanh((embs @ self.weights_1) + self.bias_1)
-
-            # layer 2
-            logits: Tensor = (l1_output @ self.weights_2) + self.bias_2
+            l1_output: Tensor = self.run_layer_1(embs, True)
+            logits: Tensor = self.run_layer_2(l1_output)
 
             # let's find loss
             loss = F.cross_entropy(logits, targets_minibatch)
@@ -300,8 +354,8 @@ class NGramModel:  # pylint: disable=too-many-instance-attributes
         )
         embs = embs.view(view_size)
 
-        l1_output: Tensor = torch.tanh((embs @ self.weights_1) + self.bias_1)
-        logits: Tensor = (l1_output @ self.weights_2) + self.bias_2
+        l1_output: Tensor = self.run_layer_1(embs, False)
+        logits: Tensor = self.run_layer_2(l1_output)
         probs: Tensor = F.softmax(logits, dim=1)
 
         return probs
