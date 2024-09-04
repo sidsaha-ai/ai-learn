@@ -273,8 +273,11 @@ class NGramModel:  # pylint: disable=too-many-instance-attributes
         # linear layer
         outputs: Tensor = (inputs @ self.weights_1) + self.bias_1
 
+        # add a small epsilon to std because we are dividing by std below and it
+        # should never be zero, otherwise division will fail.
+        epsilon: float = 0.0001
         mean: Tensor = outputs.mean(dim=0, keepdim=True) if is_train else self.batch_norm_final_mean
-        std: Tensor = outputs.std(dim=0, keepdim=True) if is_train else self.batch_norm_final_std
+        std: Tensor = outputs.std(dim=0, keepdim=True) + epsilon if is_train else self.batch_norm_final_std
 
         # batch normalization layer
         outputs = self.batch_norm_gain * (outputs - mean) / std + self.batch_norm_bias
