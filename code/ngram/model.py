@@ -2,6 +2,7 @@
 This contains the model implementation for the N-gram character model.
 """
 
+import math
 import random
 import string
 
@@ -50,9 +51,15 @@ class NGramModel:  # pylint: disable=too-many-instance-attributes
 
         # init the embeddings for the input
         self.embeddings: Tensor = None
-        # neural network layers
+        # layer 1
         self.weights_1: Tensor = None
         self.bias_1: Tensor = None
+        # batch normalization layer
+        self.batch_norm_gain: Tensor = None
+        self.batch_norm_bias: Tensor = None
+        self.batch_norm_final_mean: Tensor = None
+        self.batch_norm_final_std: Tensor = None
+        # layer 2
         self.weights_2: Tensor = None
         self.bias_2: Tensor = None
         # parameters of the neural network
@@ -162,29 +169,74 @@ class NGramModel:  # pylint: disable=too-many-instance-attributes
         )
         torch.nn.init.uniform_(self.embeddings, a=-0.1, b=0.1)
 
+    def _init_layer_1(self) -> None:
+        """
+        Method to initialize the first layer of the neural network.
+        """
+        size: tuple[int, int] = (
+            self.train_inputs.shape[1] * self.embeddings.shape[1], 200,
+        )
+
+        # ** Tip **
+        # In general, it's best to init a neural network's (any layer that has an activation function
+        # like tanh) by multiplying with the square-root of the number of inputs ("fan-in")
+        self.weights_1 = torch.randn(size, dtype=torch.float) * math.sqrt(size[0])
+
+        # we can either do above for init or we can use Pytorch's Kaiming to init like below.
+        # we should use Pytorch.
+        self.weights_1 = torch.empty(size, dtype=torch.float)
+        torch.nn.init.kaiming_normal_(self.weights_1, nonlinearity='tanh')
+
+        # Bias is made small by multiplying with "near zero" to sqaush the activation.
+        self.bias_1 = torch.randn(self.weights_1.shape[1], dtype=torch.float) * 0.01
+
+    def _init_batch_norm_layer(self) -> None:
+        """
+        This method initializes a batch normalization layer. What is it and why is it required?
+        A batch normalization layer is generally placed in any layer that goes through a non-linearity
+        like tanh and applied before applying the tanh. This is required to normalize the output of the layer
+        to a Gaussian distribution. However, we only want to force the Gaussian structure for the first
+        time and then let neural network learn the distribution.
+
+        Batch normalization is applied by subtracting each element with the total mean of the batch and dividing
+        by the standard deviation of the batch.
+        """
+        self.batch_norm_gain = torch.ones((1, self.weights_1.shape[1]))
+        self.batch_norm_bias = torch.zeros((1, self.weights_1.shape[1]))
+
+        self.batch_norm_final_mean = torch.ones((1, self.weights_1.shape[1]))
+        self.batch_norm_final_std = torch.zeros((1, self.weights_1.shape[1]))
+
+    def _init_layer_2(self) -> None:
+        """
+        Method to initialize the second layer of the neural network.
+        """
+        size: tuple[int, int] = (
+            self.weights_1.shape[1], len(self.ltoi),
+        )
+
+        # ** Tip **
+        # In this case, we are just multiplying with a near zero number rather than square-root
+        # because this is the last layer and it does not have to go through an activation function.
+        self.weights_2 = torch.randn(size, dtype=torch.float) * 0.01
+
+        self.bias_2 = torch.randn(self.weights_2.shape[1], dtype=torch.float) * 0.01
+
     def _init_neural_net(self) -> None:
         """
         This method inits the layers of the neural network.
         """
         self._init_embeddings()
-
-        # layer 1
-        size: tuple[int, int] = (
-            self.train_inputs.shape[1] * self.embeddings.shape[1], 500,
-        )
-        self.weights_1 = torch.randn(size, dtype=torch.float, requires_grad=True)
-        self.bias_1 = torch.randn(self.weights_1.shape[1], dtype=torch.float, requires_grad=True)
-
-        # layer 2
-        size = (
-            self.weights_1.shape[1], len(self.ltoi),
-        )
-        self.weights_2 = torch.randn(size, dtype=torch.float, requires_grad=True)
-        self.bias_2 = torch.randn(self.weights_2.shape[1], dtype=torch.float, requires_grad=True)
+        self._init_layer_1()
+        self._init_batch_norm_layer()
+        self._init_layer_2()
 
         self.parameters = [
             self.embeddings, self.weights_1, self.bias_1, self.weights_2, self.bias_2,
         ]
+        # all parameters require gradient
+        for p in self.parameters:
+            p.requires_grad = True
 
     def _mini_batch(self) -> tuple[Tensor, Tensor]:
         """
@@ -205,6 +257,46 @@ class NGramModel:  # pylint: disable=too-many-instance-attributes
         targets_minibatch: Tensor = self.train_targets[batch_indices]
 
         return inputs_minibatch, targets_minibatch
+
+    @torch.no_grad()
+    def update_batch_norm(self, mean: Tensor, std: Tensor) -> None:
+        """
+        Updates the batch norm final mean and std during training.
+        """
+        self.batch_norm_final_mean = (0.99 * self.batch_norm_final_mean) + (0.01 * mean)
+        self.batch_norm_final_std = (0.99 * self.batch_norm_final_std) + (0.01 * std)
+
+    def run_layer_1(self, inputs: Tensor, is_train: bool) -> Tensor:
+        """
+        Executes the layer 1.
+        """
+        # linear layer
+        outputs: Tensor = (inputs @ self.weights_1) + self.bias_1
+
+        # add a small epsilon to std because we are dividing by std below and it
+        # should never be zero, otherwise division will fail.
+        epsilon: float = 0.0001
+        mean: Tensor = outputs.mean(dim=0, keepdim=True) if is_train else self.batch_norm_final_mean
+        std: Tensor = outputs.std(dim=0, keepdim=True) + epsilon if is_train else self.batch_norm_final_std
+
+        # batch normalization layer
+        outputs = self.batch_norm_gain * (outputs - mean) / std + self.batch_norm_bias
+
+        # non-linearity layer
+        outputs = torch.tanh(outputs)
+
+        if is_train:
+            self.update_batch_norm(mean, std)
+
+        return outputs
+
+    def run_layer_2(self, inputs: Tensor) -> Tensor:
+        """
+        Executes the layer 2.
+        """
+        outputs: Tensor = (inputs @ self.weights_2) + self.bias_2
+
+        return outputs
 
     def train(self, num_epochs: int) -> None:
         """
@@ -232,11 +324,8 @@ class NGramModel:  # pylint: disable=too-many-instance-attributes
             )
             embs = embs.view(view_size)
 
-            # layer 1
-            l1_output = torch.tanh((embs @ self.weights_1) + self.bias_1)
-
-            # layer 2
-            logits: Tensor = (l1_output @ self.weights_2) + self.bias_2
+            l1_output: Tensor = self.run_layer_1(embs, True)
+            logits: Tensor = self.run_layer_2(l1_output)
 
             # let's find loss
             loss = F.cross_entropy(logits, targets_minibatch)
@@ -272,8 +361,8 @@ class NGramModel:  # pylint: disable=too-many-instance-attributes
         )
         embs = embs.view(view_size)
 
-        l1_output: Tensor = torch.tanh((embs @ self.weights_1) + self.bias_1)
-        logits: Tensor = (l1_output @ self.weights_2) + self.bias_2
+        l1_output: Tensor = self.run_layer_1(embs, False)
+        logits: Tensor = self.run_layer_2(l1_output)
         probs: Tensor = F.softmax(logits, dim=1)
 
         return probs
@@ -309,9 +398,6 @@ class NGramModel:  # pylint: disable=too-many-instance-attributes
         have varied.
         """
         epochs: list = range(1, len(losses) + 1)
-
-        # let's plot the log of losses for more discernability.
-        losses = torch.log(torch.tensor(losses)).tolist()
 
         plt.figure(figsize=(10, 6))
         plt.plot(epochs, losses)
