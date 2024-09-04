@@ -162,33 +162,45 @@ class NGramModel:  # pylint: disable=too-many-instance-attributes
             (num_letters, embedding_size), dtype=torch.float, requires_grad=True,
         )
         torch.nn.init.uniform_(self.embeddings, a=-0.1, b=0.1)
+    
+    def _init_layer_1(self) -> None:
+        """
+        Method to initialize the first layer of the neural network.
+        """
+        size: tuple[int, int] = (
+            self.train_inputs.shape[1] * self.embeddings.shape[1], 500,
+        )
+
+        # ** Tip **
+        # In general, it's best to init a neural network's (any layer that has an activation function
+        # like tanh) by multiplying with the square-root of the number of inputs ("fan-in")
+        self.weights_1 = torch.randn(size, dtype=torch.float) * math.sqrt(size[0])
+
+        # Bias is made small by multiplying with "near zero" to sqaush the activation.
+        self.bias_1 = torch.randn(self.weights_1.shape[1], dtype=torch.float) * 0.01
+    
+    def _init_layer_2(self) -> None:
+        """
+        Method to initialize the second layer of the neural network.
+        """
+        size: tuple[int, int] = (
+            self.weights_1.shape[1], len(self.ltoi),
+        )
+
+        # ** Tip **
+        # In this case, we are just multiplying with a near zero number rather than square-root
+        # because this is the last layer and it does not have to go through an activation function.
+        self.weights_2 = torch.randn(size, dtype=torch.float) * 0.01
+
+        self.bias_2 = torch.randn(self.weights_2.shape[1], dtype=torch.float) * 0.01
 
     def _init_neural_net(self) -> None:
         """
         This method inits the layers of the neural network.
         """
         self._init_embeddings()
-
-        # make the weights and biases close to zero.
-        # the last layer is made to ~0 so that the initial loss is not very high.
-        # the other layers are made ~0 so that tanh is "not saturated".
-
-        # layer 1
-        size: tuple[int, int] = (
-            self.train_inputs.shape[1] * self.embeddings.shape[1], 500,
-        )
-
-        # Tip: In general, it's best to init a neural network's weight by multiplying
-        # with the square-root of the number of inputs (number of "fan-in")
-        self.weights_1 = torch.randn(size, dtype=torch.float) * math.sqrt(size[0])
-        self.bias_1 = torch.randn(self.weights_1.shape[1], dtype=torch.float) * 0.01
-
-        # layer 2
-        size = (
-            self.weights_1.shape[1], len(self.ltoi),
-        )
-        self.weights_2 = torch.randn(size, dtype=torch.float) * 0.01
-        self.bias_2 = torch.randn(self.weights_2.shape[1], dtype=torch.float) * 0.01
+        self._init_layer_1()
+        self._init_layer_2()
 
         self.parameters = [
             self.embeddings, self.weights_1, self.bias_1, self.weights_2, self.bias_2,
