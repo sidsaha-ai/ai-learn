@@ -2,6 +2,7 @@
 This contains the model implementation for the N-gram character model.
 """
 
+import math
 import random
 import string
 
@@ -176,7 +177,10 @@ class NGramModel:  # pylint: disable=too-many-instance-attributes
         size: tuple[int, int] = (
             self.train_inputs.shape[1] * self.embeddings.shape[1], 500,
         )
-        self.weights_1 = torch.randn(size, dtype=torch.float) * 0.01
+
+        # Tip: In general, it's best to init a neural network's weight by multiplying
+        # with the square-root of the number of inputs (number of "fan-in")
+        self.weights_1 = torch.randn(size, dtype=torch.float) * math.sqrt(size[0])
         self.bias_1 = torch.randn(self.weights_1.shape[1], dtype=torch.float) * 0.01
 
         # layer 2
