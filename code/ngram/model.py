@@ -176,6 +176,11 @@ class NGramModel:  # pylint: disable=too-many-instance-attributes
         # like tanh) by multiplying with the square-root of the number of inputs ("fan-in")
         self.weights_1 = torch.randn(size, dtype=torch.float) * math.sqrt(size[0])
 
+        # we can either do above for init or we can use Pytorch's Kaiming to init like below.
+        # we should use Pytorch.
+        self.weights_1 = torch.empty(size, dtype=torch.float)
+        torch.nn.init.kaiming_normal_(self.weights_1, nonlinearity='tanh')
+
         # Bias is made small by multiplying with "near zero" to sqaush the activation.
         self.bias_1 = torch.randn(self.weights_1.shape[1], dtype=torch.float) * 0.01
     
