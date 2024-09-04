@@ -189,7 +189,7 @@ class NGramModel:  # pylint: disable=too-many-instance-attributes
 
         # Bias is made small by multiplying with "near zero" to sqaush the activation.
         self.bias_1 = torch.randn(self.weights_1.shape[1], dtype=torch.float) * 0.01
-    
+
     def _init_batch_norm_layer(self) -> None:
         """
         This method initializes a batch normalization layer. What is it and why is it required?
@@ -257,7 +257,7 @@ class NGramModel:  # pylint: disable=too-many-instance-attributes
         targets_minibatch: Tensor = self.train_targets[batch_indices]
 
         return inputs_minibatch, targets_minibatch
-    
+
     @torch.no_grad()
     def update_batch_norm(self, mean: Tensor, std: Tensor) -> None:
         """
@@ -266,30 +266,30 @@ class NGramModel:  # pylint: disable=too-many-instance-attributes
         self.batch_norm_final_mean = (0.99 * self.batch_norm_final_mean) + (0.01 * mean)
         self.batch_norm_final_std = (0.99 * self.batch_norm_final_std) + (0.01 * std)
 
-    def run_layer_1(self, input: Tensor, is_train: bool) -> Tensor:
+    def run_layer_1(self, inputs: Tensor, is_train: bool) -> Tensor:
         """
         Executes the layer 1.
         """
-        output: Tensor = (input @ self.weights_1) + self.bias_1
+        outputs: Tensor = (inputs @ self.weights_1) + self.bias_1
 
-        mean: Tensor = output.mean(dim=0, keepdim=True) if is_train else self.batch_norm_final_mean
-        std: Tensor = output.std(dim=0, keepdim=True) if is_train else self.batch_norm_final_std
-        
-        output = self.batch_norm_gain * (output - mean) / std + self.batch_norm_bias
-        output = torch.tanh(output)
+        mean: Tensor = outputs.mean(dim=0, keepdim=True) if is_train else self.batch_norm_final_mean
+        std: Tensor = outputs.std(dim=0, keepdim=True) if is_train else self.batch_norm_final_std
+
+        outputs = self.batch_norm_gain * (outputs - mean) / std + self.batch_norm_bias
+        outputs = torch.tanh(outputs)
 
         if is_train:
             self.update_batch_norm(mean, std)
 
-        return output
-    
-    def run_layer_2(self, input: Tensor) -> Tensor:
+        return outputs
+
+    def run_layer_2(self, inputs: Tensor) -> Tensor:
         """
         Executes the layer 2.
         """
-        output: Tensor = (input @ self.weights_2) + self.bias_2
+        outputs: Tensor = (inputs @ self.weights_2) + self.bias_2
 
-        return output
+        return outputs
 
     def train(self, num_epochs: int) -> None:
         """
