@@ -4,6 +4,7 @@ This class represents a linear layer of the neural network.
 import torch
 from torch import Tensor
 
+
 class Linear:
     """
     Class to represent a linear layer.
