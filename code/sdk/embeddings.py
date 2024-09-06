@@ -16,12 +16,13 @@ class Embedding:
             *,
             num_embeddings: int,
             embedding_dim: int,
+            dtype: torch.dtype=torch.float,
     ) -> None:
         super().__init__()
 
         size: tuple[int, int] = (num_embeddings, embedding_dim)
         self.weights: Tensor = torch.empty(
-            size, dtype=torch.float, requires_grad=True,
+            size, dtype=dtype, requires_grad=True,
         )
 
         # init with a normal distribution with a mean of 0 and a standard deviation of 1.
