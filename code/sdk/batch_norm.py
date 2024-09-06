@@ -31,6 +31,12 @@ class BatchNorm:
         self.mean = torch.ones(size)
         self.var = torch.zeros(size)
 
+    def parameters(self) -> list:
+        """
+        Returns the parameters list of this layer.
+        """
+        return [self.gamma, self.beta]
+
     def __call__(self, inputs: Tensor) -> Tensor:
         mean = inputs.mean(0, keepdim=True) if self.training else self.mean
         var = inputs.var(0, keepdim=True) if self.training else self.var
