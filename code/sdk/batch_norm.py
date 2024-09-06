@@ -5,6 +5,7 @@ This class represents the batch norm layer.
 import torch
 from torch import Tensor
 
+
 class BatchNorm:
     """
     Class for the batch norm layer.
