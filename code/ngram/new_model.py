@@ -12,6 +12,7 @@ from sdk.linear import Linear
 from sdk.tanh import Tanh
 from torch import Tensor
 from torch.nn import functional as F
+from ngram.dataset import Dataset
 
 
 class NewNgramModel:
@@ -23,6 +24,15 @@ class NewNgramModel:
         self.context_length: int = context_length
 
         self.encoder = Encoder()
+        self.dataset = Dataset(
+            input_words=input_words, context_length=context_length,
+        )
 
-        print(self.encoder.ltoi)
-        print(self.encoder.itol)
+        print(f'{self.dataset.train_inputs.shape=}')
+        print(f'{self.dataset.train_targets.shape=}')
+
+        print(f'{self.dataset.dev_inputs.shape=}')
+        print(f'{self.dataset.dev_targets.shape=}')
+
+        print(f'{self.dataset.test_inputs.shape=}')
+        print(f'{self.dataset.test_targets.shape=}')

@@ -18,8 +18,8 @@ class Encoder:
             self.ltoi[letter] = index
             self.itol[index] = letter
     
-    def encoded_val(self, letter: str) -> int:
+    def encode(self, letter: str) -> int:
         return self.ltoi.get(letter)
     
-    def decoded_val(self, code: int) -> str:
+    def decode(self, code: int) -> str:
         return self.itol.get(code)
