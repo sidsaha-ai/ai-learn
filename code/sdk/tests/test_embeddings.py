@@ -1,7 +1,7 @@
 import pytest
 import torch
-
 from sdk.embeddings import Embedding
+
 
 def test_indexing() -> None:
     """
