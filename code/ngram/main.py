@@ -47,8 +47,7 @@ def new_main(train_data_filepath: str, batch_size: int, num_epochs: int) -> None
     words: list = _read_words(train_data_filepath)
 
     model = NewNgramModel(words, batch_size)
-    print(model)
-    print(num_epochs)
+    model.train(num_epochs)
 
 
 if __name__ == '__main__':

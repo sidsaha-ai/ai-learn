@@ -47,3 +47,11 @@ class Linear:
             res += self.bias
 
         return res
+    
+    @property
+    def in_features(self) -> int:
+        return self.weights.shape[0]
+
+    @property
+    def out_features(self) -> int:
+        return self.weights.shape[1]
