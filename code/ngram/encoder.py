@@ -4,6 +4,7 @@ This file contains the letter encoding mapper class.
 
 import string
 
+
 class Encoder:
 
     def __init__(self) -> None:
