@@ -17,7 +17,6 @@ class BatchNorm:
             eps: float = 1e-5,     # the epsilon to add to avoid division by zero
             momentum: float = 0.1  # the momentum to use to udpate the weights of this layer
     ) -> None:
-        self.num_features: int = num_features
         self.eps: float = eps
         self.momentum: float = momentum
 
@@ -31,7 +30,7 @@ class BatchNorm:
         # the final mean and variance to use during prediction
         self.mean = torch.ones(size)
         self.var = torch.zeros(size)
-    
+
     def __call__(self, inputs: Tensor) -> Tensor:
         mean = inputs.mean(0, keepdim=True) if self.training else self.mean
         var = inputs.var(0, keepdim=True) if self.training else self.var
