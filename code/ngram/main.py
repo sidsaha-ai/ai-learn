@@ -4,6 +4,7 @@ The main file to start execution.
 import argparse
 
 from ngram.model import NGramModel
+from ngram.new_model import NewNgramModel
 
 
 def _read_words(filepath: str) -> list:
@@ -38,6 +39,14 @@ def main(train_data_filepath: str, batch_size: int, num_epochs: int) -> None:
         word: str = model.predict()
         print(word)
 
+def new_main(train_data_filepath: str, batch_size: int, num_epochs: int) -> None:
+    """
+    Main method that starts execution using the new model.
+    """
+    words: list = _read_words(train_data_filepath)
+
+    model = NewNgramModel(words, batch_size)
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
@@ -53,7 +62,13 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
 
-    main(
+    # main(
+    #     args.train_data_filepath,
+    #     args.batch_size,
+    #     args.num_epochs,
+    # )
+
+    new_main(
         args.train_data_filepath,
         args.batch_size,
         args.num_epochs,
