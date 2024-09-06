@@ -29,23 +29,28 @@ class Embedding:
 
     def __getitem__(self, index) -> Tensor:
         return self.weights[index]
-    
+
     def __matmul__(self, other: Tensor) -> Tensor:
         """
         Implements the @ operator like `embedding @ other`.
         """
         return self.weights @ other
-    
+
     def __rmatmul__(self, other: Tensor) -> Tensor:
         """
         Implements the @ operator like `other @ embedding`.
         """
         return other @ self.weights
-    
-    @property    
+
+    @property
     def shape(self) -> torch.Size:
+        """
+        Adds a property to get the shape of the underlying tensor.
+        """
         return self.weights.shape
-    
+
     def view(self, size: tuple[int, int]) -> Tensor:
+        """
+        Applies the view method on the underlying tensor.
+        """
         return self.weights.view(size)
-    
