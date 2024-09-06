@@ -2,10 +2,11 @@
 Unit tests for the Tanh layer.
 """
 
+import pytest
 import torch
 from sdk.tanh import Tanh
 from torch import Tensor
-import pytest
+
 
 @pytest.mark.parametrize(
     'num_rows, num_cols',
