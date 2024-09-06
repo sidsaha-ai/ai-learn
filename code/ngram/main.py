@@ -39,6 +39,7 @@ def main(train_data_filepath: str, batch_size: int, num_epochs: int) -> None:
         word: str = model.predict()
         print(word)
 
+
 def new_main(train_data_filepath: str, batch_size: int, num_epochs: int) -> None:
     """
     Main method that starts execution using the new model.
@@ -46,6 +47,8 @@ def new_main(train_data_filepath: str, batch_size: int, num_epochs: int) -> None
     words: list = _read_words(train_data_filepath)
 
     model = NewNgramModel(words, batch_size)
+    print(model)
+    print(num_epochs)
 
 
 if __name__ == '__main__':

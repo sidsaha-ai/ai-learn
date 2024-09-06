@@ -1,18 +1,9 @@
 """
 Build the model by leveraging the SDK.
 """
-import string
 
-import matplotlib.pyplot as plt
-import torch
 from ngram.dataset import Dataset
 from ngram.encoder import Encoder
-from sdk.batch_norm import BatchNorm
-from sdk.embeddings import Embedding
-from sdk.linear import Linear
-from sdk.tanh import Tanh
-from torch import Tensor
-from torch.nn import functional as F
 
 
 class NewNgramModel:

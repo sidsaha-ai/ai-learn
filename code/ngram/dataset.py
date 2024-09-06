@@ -24,8 +24,8 @@ class Dataset:
         self.test_inputs, self.test_targets = None, None
 
         self.build()
-    
-    def make_tuples(self) -> tuple[list, list]:
+
+    def _make_tuples(self) -> tuple[list, list]:
         inputs, targets = [], []
 
         for word in self.input_words:
@@ -37,11 +37,11 @@ class Dataset:
 
                 inputs.append(current_inputs)
                 targets.append(current_targets)
-        
+
         return inputs, targets
-    
-    def make_data(self) -> tuple[list, list]:
-        inputs, targets = self.make_tuples()
+
+    def _make_data(self) -> tuple[list, list]:
+        inputs, targets = self._make_tuples()
 
         encoder = Encoder()
         inputs = [
@@ -55,11 +55,14 @@ class Dataset:
         return inputs, targets
 
     def build(self) -> None:
-        inputs, targets = self.make_data()
+        """
+        Builds the training, dev, and test dataset.
+        """
+        inputs, targets = self._make_data()
 
         assert len(inputs) == len(targets)
 
-        indexes = [ix for ix in range(0, len(inputs))]
+        indexes = list(range(0, len(inputs)))
         random.shuffle(indexes)
 
         # training set 80%
