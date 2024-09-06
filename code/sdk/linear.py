@@ -39,11 +39,11 @@ class Linear:
         """
         Returns the parameters of this layer.
         """
-        return [self.weights, self.bias] if self.bias else [self.weights]
+        return [self.weights, self.bias] if self.bias is not None else [self.weights]
 
     def __call__(self, inputs: Tensor) -> Tensor:
         res = inputs @ self.weights
-        if self.bias:
+        if self.bias is not None:
             res += self.bias
 
         return res
