@@ -26,7 +26,7 @@ class Embedding:
 
         # init with a normal distribution with a mean of 0 and a standard deviation of 1.
         torch.nn.init.normal_(self.weights, mean=0, std=1)
-    
+
     def parameters(self) -> list:
         """
         Returns the parameters.
