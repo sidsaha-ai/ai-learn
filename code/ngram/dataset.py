@@ -2,11 +2,11 @@
 This builds the train, dev, and test dataset.
 """
 
-import torch
-from torch import Tensor
-
-from ngram.encoder import Encoder
 import random
+
+import torch
+from ngram.encoder import Encoder
+
 
 class Dataset:
     """
