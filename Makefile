@@ -10,3 +10,6 @@ requirements:
 
 install-requirements:
 	pip install --no-cache-dir -r requirements.txt
+
+test:
+	pytest
