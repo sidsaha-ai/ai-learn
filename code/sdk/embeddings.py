@@ -26,6 +26,12 @@ class Embedding:
 
         # init with a normal distribution with a mean of 0 and a standard deviation of 1.
         torch.nn.init.normal_(self.weights, mean=0, std=1)
+    
+    def parameters(self) -> list[Tensor]:
+        """
+        Returns the parameters.
+        """
+        return [self.weights]
 
     def __getitem__(self, index) -> Tensor:
         return self.weights[index]
