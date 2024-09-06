@@ -31,7 +31,9 @@ class Linear:
 
         self.bias = None
         if bias:
-            self.bias = torch.randn(out_features, dtype=torch.float) * 0.01  # multiply near-zero to squash the bias
+            self.bias = torch.randn(
+                out_features, dtype=torch.float, requires_grad=True
+            ) * 0.01  # multiply near-zero to squash the bias
 
     def parameters(self) -> list:
         """
