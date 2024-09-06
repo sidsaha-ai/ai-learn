@@ -43,7 +43,7 @@ class Embedding:
         return other @ self.weights
     
     @property    
-    def shape(self) -> tuple[int, int]:
+    def shape(self) -> torch.Size:
         return self.weights.shape
     
     def view(self, size: tuple[int, int]) -> Tensor:
