@@ -13,34 +13,49 @@ class Linear:
     def __init__(
             self,
             *,
-            in_features: int,   # the number of input features
-            out_features: int,  # the number of output features
-            nonlinearity: str,  # the non-linearity that will be applied after this linear layer (optional)
+            in_features: int,     # the number of input features
+            out_features: int,    # the number of output features
+            nonlinearity: str,    # the non-linearity that will be applied after this linear layer (optional)
             bias: bool = True,    # whether this layer should have a bias or not.
     ) -> None:
         super().__init__()
 
         size: tuple[int, int] = (in_features, out_features)
-        self.weights = torch.empty(size, dtype=torch.float, requires_grad=True)
+        self.weights = torch.empty(size, dtype=torch.float)
 
         # init the weights
+        """
+        Knowledge:
+        For layers that will have to go through a non-linearity, it is good to initiliaze
+        the weights so that their variance generally constant so that gradients do not explode
+        or vanish.
+
+        For last layer (where there is no nonlinearity), it is better to keep weights small, so
+        that the initial loss is not very high. If the initial loss is very high, then
+        gradient could be very high, and gradient descent updates might overshoot the local
+        minima.
+        """
         if nonlinearity:
             torch.nn.init.kaiming_normal_(self.weights, nonlinearity=nonlinearity)
         else:
-            torch.nn.init.normal_(self.weights, mean=0, std=1)
+            self.weights = torch.randn(
+                size, dtype=torch.float) * 0.01
+        
+        self.weights.requires_grad = True
 
         self.bias = None
         if bias:
             self.bias = torch.randn(
-                out_features, dtype=torch.float, requires_grad=True
-            ) * 0.01  # multiply near-zero to squash the bias
+                out_features, dtype=torch.float) * 0.01  # multiply near-zero to squash the bias
+            self.bias.requires_grad = True
+        
 
     def parameters(self) -> list:
         """
         Returns the parameters of this layer.
         """
         return [self.weights, self.bias] if self.bias is not None else [self.weights]
-
+    
     def __call__(self, inputs: Tensor) -> Tensor:
         res = inputs @ self.weights
         if self.bias is not None:
@@ -55,3 +70,7 @@ class Linear:
     @property
     def out_features(self) -> int:
         return self.weights.shape[1]
+    
+    @property
+    def num_parameters(self) -> int:
+        return sum(p.nelement() for p in self.parameters())

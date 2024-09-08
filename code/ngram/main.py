@@ -61,17 +61,13 @@ if __name__ == '__main__':
     parser.add_argument(
         '--num_epochs', required=True, type=int,
     )
+    parser.add_argument(
+        '--type', required=True, choices=['old', 'new'],
+    )
 
     args = parser.parse_args()
 
-    # main(
-    #     args.train_data_filepath,
-    #     args.batch_size,
-    #     args.num_epochs,
-    # )
-
-    new_main(
-        args.train_data_filepath,
-        args.batch_size,
-        args.num_epochs,
+    fn = main if args.type == 'old' else new_main
+    fn(
+        args.train_data_filepath, args.batch_size, args.num_epochs,
     )

@@ -21,11 +21,12 @@ class Embedding:
 
         size: tuple[int, int] = (num_embeddings, embedding_dim)
         self.weights: Tensor = torch.empty(
-            size, dtype=torch.float, requires_grad=True,
+            size, dtype=torch.float,
         )
 
         # init with a normal distribution with a mean of 0 and a standard deviation of 1.
         torch.nn.init.normal_(self.weights, mean=0, std=1)
+        self.weights.requires_grad = True
 
     def parameters(self) -> list:
         """
@@ -54,6 +55,10 @@ class Embedding:
         Adds a property to get the shape of the underlying tensor.
         """
         return self.weights.shape
+    
+    @property
+    def num_parameters(self) -> int:
+        return sum(p.nelement() for p in self.parameters())
 
     def view(self, size: tuple[int, int]) -> Tensor:
         """

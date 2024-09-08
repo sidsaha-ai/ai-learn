@@ -46,17 +46,31 @@ class NewNgramModel:
             in_features=self.l2.out_features, out_features=len(self.encoder.ltoi), nonlinearity=None,
         )
 
+        self.parameters = self.embeddings.parameters() + self.l1.parameters() + self.l2.parameters() + self.l3.parameters()
+        print(f'Num parameters: {self.embeddings.num_parameters + self.l1.num_parameters + self.l2.num_parameters + self.l3.num_parameters}')
 
     def train(self, num_epochs: int) -> None:
-        # let's train one epoch first
-        embs = self.embeddings[self.dataset.train_inputs]
-        embs = embs.view(
-            (embs.shape[0], (embs.shape[1] * embs.shape[2])),
-        )
+        for epoch in range(num_epochs):
+            embs = self.embeddings[self.dataset.train_inputs]
+            embs = embs.view(
+                (embs.shape[0], (embs.shape[1] * embs.shape[2])),
+            )
 
-        out = self.t1(self.bn1(self.l1(embs)))
-        out = self.t2(self.bn2(self.l2(out)))
-        logits = self.l3(out)
-        probs = F.softmax(logits, dim=1)
+            out = self.t1(self.bn1(self.l1(embs)))
+            out = self.t2(self.bn2(self.l2(out)))
+            logits = self.l3(out)
 
-        print(probs[0])
+            loss = F.cross_entropy(logits, self.dataset.train_targets)
+            
+            if epoch % 1000 == 0:
+                print(f'#{epoch}, Loss: {loss.item():.4f}')
+            
+            # backpropagation
+            for p in self.parameters:
+                p.grad = None
+            loss.backward()
+
+            lr = 0.1
+            for p in self.parameters:
+                p.data += (-lr) * p.grad
+
