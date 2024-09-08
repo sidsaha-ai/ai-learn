@@ -61,11 +61,14 @@ class Linear:
             res += self.bias
 
         return res
-    
+
     def to_gpu(self) -> None:
+        """
+        Moves the tensors to the GPU, if available.
+        """
         if not torch.backends.mps.is_available():
             return
-        
+
         device = torch.device('mps')
 
         self.weights.to(device)

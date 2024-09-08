@@ -50,13 +50,16 @@ class BatchNorm:
                 self.var = ((1 - self.momentum) * self.var) + (self.momentum * self.var)
 
         return outputs
-    
+
     def to_gpu(self) -> None:
+        """
+        Moves the tensors to the GPU, if available.
+        """
         if not torch.backends.mps.is_available():
             return
-        
+
         device = torch.device('mps')
-        
+
         self.gamma.to(device)
         self.beta.to(device)
         self.mean.to(device)
