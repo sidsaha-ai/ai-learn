@@ -46,8 +46,8 @@ class BatchNorm:
         # update the mean and var of the class.
         if self.training:
             with torch.no_grad():
-                self.mean = ((1 - self.momentum) * self.mean) + (self.momentum * self.mean)
-                self.var = ((1 - self.momentum) * self.var) + (self.momentum * self.var)
+                self.mean = ((1 - self.momentum) * self.mean) + (self.momentum * mean)
+                self.var = ((1 - self.momentum) * self.var) + (self.momentum * var)
 
         return outputs
 
