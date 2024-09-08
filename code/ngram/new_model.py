@@ -31,20 +31,36 @@ class NewNgramModel:
         self.embeddings = Embedding(
             num_embeddings=len(self.encoder.ltoi), embedding_dim=10,  # each letter is represented by 10 dimensions
         )
+        num_hidden: int = 100
         self.neural_net = [
             # layer - 1
             Linear(
-                in_features=self.dataset.train_inputs.shape[1] * self.embeddings.shape[1], out_features=200, nonlinearity='tanh',
+                in_features=self.dataset.train_inputs.shape[1] * self.embeddings.shape[1], out_features=num_hidden, nonlinearity='tanh',
             ),
-            BatchNorm(num_features=200),
+            BatchNorm(num_features=num_hidden),
             Tanh(),
 
             # layer - 2
-            Linear(in_features=200, out_features=100, nonlinearity='tanh'),
-            BatchNorm(num_features=100),
+            Linear(in_features=num_hidden, out_features=num_hidden, nonlinearity='tanh'),
+            BatchNorm(num_features=num_hidden),
             Tanh(),
 
             # layer - 3
+            Linear(in_features=num_hidden, out_features=num_hidden, nonlinearity='tanh'),
+            BatchNorm(num_features=num_hidden),
+            Tanh(),
+
+            # layer - 4
+            Linear(in_features=num_hidden, out_features=num_hidden, nonlinearity='tanh'),
+            BatchNorm(num_features=num_hidden),
+            Tanh(),
+
+            # layer - 5
+            Linear(in_features=num_hidden, out_features=num_hidden, nonlinearity='tanh'),
+            BatchNorm(num_features=num_hidden),
+            Tanh(),
+
+            # layer - 6
             Linear(in_features=100, out_features=len(self.encoder.ltoi), nonlinearity=None),
         ]
 
