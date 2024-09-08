@@ -4,7 +4,11 @@ This plots various common things needed.
 
 import matplotlib.pyplot as plt
 
+
 class Plotter:
+    """
+    Class that has utility functions to plot common things.
+    """
 
     @classmethod
     def plot_losses(cls, losses: list[dict]) -> None:
@@ -35,7 +39,7 @@ class Plotter:
             plt.plot(
                 range(start + 1, end + 1), loss[start:end], label=f'LR {unique_lrs[ix]}', color=color,
             )
-        
+
         plt.xlabel('Epoch')
         plt.ylabel('Loss')
         plt.title('Loss Progression')

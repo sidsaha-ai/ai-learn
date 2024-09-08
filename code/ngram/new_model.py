@@ -7,9 +7,9 @@ from ngram.encoder import Encoder
 from sdk.batch_norm import BatchNorm
 from sdk.embeddings import Embedding
 from sdk.linear import Linear
+from sdk.plotter import Plotter
 from sdk.tanh import Tanh
 from torch.nn import functional as F
-from sdk.plotter import Plotter
 
 
 class NewNgramModel:
@@ -49,7 +49,7 @@ class NewNgramModel:
 
         self.parameters = self.embeddings.parameters() + self.l1.parameters() + self.l2.parameters() + self.l3.parameters()
         print(f'Num parameters: {self.embeddings.num_parameters + self.l1.num_parameters + self.l2.num_parameters + self.l3.num_parameters}')
-    
+
     def _lr(self, epoch: int, num_epochs: int) -> float:
         """
         Returns the learning rate.
@@ -83,12 +83,11 @@ class NewNgramModel:
             lr = self._lr(epoch, num_epochs)
             for p in self.parameters:
                 p.data += (-lr) * p.grad
-            
-            losses.append({
-                'loss': loss.item(),
-                'lr': lr,
-            })
-            
+
+            losses.append(
+                {'loss': loss.item(), 'lr': lr},
+            )
+
             if epoch % 100 == 0:
                 print(f'#{epoch}, LR: {lr:.4f}, Loss: {loss.item():.4f}')
         print(f'#{epoch}, LR: {lr:.4f}, Loss: {loss.item():.4f}')
