@@ -63,7 +63,7 @@ class Plotter:
                 continue
             out = layer.output
 
-            print(f'Layer {ix}, Type: {layer.__class__.__name__}, Mean: {out.mean():.4f}, Std: {out.std():.4f}, Saturation: {(out.abs() > 0.97).float().mean() * 100}%')
+            print(f'Layer {ix}, Type: {layer.__class__.__name__}, Mean: {out.mean():.4f}, Std: {out.std():.4f}, Saturation: {(out.abs() > 0.97).float().mean() * 100}%')  # pylint: disable=line-too-long  # NOQA
 
             hy, hx = torch.histogram(out, density=True)
             plt.plot(
@@ -72,7 +72,7 @@ class Plotter:
             legends.append(
                 f'layer {ix} ({layer.__class__.__name__})',
             )
-        
+
         plt.legend(legends)
         plt.title('Activations')
         plt.show()

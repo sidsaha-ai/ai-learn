@@ -58,12 +58,13 @@ def new_main(train_data_filepath: str, batch_size: int, num_epochs: int) -> None
         print(model.generate())
 
     # let's look at some plots to see that the model is working fine.
-    
+
     ##
     # Look at the activations of each of the Tanh layers. The mean of layer should be about 0, standard deviation
     # should be about 1, and not a very high percentage of neurons be saturated (values nearing 1).
     ##
     Plotter.plot_activations(model.neural_net)
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
