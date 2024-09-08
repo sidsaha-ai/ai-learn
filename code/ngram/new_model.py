@@ -31,28 +31,26 @@ class NewNgramModel:
         self.embeddings = Embedding(
             num_embeddings=len(self.encoder.ltoi), embedding_dim=10,  # each letter is represented by 10 dimensions
         )
-        self.l1 = Linear(
-            in_features=self.dataset.train_inputs.shape[1] * self.embeddings.shape[1],
-            out_features=200,
-            nonlinearity='tanh',
-        )
-        self.bn1 = BatchNorm(num_features=self.l1.out_features)
-        self.t1 = Tanh()
+        self.layers = [
+            # layer - 1
+            Linear(
+                in_features=self.dataset.train_inputs.shape[1] * self.embeddings.shape[1], out_features=200, nonlinearity='tanh',
+            ),
+            BatchNorm(num_features=200),
+            Tanh(),
 
-        self.l2 = Linear(
-            in_features=self.l1.out_features, out_features=100, nonlinearity='tanh',
-        )
-        self.bn2 = BatchNorm(num_features=self.l2.out_features)
-        self.t2 = Tanh()
+            # layer - 2
+            Linear(in_features=200, out_features=100, nonlinearity='tanh'),
+            BatchNorm(num_features=100),
+            Tanh(),
 
-        self.l3 = Linear(
-            in_features=self.l2.out_features, out_features=len(self.encoder.ltoi), nonlinearity=None,
-        )
+            # layer - 3
+            Linear(in_features=100, out_features=len(self.encoder.ltoi), nonlinearity=None),
+        ]
 
         self.loss_fn = F.cross_entropy
 
-        self.parameters = self.embeddings.parameters() + self.l1.parameters() + self.l2.parameters() + self.l3.parameters()
-        print(f'Num parameters: {self.embeddings.num_parameters + self.l1.num_parameters + self.l2.num_parameters + self.l3.num_parameters}')
+        self.parameters = self.embeddings.parameters() + [p for layer in self.layers for p in layer.parameters() if isinstance(layer, Linear)]
 
     def _lr(self, epoch: int, num_epochs: int) -> float:
         """
@@ -65,22 +63,22 @@ class NewNgramModel:
         """
         The method trains the neural network.
         """
-        self.bn1.training = True
-        self.bn2.training = False
+        for layer in self.layers:
+            if isinstance(layer, BatchNorm):
+                layer.training = True
 
         losses: list[dict] = []
         for epoch in range(num_epochs):
             inputs_batch, targets_batch = self.dataset.minibatch()
             embs = self.embeddings[inputs_batch]
-            embs = embs.view(
+
+            x = embs.view(
                 (embs.shape[0], (embs.shape[1] * embs.shape[2])),
             )
+            for layer in self.layers:
+                x = layer(x)
 
-            out = self.t1(self.bn1(self.l1(embs)))
-            out = self.t2(self.bn2(self.l2(out)))
-            logits = self.l3(out)
-
-            loss = self.loss_fn(logits, targets_batch)
+            loss = self.loss_fn(x, targets_batch)
 
             # backpropagation
             for p in self.parameters:
@@ -106,19 +104,19 @@ class NewNgramModel:
         """
         Returns the loss over the passed inputs and targets
         """
-        self.bn1.training = False
-        self.bn2.training = False
+        for layer in self.layers:
+            if isinstance(layer, BatchNorm):
+                layer.training = False
 
         embs = self.embeddings[inputs]
-        embs = embs.view(
+
+        x = embs.view(
             embs.shape[0], (embs.shape[1] * embs.shape[2]),
         )
+        for layer in self.layers:
+            x = layer(x)
 
-        out = self.t1(self.bn1(self.l1(embs)))
-        out = self.t2(self.bn2(self.l2(out)))
-        logits = self.l3(out)
-
-        loss = self.loss_fn(logits, targets).item()
+        loss = self.loss_fn(x, targets).item()
         return loss
 
     def train_loss(self) -> float:
@@ -145,19 +143,21 @@ class NewNgramModel:
         """
         res: str = ''
 
-        self.bn1.training = False
-        self.bn2.training = False
+        for layer in self.layers:
+            if isinstance(layer, BatchNorm):
+                layer.training = False
 
         inputs = [self.encoder.encode(letter) for letter in list('.' * self.context_length)]
         while True:
             embs = self.embeddings[inputs]
-            embs = embs.view(
+
+            x = embs.view(
                 1, (embs.shape[0] * embs.shape[1]),
             )
-            out = self.t1(self.bn1(self.l1(embs)))
-            out = self.t2(self.bn2(self.l2(out)))
-            logits = self.l3(out)
-            probs = F.softmax(logits, dim=1)
+            for layer in self.layers:
+                x = layer(x)
+
+            probs = F.softmax(x, dim=1)
 
             output = torch.multinomial(probs, num_samples=1, replacement=True).item()
             output_letter = self.encoder.decode(output)
