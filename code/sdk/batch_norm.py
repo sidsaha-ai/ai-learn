@@ -33,6 +33,9 @@ class BatchNorm:
         self.mean = torch.zeros(size)
         self.var = torch.ones(size)
 
+        # output
+        self.output = None
+
     def parameters(self) -> list:
         """
         Returns the parameters list of this layer.
@@ -58,6 +61,7 @@ class BatchNorm:
                 self.mean = ((1 - self.momentum) * self.mean) + (self.momentum * mean)
                 self.var = ((1 - self.momentum) * self.var) + (self.momentum * var)
 
+        self.output = outputs
         return outputs
 
     def to_gpu(self) -> None:

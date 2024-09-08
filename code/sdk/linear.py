@@ -48,6 +48,8 @@ class Linear:
             self.bias = torch.randn(
                 out_features, dtype=torch.float) * 0.01  # multiply near-zero to squash the bias
             self.bias.requires_grad = True
+        
+        self.output = None
 
     def parameters(self) -> list:
         """
@@ -60,6 +62,7 @@ class Linear:
         if self.bias is not None:
             res += self.bias
 
+        self.output = res
         return res
 
     def to_gpu(self) -> None:

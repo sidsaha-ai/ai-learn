@@ -11,8 +11,16 @@ class Tanh:
     Class to represent the Tanh layer.
     """
 
+    def __init__(self) -> None:
+        super().__init__()
+
+        self.output = None
+
     def __call__(self, x: Tensor) -> Tensor:
-        return torch.tanh(x)
+        out = torch.tanh(x)
+
+        self.output = out
+        return out
 
     def parameters(self) -> list:
         """

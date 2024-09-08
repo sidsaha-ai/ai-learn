@@ -31,7 +31,7 @@ class NewNgramModel:
         self.embeddings = Embedding(
             num_embeddings=len(self.encoder.ltoi), embedding_dim=10,  # each letter is represented by 10 dimensions
         )
-        self.layers = [
+        self.neural_net = [
             # layer - 1
             Linear(
                 in_features=self.dataset.train_inputs.shape[1] * self.embeddings.shape[1], out_features=200, nonlinearity='tanh',
@@ -50,7 +50,7 @@ class NewNgramModel:
 
         self.loss_fn = F.cross_entropy
 
-        self.parameters = self.embeddings.parameters() + [p for layer in self.layers for p in layer.parameters()]
+        self.parameters = self.embeddings.parameters() + [p for layer in self.neural_net for p in layer.parameters()]
 
     def _lr(self, epoch: int, num_epochs: int) -> float:
         """
@@ -63,7 +63,7 @@ class NewNgramModel:
         """
         The method trains the neural network.
         """
-        for layer in self.layers:
+        for layer in self.neural_net:
             if isinstance(layer, BatchNorm):
                 layer.training = True
 
@@ -75,7 +75,7 @@ class NewNgramModel:
             x = embs.view(
                 (embs.shape[0], (embs.shape[1] * embs.shape[2])),
             )
-            for layer in self.layers:
+            for layer in self.neural_net:
                 x = layer(x)
 
             loss = self.loss_fn(x, targets_batch)
@@ -104,7 +104,7 @@ class NewNgramModel:
         """
         Returns the loss over the passed inputs and targets
         """
-        for layer in self.layers:
+        for layer in self.neural_net:
             if isinstance(layer, BatchNorm):
                 layer.training = False
 
@@ -113,7 +113,7 @@ class NewNgramModel:
         x = embs.view(
             embs.shape[0], (embs.shape[1] * embs.shape[2]),
         )
-        for layer in self.layers:
+        for layer in self.neural_net:
             x = layer(x)
 
         loss = self.loss_fn(x, targets).item()
@@ -143,7 +143,7 @@ class NewNgramModel:
         """
         res: str = ''
 
-        for layer in self.layers:
+        for layer in self.neural_net:
             if isinstance(layer, BatchNorm):
                 layer.training = False
 
@@ -154,7 +154,7 @@ class NewNgramModel:
             x = embs.view(
                 1, (embs.shape[0] * embs.shape[1]),
             )
-            for layer in self.layers:
+            for layer in self.neural_net:
                 x = layer(x)
 
             probs = F.softmax(x, dim=1)

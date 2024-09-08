@@ -4,6 +4,9 @@ This plots various common things needed.
 
 import matplotlib.pyplot as plt
 
+from sdk.tanh import Tanh
+import torch
+
 
 class Plotter:
     """
@@ -45,4 +48,32 @@ class Plotter:
         plt.title('Loss Progression')
         plt.legend()
         plt.tight_layout()
+        plt.show()
+
+    @classmethod
+    def plot_activations(cls, neural_net: list) -> None:
+        """
+        This plots the tanh activations (outputs) of the neural network pased.
+        """
+        plt.figure(figsize=(20, 4))
+        legends = []
+
+        # do not take the output layer
+        for ix, layer in enumerate(neural_net):
+            if not isinstance(layer, Tanh):
+                continue
+            out = layer.output
+
+            print(f'Layer {ix}, Type: {layer.__class__.__name__}, Mean: {out.mean():.4f}, Std: {out.std():.4f}, Saturation: {(out.abs() > 0.97).float().mean() * 100}%')
+
+            hy, hx = torch.histogram(out, density=True)
+            plt.plot(
+                hx[:-1].detach(), hy.detach(),
+            )
+            legends.append(
+                f'layer {ix} ({layer.__class__.__name__})',
+            )
+        
+        plt.legend(legends)
+        plt.title('Activations')
         plt.show()
