@@ -32,6 +32,8 @@ fonttools==4.53.1
     # via matplotlib
 fsspec==2024.6.1
     # via torch
+iniconfig==2.0.0
+    # via pytest
 ipython==8.26.0
     # via -r requirements.in
 isort==5.13.2
@@ -72,6 +74,7 @@ packaging==24.1
     # via
     #   build
     #   matplotlib
+    #   pytest
 pandas==2.2.2
     # via -r requirements.in
 parso==0.8.4
@@ -84,6 +87,8 @@ pip-tools==7.4.1
     # via -r requirements.in
 platformdirs==4.2.2
     # via pylint
+pluggy==1.5.0
+    # via pytest
 prompt-toolkit==3.0.47
     # via ipython
 ptyprocess==0.7.0
@@ -108,6 +113,8 @@ pyproject-hooks==1.1.0
     # via
     #   build
     #   pip-tools
+pytest==8.3.2
+    # via -r requirements.in
 python-dateutil==2.9.0.post0
     # via
     #   matplotlib
