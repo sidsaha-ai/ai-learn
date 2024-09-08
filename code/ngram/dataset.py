@@ -82,7 +82,10 @@ class Dataset:
         self.test_inputs = torch.tensor(inputs[dev_end:])
         self.test_targets = torch.tensor(targets[dev_end:])
 
-    def minibatch(self, batch_percent:int = 5) -> tuple[Tensor, Tensor]:
+    def minibatch(self, batch_percent: int = 5) -> tuple[Tensor, Tensor]:
+        """
+        Returns a random mini-batch of the inputs.
+        """
         batch_size: int = int((batch_percent * self.train_inputs.shape[0]) / 100)
 
         indices = list(range(self.train_inputs.shape[0]))
