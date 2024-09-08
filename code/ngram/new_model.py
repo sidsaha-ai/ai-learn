@@ -118,7 +118,7 @@ class NewNgramModel:
         out = self.t2(self.bn2(self.l2(out)))
         logits = self.l3(out)
 
-        loss = self.loss_fn(logits, targets)
+        loss = self.loss_fn(logits, targets).item()
         return loss
 
     def train_loss(self) -> float:
@@ -138,3 +138,33 @@ class NewNgramModel:
         Returns the loss over the test dataset.
         """
         return self.loss(self.dataset.test_inputs, self.dataset.test_targets)
+
+    def generate(self) -> str:
+        """
+        Generates a name from the trained neural network.
+        """
+        res: str = ''
+
+        self.bn1.training = False
+        self.bn2.training = False
+
+        inputs = [self.encoder.encode(letter) for letter in list('.' * self.context_length)]
+        while True:
+            embs = self.embeddings[inputs]
+            embs = embs.view(
+                1, (embs.shape[0] * embs.shape[1]),
+            )
+            out = self.t1(self.bn1(self.l1(embs)))
+            out = self.t2(self.bn2(self.l2(out)))
+            logits = self.l3(out)
+            probs = F.softmax(logits, dim=1)
+
+            output = torch.multinomial(probs, num_samples=1, replacement=True).item()
+            output_letter = self.encoder.decode(output)
+            res += output_letter
+            if output_letter == '.':
+                break
+
+            inputs = inputs[1:] + [output]
+
+        return res

@@ -53,6 +53,9 @@ def new_main(train_data_filepath: str, batch_size: int, num_epochs: int) -> None
     print(f'Dev loss: {model.dev_loss():.4f}')
     print(f'Test loss: {model.test_loss():.4f}')
 
+    for _ in range(20):
+        print(model.generate())
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
