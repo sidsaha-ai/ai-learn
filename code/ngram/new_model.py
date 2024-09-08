@@ -2,6 +2,7 @@
 Build the model by leveraging the SDK.
 """
 
+import torch
 from ngram.dataset import Dataset
 from ngram.encoder import Encoder
 from sdk.batch_norm import BatchNorm
@@ -9,6 +10,7 @@ from sdk.embeddings import Embedding
 from sdk.linear import Linear
 from sdk.plotter import Plotter
 from sdk.tanh import Tanh
+from torch import Tensor
 from torch.nn import functional as F
 
 
@@ -47,6 +49,8 @@ class NewNgramModel:
             in_features=self.l2.out_features, out_features=len(self.encoder.ltoi), nonlinearity=None,
         )
 
+        self.loss_fn = F.cross_entropy
+
         self.parameters = self.embeddings.parameters() + self.l1.parameters() + self.l2.parameters() + self.l3.parameters()
         print(f'Num parameters: {self.embeddings.num_parameters + self.l1.num_parameters + self.l2.num_parameters + self.l3.num_parameters}')
 
@@ -61,6 +65,9 @@ class NewNgramModel:
         """
         The method trains the neural network.
         """
+        self.bn1.training = True
+        self.bn2.training = False
+
         losses: list[dict] = []
         for epoch in range(num_epochs):
             inputs_batch, targets_batch = self.dataset.minibatch()
@@ -73,7 +80,7 @@ class NewNgramModel:
             out = self.t2(self.bn2(self.l2(out)))
             logits = self.l3(out)
 
-            loss = F.cross_entropy(logits, targets_batch)
+            loss = self.loss_fn(logits, targets_batch)
 
             # backpropagation
             for p in self.parameters:
@@ -93,3 +100,41 @@ class NewNgramModel:
         print(f'#{epoch}, LR: {lr:.4f}, Loss: {loss.item():.4f}')
 
         Plotter.plot_losses(losses)
+
+    @torch.no_grad()
+    def loss(self, inputs: Tensor, targets: Tensor) -> float:
+        """
+        Returns the loss over the passed inputs and targets
+        """
+        self.bn1.training = False
+        self.bn2.training = False
+
+        embs = self.embeddings[inputs]
+        embs = embs.view(
+            embs.shape[0], (embs.shape[1] * embs.shape[2]),
+        )
+
+        out = self.t1(self.bn1(self.l1(embs)))
+        out = self.t2(self.bn2(self.l2(out)))
+        logits = self.l3(out)
+
+        loss = self.loss_fn(logits, targets)
+        return loss
+
+    def train_loss(self) -> float:
+        """
+        Returns the loss over the training dataset.
+        """
+        return self.loss(self.dataset.train_inputs, self.dataset.train_targets)
+
+    def dev_loss(self) -> float:
+        """
+        Returns the loss over the dev dataset.
+        """
+        return self.loss(self.dataset.dev_inputs, self.dataset.dev_targets)
+
+    def test_loss(self) -> float:
+        """
+        Returns the loss over the test dataset.
+        """
+        return self.loss(self.dataset.test_inputs, self.dataset.test_targets)

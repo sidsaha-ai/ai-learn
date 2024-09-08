@@ -49,6 +49,10 @@ def new_main(train_data_filepath: str, batch_size: int, num_epochs: int) -> None
     model = NewNgramModel(words, batch_size)
     model.train(num_epochs)
 
+    print(f'Training loss: {model.train_loss():.4f}')
+    print(f'Dev loss: {model.dev_loss():.4f}')
+    print(f'Test loss: {model.test_loss():.4f}')
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
