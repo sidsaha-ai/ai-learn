@@ -9,6 +9,7 @@ from sdk.embeddings import Embedding
 from sdk.linear import Linear
 from sdk.tanh import Tanh
 from torch.nn import functional as F
+from sdk.plotter import Plotter
 
 
 class NewNgramModel:
@@ -60,6 +61,7 @@ class NewNgramModel:
         """
         The method trains the neural network.
         """
+        losses: list[dict] = []
         for epoch in range(num_epochs):
             inputs_batch, targets_batch = self.dataset.minibatch()
             embs = self.embeddings[inputs_batch]
@@ -82,6 +84,13 @@ class NewNgramModel:
             for p in self.parameters:
                 p.data += (-lr) * p.grad
             
+            losses.append({
+                'loss': loss.item(),
+                'lr': lr,
+            })
+            
             if epoch % 100 == 0:
                 print(f'#{epoch}, LR: {lr:.4f}, Loss: {loss.item():.4f}')
         print(f'#{epoch}, LR: {lr:.4f}, Loss: {loss.item():.4f}')
+
+        Plotter.plot_losses(losses)
