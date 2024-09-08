@@ -3,9 +3,8 @@ This plots various common things needed.
 """
 
 import matplotlib.pyplot as plt
-
-from sdk.tanh import Tanh
 import torch
+from sdk.tanh import Tanh
 
 
 class Plotter:
