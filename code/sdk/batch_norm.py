@@ -28,8 +28,8 @@ class BatchNorm:
         self.training = True  # should be changed to False during prediction
 
         # the final mean and variance to use during prediction
-        self.mean = torch.ones(size)
-        self.var = torch.zeros(size)
+        self.mean = torch.zeros(size)
+        self.var = torch.ones(size)
 
     def parameters(self) -> list:
         """
