@@ -6,6 +6,7 @@ import random
 
 import torch
 from ngram.encoder import Encoder
+from torch import Tensor
 
 
 class Dataset:
@@ -80,3 +81,14 @@ class Dataset:
         # test set
         self.test_inputs = torch.tensor(inputs[dev_end:])
         self.test_targets = torch.tensor(targets[dev_end:])
+
+    def minibatch(self, batch_percent:int = 5) -> tuple[Tensor, Tensor]:
+        batch_size: int = int((batch_percent * self.train_inputs.shape[0]) / 100)
+
+        indices = list(range(self.train_inputs.shape[0]))
+        random.shuffle(indices)
+
+        inputs_batch = self.train_inputs[indices[0:batch_size]]
+        targets_batch = self.train_targets[indices[0:batch_size]]
+
+        return inputs_batch, targets_batch

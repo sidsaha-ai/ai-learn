@@ -54,7 +54,8 @@ class NewNgramModel:
         The method trains the neural network.
         """
         for epoch in range(num_epochs):
-            embs = self.embeddings[self.dataset.train_inputs]
+            inputs_batch, targets_batch = self.dataset.minibatch()
+            embs = self.embeddings[inputs_batch]
             embs = embs.view(
                 (embs.shape[0], (embs.shape[1] * embs.shape[2])),
             )
@@ -63,9 +64,9 @@ class NewNgramModel:
             out = self.t2(self.bn2(self.l2(out)))
             logits = self.l3(out)
 
-            loss = F.cross_entropy(logits, self.dataset.train_targets)
+            loss = F.cross_entropy(logits, targets_batch)
 
-            if epoch % 1000 == 0:
+            if epoch % 100 == 0:
                 print(f'#{epoch}, Loss: {loss.item():.4f}')
 
             # backpropagation
