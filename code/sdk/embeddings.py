@@ -55,9 +55,12 @@ class Embedding:
         Adds a property to get the shape of the underlying tensor.
         """
         return self.weights.shape
-    
+
     @property
     def num_parameters(self) -> int:
+        """
+        Returns the number of parameters in this layer.
+        """
         return sum(p.nelement() for p in self.parameters())
 
     def view(self, size: tuple[int, int]) -> Tensor:

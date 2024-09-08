@@ -40,7 +40,7 @@ class Linear:
         else:
             self.weights = torch.randn(
                 size, dtype=torch.float) * 0.01
-        
+
         self.weights.requires_grad = True
 
         self.bias = None
@@ -48,29 +48,37 @@ class Linear:
             self.bias = torch.randn(
                 out_features, dtype=torch.float) * 0.01  # multiply near-zero to squash the bias
             self.bias.requires_grad = True
-        
 
     def parameters(self) -> list:
         """
         Returns the parameters of this layer.
         """
         return [self.weights, self.bias] if self.bias is not None else [self.weights]
-    
+
     def __call__(self, inputs: Tensor) -> Tensor:
         res = inputs @ self.weights
         if self.bias is not None:
             res += self.bias
 
         return res
-    
+
     @property
     def in_features(self) -> int:
+        """
+        Returns the number of input features to this layer.
+        """
         return self.weights.shape[0]
 
     @property
     def out_features(self) -> int:
+        """
+        Returns the numnber of output features from this layer.
+        """
         return self.weights.shape[1]
-    
+
     @property
     def num_parameters(self) -> int:
+        """
+        Returns the number of parameters from this layer.
+        """
         return sum(p.nelement() for p in self.parameters())

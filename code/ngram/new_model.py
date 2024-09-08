@@ -50,6 +50,9 @@ class NewNgramModel:
         print(f'Num parameters: {self.embeddings.num_parameters + self.l1.num_parameters + self.l2.num_parameters + self.l3.num_parameters}')
 
     def train(self, num_epochs: int) -> None:
+        """
+        The method trains the neural network.
+        """
         for epoch in range(num_epochs):
             embs = self.embeddings[self.dataset.train_inputs]
             embs = embs.view(
@@ -61,10 +64,10 @@ class NewNgramModel:
             logits = self.l3(out)
 
             loss = F.cross_entropy(logits, self.dataset.train_targets)
-            
+
             if epoch % 1000 == 0:
                 print(f'#{epoch}, Loss: {loss.item():.4f}')
-            
+
             # backpropagation
             for p in self.parameters:
                 p.grad = None
@@ -73,4 +76,3 @@ class NewNgramModel:
             lr = 0.1
             for p in self.parameters:
                 p.data += (-lr) * p.grad
-
