@@ -50,7 +50,7 @@ class NewNgramModel:
 
         self.loss_fn = F.cross_entropy
 
-        self.parameters = self.embeddings.parameters() + [p for layer in self.layers for p in layer.parameters() if isinstance(layer, Linear)]
+        self.parameters = self.embeddings.parameters() + [p for layer in self.layers for p in layer.parameters()]
 
     def _lr(self, epoch: int, num_epochs: int) -> float:
         """

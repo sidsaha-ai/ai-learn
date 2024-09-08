@@ -24,6 +24,8 @@ class BatchNorm:
 
         self.gamma = torch.ones(size)
         self.beta = torch.zeros(size)
+        self.gamma.requires_grad = True
+        self.beta.requires_grad = True
 
         self.training = True  # should be changed to False during prediction
 
@@ -36,6 +38,13 @@ class BatchNorm:
         Returns the parameters list of this layer.
         """
         return [self.gamma, self.beta]
+
+    @property
+    def num_parameters(self) -> int:
+        """
+        Returns the number of parameters in this layer.
+        """
+        return sum(p.nelement() for p in self.parameters())
 
     def __call__(self, inputs: Tensor) -> Tensor:
         mean = inputs.mean(0, keepdim=True) if self.training else self.mean
