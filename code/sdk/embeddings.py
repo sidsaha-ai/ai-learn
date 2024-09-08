@@ -68,3 +68,10 @@ class Embedding:
         Applies the view method on the underlying tensor.
         """
         return self.weights.view(size)
+    
+    def to_gpu(self) -> None:
+        if not torch.backends.mps.is_available():
+            return
+        
+        device = torch.device('mps')
+        self.weights.to(device)

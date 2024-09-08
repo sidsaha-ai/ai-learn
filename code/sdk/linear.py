@@ -61,6 +61,16 @@ class Linear:
             res += self.bias
 
         return res
+    
+    def to_gpu(self) -> None:
+        if not torch.backends.mps.is_available():
+            return
+        
+        device = torch.device('mps')
+
+        self.weights.to(device)
+        if self.bias is not None:
+            self.bias.to(device)
 
     @property
     def in_features(self) -> int:
