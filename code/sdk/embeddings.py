@@ -52,11 +52,11 @@ class Embedding:
         Implements the @ operator like `other @ embedding`.
         """
         return other @ self.weights
-    
+
     def __call__(self, inputs: Tensor) -> Tensor:
         self.input = inputs
         self.output = self.weights[inputs]
-        
+
         return self.output
 
     @property

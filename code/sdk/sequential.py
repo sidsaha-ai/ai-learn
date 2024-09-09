@@ -2,36 +2,37 @@
 Implements the sequential container class to hold all the layers.
 """
 
-from typing import Any
-
 from torch import Tensor
 
 
 class Sequential:
+    """
+    Container class that holds layers in a sequential manner.
+    """
 
     def __init__(self, layers: list) -> None:
         super().__init__()
 
         self.layers = layers
-        
+
         self.input = None
         self.output = None
         self.training = True
-    
-    def __call__(self, input: Tensor) -> Tensor:
+
+    def __call__(self, inputs: Tensor) -> Tensor:
         """
         Calls all the layers.
         """
-        self.input = input
+        self.input = inputs
 
-        x = input
+        x = inputs
         for layer in self.layers:
             x = layer(x)
-        
+
         self.output = x
 
         return self.output
-    
+
     def parameters(self) -> list:
         """
         Returns the parameters of all the layers.
@@ -42,5 +43,5 @@ class Sequential:
         if name == 'training':
             for layer in self.layers:
                 layer.training = value
-        
+
         super().__setattr__(name, value)
