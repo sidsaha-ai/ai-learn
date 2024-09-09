@@ -63,7 +63,7 @@ class Plotter:
                 continue
             out = layer.output
 
-            print(f'Layer {ix}, Type: {layer.__class__.__name__}, Mean: {out.mean():.4f}, Std: {out.std():.4f}, Saturation: {(out.abs() > 0.97).float().mean() * 100}%')  # pylint: disable=line-too-long  # NOQA
+            print(f'Layer {ix}, Type: {layer.__class__.__name__}, Mean: {out.mean():.4f}, Std: {out.std():.4f}, Saturation: {((out.abs() > 0.97).float().mean() * 100):.4f}%')  # pylint: disable=line-too-long  # NOQA
 
             hy, hx = torch.histogram(out, density=True)
             plt.plot(
@@ -89,7 +89,7 @@ class Plotter:
             if not isinstance(layer, Tanh) or layer.input_grad is None:
                 continue
 
-            print(f'Layer {ix} ({layer.__class__.__name__}), Mean: {layer.input_grad.mean()}, Std: {layer.input_grad.std()}')
+            print(f'Layer {ix} ({layer.__class__.__name__}), Mean: {layer.input_grad.mean():.4f}, Std: {layer.input_grad.std():.4f}')
             hy, hx = torch.histogram(layer.input_grad, density=True)
             plt.plot(
                 hx[:-1].detach(), hy.detach(),
