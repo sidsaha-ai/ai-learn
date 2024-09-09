@@ -120,6 +120,9 @@ class NewNgramModel:
 
         Plotter.plot_losses(losses)
 
+        # after training, check the activations (saturation should be low)
+        Plotter.plot_activations(self.neural_net, to_plot=False)
+
     @torch.no_grad()
     def loss(self, inputs: Tensor, targets: Tensor) -> float:
         """

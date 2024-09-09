@@ -50,7 +50,7 @@ class Plotter:
         plt.show()
 
     @classmethod
-    def plot_activations(cls, neural_net: list) -> None:
+    def plot_activations(cls, neural_net: list, to_plot: bool = True) -> None:
         """
         This plots the tanh activations (outputs) of the neural network pased.
         """
@@ -73,9 +73,10 @@ class Plotter:
                 f'layer {ix} ({layer.__class__.__name__})',
             )
 
-        plt.legend(legends)
-        plt.title('Activations')
-        plt.show()
+        if to_plot:
+            plt.legend(legends)
+            plt.title('Activations')
+            plt.show()
 
     @classmethod
     def plot_gradients(cls, neural_net: list) -> None:
