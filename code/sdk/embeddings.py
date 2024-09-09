@@ -28,6 +28,8 @@ class Embedding:
         torch.nn.init.normal_(self.weights, mean=0, std=1)
         self.weights.requires_grad = True
 
+        self.training = True  # to turn off training during inference
+
     def parameters(self) -> list:
         """
         Returns the parameters.

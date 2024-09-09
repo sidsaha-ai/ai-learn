@@ -51,6 +51,8 @@ class Linear:
 
         self.output = None
 
+        self.training = True  # can turn off during inference
+
     def parameters(self) -> list:
         """
         Returns the parameters of this layer.

@@ -80,12 +80,11 @@ class NewNgramModel:
         The method trains the neural network.
         """
         for layer in self.neural_net:
-            if isinstance(layer, BatchNorm):
-                layer.training = True
+            layer.training = True
 
         losses: list[dict] = []
         for epoch in range(num_epochs):
-            inputs_batch, targets_batch = self.dataset.minibatch()
+            inputs_batch, targets_batch = self.dataset.minibatch(batch_percent=1)
             embs = self.embeddings[inputs_batch]
 
             x = embs.view(
@@ -121,8 +120,7 @@ class NewNgramModel:
         Returns the loss over the passed inputs and targets
         """
         for layer in self.neural_net:
-            if isinstance(layer, BatchNorm):
-                layer.training = False
+            layer.training = False
 
         embs = self.embeddings[inputs]
 
@@ -160,8 +158,7 @@ class NewNgramModel:
         res: str = ''
 
         for layer in self.neural_net:
-            if isinstance(layer, BatchNorm):
-                layer.training = False
+            layer.training = False
 
         inputs = [self.encoder.encode(letter) for letter in list('.' * self.context_length)]
         while True:

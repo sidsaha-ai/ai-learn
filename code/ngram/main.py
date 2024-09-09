@@ -50,20 +50,19 @@ def new_main(train_data_filepath: str, batch_size: int, num_epochs: int) -> None
     model = NewNgramModel(words, batch_size)
     model.train(num_epochs)
 
+    # let's look at some plots
+
+    # look at the activations (output) of the tanh layers. Mean should be ~0 and standard deviation should be ~1.
+    Plotter.plot_activations(model.neural_net)
+    # look at the gradients of the tanh layer.
+    Plotter.plot_gradients(model.neural_net)
+
     print(f'Training loss: {model.train_loss():.4f}')
     print(f'Dev loss: {model.dev_loss():.4f}')
     print(f'Test loss: {model.test_loss():.4f}')
 
     for _ in range(20):
         print(model.generate())
-
-    # let's look at some plots to see that the model is working fine.
-
-    ##
-    # Look at the activations of each of the Tanh layers. The mean of layer should be about 0, standard deviation
-    # should be about 1, and not a very high percentage of neurons be saturated (values nearing 1).
-    ##
-    Plotter.plot_activations(model.neural_net)
 
 
 if __name__ == '__main__':
@@ -72,7 +71,7 @@ if __name__ == '__main__':
         '--train_data_filepath', required=True, type=str,
     )
     parser.add_argument(
-        '--batch_size', required=True, type=int,
+        '--context_length', required=True, type=int,
     )
     parser.add_argument(
         '--num_epochs', required=True, type=int,
@@ -85,5 +84,5 @@ if __name__ == '__main__':
 
     fn = main if args.type == 'old' else new_main
     fn(
-        args.train_data_filepath, args.batch_size, args.num_epochs,
+        args.train_data_filepath, args.context_length, args.num_epochs,
     )
