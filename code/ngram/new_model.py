@@ -168,7 +168,6 @@ class NewNgramModel:
         """
         Generates a name from the trained neural network.
         """
-        print('--- Generating ---')
         res: str = ''
 
         for layer in self.neural_net:
@@ -176,11 +175,9 @@ class NewNgramModel:
 
         inputs = [self.encoder.encode(letter) for letter in list('.' * self.context_length)]
         while True:
-            x = torch.tensor(inputs)
+            x = torch.tensor([inputs])
             for layer in self.neural_net:
-                print(f'Layer Name: {layer.__class__.__name__}, Input tensor Shape: {x.shape}')
                 x = layer(x)
-                print(f'Layer Name: {layer.__class__.__name__}, Output tensor Shape: {x.shape}')
 
             probs = F.softmax(x, dim=1)
 
