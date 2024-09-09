@@ -5,7 +5,6 @@ import argparse
 
 from ngram.model import NGramModel
 from ngram.new_model import NewNgramModel
-from sdk.plotter import Plotter
 
 
 def _read_words(filepath: str) -> list:
