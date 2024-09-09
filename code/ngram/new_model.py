@@ -6,13 +6,13 @@ import torch
 from ngram.dataset import Dataset
 from ngram.encoder import Encoder
 from sdk.batch_norm import BatchNorm
+from sdk.cross_entropy import CrossEntropy
 from sdk.embeddings import Embedding
 from sdk.linear import Linear
 from sdk.plotter import Plotter
 from sdk.tanh import Tanh
 from torch import Tensor
 from torch.nn import functional as F
-from sdk.cross_entropy import CrossEntropy
 
 
 class NewNgramModel:
