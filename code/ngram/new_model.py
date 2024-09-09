@@ -12,6 +12,7 @@ from sdk.plotter import Plotter
 from sdk.tanh import Tanh
 from torch import Tensor
 from torch.nn import functional as F
+from sdk.cross_entropy import CrossEntropy
 
 
 class NewNgramModel:
@@ -64,7 +65,7 @@ class NewNgramModel:
             Linear(in_features=100, out_features=len(self.encoder.ltoi), nonlinearity=None),
         ]
 
-        self.loss_fn = F.cross_entropy
+        self.loss_fn = CrossEntropy()
 
         self.parameters = self.embeddings.parameters() + [p for layer in self.neural_net for p in layer.parameters()]
 
