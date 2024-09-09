@@ -76,3 +76,26 @@ class Plotter:
         plt.legend(legends)
         plt.title('Activations')
         plt.show()
+
+    @classmethod
+    def plot_gradients(cls, neural_net: list) -> None:
+        """
+        This plots the tanh gradients of the neural network.
+        """
+        plt.figure(figsize=(20, 4))
+        legends = []
+
+        for ix, layer in enumerate(neural_net):
+            if not isinstance(layer, Tanh) or layer.input_grad is None:
+                continue
+
+            print(f'Layer {ix} ({layer.__class__.__name__}), Mean: {layer.input_grad.mean()}, Std: {layer.input_grad.std()}')
+            hy, hx = torch.histogram(layer.input_grad, density=True)
+            plt.plot(
+                hx[:-1].detach(), hy.detach(),
+            )
+            legends.append(f'Layer {ix} ({layer.__class__.__name__})')
+        
+        plt.legend(legends)
+        plt.title('Gradient Distribution')
+        plt.show()
