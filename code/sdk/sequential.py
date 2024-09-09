@@ -3,7 +3,9 @@ Implements the sequential container class to hold all the layers.
 """
 
 from typing import Any
+
 from torch import Tensor
+
 
 class Sequential:
 

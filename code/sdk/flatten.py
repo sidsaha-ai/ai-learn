@@ -3,6 +3,7 @@ Flatten class implementation.
 """
 from torch import Tensor
 
+
 class Flatten:
 
     def __init__(self) -> None:

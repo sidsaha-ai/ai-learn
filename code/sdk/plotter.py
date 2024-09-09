@@ -4,8 +4,8 @@ This plots various common things needed.
 
 import matplotlib.pyplot as plt
 import torch
-from sdk.tanh import Tanh
 from sdk.sequential import Sequential
+from sdk.tanh import Tanh
 
 
 class Plotter:

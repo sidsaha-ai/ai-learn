@@ -8,14 +8,13 @@ from ngram.encoder import Encoder
 from sdk.batch_norm import BatchNorm
 from sdk.cross_entropy import CrossEntropy
 from sdk.embeddings import Embedding
+from sdk.flatten import Flatten
 from sdk.linear import Linear
 from sdk.plotter import Plotter
+from sdk.sequential import Sequential
 from sdk.tanh import Tanh
 from torch import Tensor
 from torch.nn import functional as F
-from sdk.embeddings import Embedding
-from sdk.flatten import Flatten
-from sdk.sequential import Sequential
 
 
 class NewNgramModel:
