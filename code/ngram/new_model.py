@@ -13,6 +13,8 @@ from sdk.plotter import Plotter
 from sdk.tanh import Tanh
 from torch import Tensor
 from torch.nn import functional as F
+from sdk.embeddings import Embedding
+from sdk.flatten import Flatten
 
 
 class NewNgramModel:
@@ -32,11 +34,19 @@ class NewNgramModel:
         self.embeddings = Embedding(
             num_embeddings=len(self.encoder.ltoi), embedding_dim=10,  # each letter is represented by 10 dimensions
         )
+        embedding_dim: int = 10
         num_hidden: int = 100
+        print(f'{self.dataset.train_inputs.shape=}')
         self.neural_net = [
+            # embedding layer
+            Embedding(
+                num_embeddings=len(self.encoder.ltoi), embedding_dim=embedding_dim,
+            ),
+            Flatten(),
+
             # layer - 1
             Linear(
-                in_features=self.dataset.train_inputs.shape[1] * self.embeddings.shape[1], out_features=num_hidden, nonlinearity='tanh',
+                in_features=self.dataset.train_inputs.shape[1] * embedding_dim, out_features=num_hidden, nonlinearity='tanh',
             ),
             BatchNorm(num_features=num_hidden),
             Tanh(),
@@ -67,7 +77,7 @@ class NewNgramModel:
 
         self.loss_fn = CrossEntropy()
 
-        self.parameters = self.embeddings.parameters() + [p for layer in self.neural_net for p in layer.parameters()]
+        self.parameters = [p for layer in self.neural_net for p in layer.parameters()]
 
     def _lr(self, epoch: int, num_epochs: int) -> float:
         """
@@ -86,11 +96,8 @@ class NewNgramModel:
         losses: list[dict] = []
         for epoch in range(num_epochs):
             inputs_batch, targets_batch = self.dataset.minibatch(batch_percent=1)
-            embs = self.embeddings[inputs_batch]
 
-            x = embs.view(
-                (embs.shape[0], (embs.shape[1] * embs.shape[2])),
-            )
+            x = inputs_batch
             for layer in self.neural_net:
                 x = layer(x)
 
@@ -132,11 +139,7 @@ class NewNgramModel:
         for layer in self.neural_net:
             layer.training = False
 
-        embs = self.embeddings[inputs]
-
-        x = embs.view(
-            embs.shape[0], (embs.shape[1] * embs.shape[2]),
-        )
+        x = inputs
         for layer in self.neural_net:
             x = layer(x)
 
@@ -165,6 +168,7 @@ class NewNgramModel:
         """
         Generates a name from the trained neural network.
         """
+        print('--- Generating ---')
         res: str = ''
 
         for layer in self.neural_net:
@@ -172,13 +176,11 @@ class NewNgramModel:
 
         inputs = [self.encoder.encode(letter) for letter in list('.' * self.context_length)]
         while True:
-            embs = self.embeddings[inputs]
-
-            x = embs.view(
-                1, (embs.shape[0] * embs.shape[1]),
-            )
+            x = torch.tensor(inputs)
             for layer in self.neural_net:
+                print(f'Layer Name: {layer.__class__.__name__}, Input tensor Shape: {x.shape}')
                 x = layer(x)
+                print(f'Layer Name: {layer.__class__.__name__}, Output tensor Shape: {x.shape}')
 
             probs = F.softmax(x, dim=1)
 

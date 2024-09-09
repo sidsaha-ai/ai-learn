@@ -29,6 +29,8 @@ class Embedding:
         self.weights.requires_grad = True
 
         self.training = True  # to turn off training during inference
+        self.input = None
+        self.output = None
 
     def parameters(self) -> list:
         """
@@ -50,6 +52,12 @@ class Embedding:
         Implements the @ operator like `other @ embedding`.
         """
         return other @ self.weights
+    
+    def __call__(self, inputs: Tensor) -> Tensor:
+        self.input = inputs
+        self.output = self.weights[inputs]
+        
+        return self.output
 
     @property
     def shape(self) -> torch.Size:
