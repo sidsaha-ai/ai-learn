@@ -50,13 +50,6 @@ def new_main(train_data_filepath: str, batch_size: int, num_epochs: int) -> None
     model = NewNgramModel(words, batch_size)
     model.train(num_epochs)
 
-    # let's look at some plots
-
-    # look at the activations (output) of the tanh layers. Mean should be ~0 and standard deviation should be ~1.
-    Plotter.plot_activations(model.neural_net)
-    # look at the gradients of the tanh layer.
-    Plotter.plot_gradients(model.neural_net)
-
     print(f'Training loss: {model.train_loss():.4f}')
     print(f'Dev loss: {model.dev_loss():.4f}')
     print(f'Test loss: {model.test_loss():.4f}')

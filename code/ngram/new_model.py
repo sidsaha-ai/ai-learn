@@ -108,6 +108,12 @@ class NewNgramModel:
                 {'loss': loss.item(), 'lr': lr},
             )
 
+            # let's see some plots after the first epoch. this is primarily done
+            # to identify issues with the initialization of the network.
+            if epoch == 1:
+                Plotter.plot_activations(self.neural_net)
+                Plotter.plot_gradients(self.neural_net)
+
             if epoch % 100 == 0:
                 print(f'#{epoch}, LR: {lr:.4f}, Loss: {loss.item():.4f}')
         print(f'#{epoch}, LR: {lr:.4f}, Loss: {loss.item():.4f}')
