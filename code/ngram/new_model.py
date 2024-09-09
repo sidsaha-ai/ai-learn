@@ -81,8 +81,8 @@ class NewNgramModel:
         for epoch in range(num_epochs):
             inputs_batch, targets_batch = self.dataset.minibatch(batch_percent=1)
 
-            x = self.model(inputs_batch)
-            loss = self.loss_fn(x, targets_batch)
+            logits = self.model(inputs_batch)
+            loss = self.loss_fn(logits, targets_batch)
 
             # backpropagation
             for p in self.parameters:
@@ -119,8 +119,8 @@ class NewNgramModel:
         """
         self.model.training = False
 
-        x = self.model(inputs)
-        loss = self.loss_fn(x, targets).item()
+        logits = self.model(inputs)
+        loss = self.loss_fn(logits, targets).item()
 
         return loss
 
@@ -152,10 +152,10 @@ class NewNgramModel:
 
         inputs = [self.encoder.encode(letter) for letter in list('.' * self.context_length)]
         while True:
-            x = self.model(
+            logits = self.model(
                 torch.tensor([inputs]),
             )
-            probs = F.softmax(x, dim=1)
+            probs = F.softmax(logits, dim=1)
 
             output = torch.multinomial(probs, num_samples=1, replacement=True).item()
             output_letter = self.encoder.decode(output)
