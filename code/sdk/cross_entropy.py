@@ -7,6 +7,9 @@ from torch import Tensor
 
 
 class CrossEntropy:
+    """
+    Custom cross-entropy loss function.
+    """
 
     def __init__(self) -> None:
         super().__init__()
@@ -14,8 +17,11 @@ class CrossEntropy:
         self.logits = None
         self.targets = None
         self.output = None
-    
+
     def __call__(self, logits: Tensor, targets: Tensor) -> Tensor:
+        """
+        Computes the cross-entropy loss.
+        """
         self.logits = logits
         self.targets = targets
 
@@ -28,5 +34,5 @@ class CrossEntropy:
         mean = torch.sum(target_probs) / N
 
         self.output = (-1) * mean
-        
+
         return self.output
