@@ -95,7 +95,7 @@ class Plotter:
                 hx[:-1].detach(), hy.detach(),
             )
             legends.append(f'Layer {ix} ({layer.__class__.__name__})')
-        
+
         plt.legend(legends)
         plt.title('Gradient Distribution')
         plt.show()

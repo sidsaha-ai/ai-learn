@@ -25,7 +25,7 @@ class Tanh:
         out = torch.tanh(x)
 
         self.output = out
-        
+
         # register hook to capture the gradient during the backward pass
         if self.training:
             out.register_hook(self.save_gradient)
