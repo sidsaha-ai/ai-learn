@@ -4,6 +4,7 @@ This plots various common things needed.
 
 import matplotlib.pyplot as plt
 import torch
+from sdk.sequential import Sequential
 from sdk.tanh import Tanh
 
 
@@ -50,7 +51,7 @@ class Plotter:
         plt.show()
 
     @classmethod
-    def plot_activations(cls, neural_net: list) -> None:
+    def plot_activations(cls, model: Sequential, to_plot: bool = True) -> None:
         """
         This plots the tanh activations (outputs) of the neural network pased.
         """
@@ -58,7 +59,7 @@ class Plotter:
         legends = []
 
         print('--- Activation Statistics ---')
-        for ix, layer in enumerate(neural_net):
+        for ix, layer in enumerate(model.layers):
             if not isinstance(layer, Tanh):
                 continue
             out = layer.output
@@ -73,12 +74,13 @@ class Plotter:
                 f'layer {ix} ({layer.__class__.__name__})',
             )
 
-        plt.legend(legends)
-        plt.title('Activations')
-        plt.show()
+        if to_plot:
+            plt.legend(legends)
+            plt.title('Activations')
+            plt.show()
 
     @classmethod
-    def plot_gradients(cls, neural_net: list) -> None:
+    def plot_gradients(cls, model: Sequential) -> None:
         """
         This plots the tanh gradients of the neural network.
         """
@@ -86,7 +88,7 @@ class Plotter:
         legends = []
 
         print('--- Gradient distribution Statistics ---')
-        for ix, layer in enumerate(neural_net):
+        for ix, layer in enumerate(model.layers):
             if not isinstance(layer, Tanh) or layer.output.grad is None:
                 continue
 

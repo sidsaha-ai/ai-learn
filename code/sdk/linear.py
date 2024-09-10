@@ -79,24 +79,3 @@ class Linear:
         self.weights.to(device)
         if self.bias is not None:
             self.bias.to(device)
-
-    @property
-    def in_features(self) -> int:
-        """
-        Returns the number of input features to this layer.
-        """
-        return self.weights.shape[0]
-
-    @property
-    def out_features(self) -> int:
-        """
-        Returns the numnber of output features from this layer.
-        """
-        return self.weights.shape[1]
-
-    @property
-    def num_parameters(self) -> int:
-        """
-        Returns the number of parameters from this layer.
-        """
-        return sum(p.nelement() for p in self.parameters())

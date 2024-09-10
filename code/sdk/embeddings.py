@@ -29,6 +29,8 @@ class Embedding:
         self.weights.requires_grad = True
 
         self.training = True  # to turn off training during inference
+        self.input = None
+        self.output = None
 
     def parameters(self) -> list:
         """
@@ -36,40 +38,11 @@ class Embedding:
         """
         return [self.weights]
 
-    def __getitem__(self, index) -> Tensor:
-        return self.weights[index]
+    def __call__(self, inputs: Tensor) -> Tensor:
+        self.input = inputs
+        self.output = self.weights[inputs]
 
-    def __matmul__(self, other: Tensor) -> Tensor:
-        """
-        Implements the @ operator like `embedding @ other`.
-        """
-        return self.weights @ other
-
-    def __rmatmul__(self, other: Tensor) -> Tensor:
-        """
-        Implements the @ operator like `other @ embedding`.
-        """
-        return other @ self.weights
-
-    @property
-    def shape(self) -> torch.Size:
-        """
-        Adds a property to get the shape of the underlying tensor.
-        """
-        return self.weights.shape
-
-    @property
-    def num_parameters(self) -> int:
-        """
-        Returns the number of parameters in this layer.
-        """
-        return sum(p.nelement() for p in self.parameters())
-
-    def view(self, size: tuple[int, int]) -> Tensor:
-        """
-        Applies the view method on the underlying tensor.
-        """
-        return self.weights.view(size)
+        return self.output
 
     def to_gpu(self) -> None:
         """
