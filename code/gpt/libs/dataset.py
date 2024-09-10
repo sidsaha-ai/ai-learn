@@ -41,12 +41,35 @@ class Dataset:
 
         train_data = self.text[0:train_index]
         val_data = self.text[train_index:]
-
+        
         self.train_data = [self.encoder.encode(el) for el in list(train_data)]
         self.val_data = [self.encoder.encode(el) for el in list(val_data)]
+        self.train_data = torch.tensor(self.train_data)
+        self.val_data = torch.tensor(self.val_data)
     
     def build(self) -> None:
         self.fetch_data()
         self.make_encoder()
         self.build_train_val_data()
     
+    def batch(self, batch_size: int, split:str = 'train') -> tuple[Tensor, Tensor]:
+        """
+        Creates a batch of either training dataset or val dataset.
+        """
+        data = self.train_data if split == 'train' else self.val_data
+
+        # random indexes to select for the batch
+        rand_ix = torch.randint(
+            low=0,
+            high=len(data) - self.block_size,
+            size=(batch_size,),  # select `batch_size` number of batches
+        )
+
+        inputs = torch.stack(
+            [data[ix:ix + self.block_size] for ix in rand_ix],
+        )
+        targets = torch.stack(
+            [data[ix + 1:ix + 1 + self.block_size] for ix in rand_ix],
+        )
+
+        return inputs, targets
