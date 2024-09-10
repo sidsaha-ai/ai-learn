@@ -65,11 +65,11 @@ class Dataset:
             size=(batch_size,),  # select `batch_size` number of batches
         )
 
-        inputs = torch.stack(
+        inputs_batch = torch.stack(
             [data[ix:ix + self.block_size] for ix in rand_ix],
         )
-        targets = torch.stack(
+        targets_batch = torch.stack(
             [data[ix + 1:ix + 1 + self.block_size] for ix in rand_ix],
         )
 
-        return inputs, targets
+        return inputs_batch, targets_batch
