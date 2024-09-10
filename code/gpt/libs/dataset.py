@@ -4,8 +4,8 @@ This fetches the tiny shakespeare dataset and creates a training datset and a va
 
 import requests
 import torch
-from torch import Tensor
 from libs.encoder import Encoder
+from torch import Tensor
 
 
 class Dataset:
