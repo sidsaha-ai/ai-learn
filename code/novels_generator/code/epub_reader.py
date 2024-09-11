@@ -83,5 +83,4 @@ if __name__ == '__main__':
     reader = EPubReader()
     book = reader.read(filepath)
 
-    print(book)
-    print(f'Book length: {len(book):,}')
+    print(f'Book: {os.path.basename(filepath)}. Book length: {len(book):,}')
