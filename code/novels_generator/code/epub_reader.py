@@ -39,6 +39,21 @@ class EPubReader:
                 text_parts.append(el)
             
         return ''.join(text_parts)
+
+    def preprocess(self, content) -> str:
+        soup = bs4.BeautifulSoup(content, 'html.parser')
+
+        # remove class attributes from all tags
+        for tag in soup.find_all(True):  # `True` argument finds all tags
+            if 'class' in tag.attrs:
+                del tag.attrs['class']
+        
+        # handle span tags within p tags
+        for p in soup.find_all('p'):
+            for span in p.find_all('span'):
+                span.unwrap()
+        
+        return str(soup)
     
     def read(self, filepath: str) -> str:
         """
@@ -50,9 +65,9 @@ class EPubReader:
         for item in book.get_items():
             if item.get_type() == ebooklib.ITEM_DOCUMENT and item.is_chapter() and 'chapter' in item.get_name().lower():
                 content = item.get_content().decode('utf-8')
+                content = self.preprocess(content)
                 content = self.clean(content)
                 text.append(content)
-                break
         
         return ' '.join(text)
 
