@@ -82,17 +82,3 @@ class EPubReader:
         text.append(SpecialTokens.END)
 
         return ''.join(text)
-
-
-if __name__ == '__main__':
-
-    path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    path = os.path.join(path, 'data')
-
-    files = [f for f in os.listdir(path) if f.endswith('.epub')]
-    filepath = os.path.join(path, files[0])
-
-    reader = EPubReader()
-    book_text = reader.read(filepath)
-
-    print(f'Book: {os.path.basename(filepath)}. Book length: {len(book_text):,}')
