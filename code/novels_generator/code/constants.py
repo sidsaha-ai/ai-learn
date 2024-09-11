@@ -1,5 +1,12 @@
-class SpecialTokens:
+"""
+Contains constants to be used.
+"""
 
+
+class SpecialTokens:
+    """
+    Special tokens for tokenizer.
+    """
     CHAPTER_NAME_START = '<CHAPTER_NAME_START>'
     CHAPTER_NAME_END = '<CHAPTER_NAME_END>'
     HEADING_START = '<HEADING_START>'

@@ -10,13 +10,16 @@ from tokenizers.trainers import BpeTrainer
 
 
 class BPETokenizer:
+    """
+    BPE Tokenizer that we will train for the model.
+    """
 
     def __init__(self) -> None:
         self.tokenizer = Tokenizer(BPE(unk_token=SpecialTokens.UNKNOWN))
-    
+
     def train(self, book_texts: list) -> None:
         """
-        Method to take the entire texts of the books and 
+        Method to take the entire texts of the books and train the tokenizer.
         """
         # pre-process
         self.tokenizer.pre_tokenizer = Whitespace()
@@ -31,7 +34,7 @@ class BPETokenizer:
 
         # train
         self.tokenizer.train_from_iterator(book_texts, trainer=trainer)
-    
+
     def encode(self, text: str):
         """
         Method to return the encoding of the passed text based on the tokenizer.

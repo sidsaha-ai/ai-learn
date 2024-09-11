@@ -1,3 +1,6 @@
+"""
+Test script to try out the BPE Tokenizer class.
+"""
 import os
 
 from novels_generator.code.epub_reader import EPubReader
@@ -5,6 +8,9 @@ from novels_generator.code.tokenizer import BPETokenizer
 
 
 def read_books() -> list:
+    """
+    This reads all the epub books and returns their contents.
+    """
     path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     path = os.path.join(path, 'data')
 
@@ -19,11 +25,14 @@ def read_books() -> list:
         book_content = reader.read(filepath)
         if book_content:
             book_texts.append(book_content)
-    
+
     return book_texts
 
 
 def main():
+    """
+    The main method to start the execution of this script.
+    """
     book_texts: list = read_books()
 
     tokenizer = BPETokenizer()

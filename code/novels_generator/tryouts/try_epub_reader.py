@@ -1,9 +1,15 @@
+"""
+Contains test script to try the EPUB reader.
+"""
 import os
 
 from novels_generator.code.epub_reader import EPubReader
 
 
 def main():
+    """
+    Main method where the execution starts for this script.
+    """
     path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     path = os.path.join(path, 'data')
 
