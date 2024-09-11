@@ -7,6 +7,8 @@ import bs4
 import ebooklib
 from ebooklib import epub
 
+from novels_generator.code.constants import SpecialTokens
+
 
 class EPubReader:
     """
@@ -24,14 +26,18 @@ class EPubReader:
         for el in section.contents:
             if isinstance(el, bs4.element.Tag):
                 match el.name:
+                    # add special tokens so that tokenizers can handle them.
                     case 'h1':
+                        text_parts.append(SpecialTokens.CHAPTER)
                         text_parts.append('\n\n')
                         text_parts.append(el.get_text(strip=True))
                         text_parts.append('\n\n')
                     case 'h2':
+                        text_parts.append(SpecialTokens.HEADING)
                         text_parts.append(el.get_text(strip=True))
                         text_parts.append('\n\n')
                     case 'p':
+                        text_parts.append(SpecialTokens.PARAGRAPH)
                         text_parts.append(el.get_text(strip=True))
                         text_parts.append('\n')
 
@@ -72,7 +78,10 @@ class EPubReader:
                 content = self.clean(content)
                 text.append(content)
 
-        return ' '.join(text)
+        # token to mark novel end
+        text.append(SpecialTokens.END)
+
+        return ''.join(text)
 
 
 if __name__ == '__main__':
