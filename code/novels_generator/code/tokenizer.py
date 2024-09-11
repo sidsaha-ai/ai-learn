@@ -2,12 +2,12 @@
 This is the tokenizer class that we will use to train a BPE tokenizer on our data and then use it to feed to the neural net.
 """
 
+from novels_generator.code.constants import SpecialTokens
 from tokenizers import Tokenizer
 from tokenizers.models import BPE
-from tokenizers.trainers import BpeTrainer
 from tokenizers.pre_tokenizers import Whitespace
+from tokenizers.trainers import BpeTrainer
 
-from novels_generator.code.constants import SpecialTokens
 
 class BPETokenizer:
 

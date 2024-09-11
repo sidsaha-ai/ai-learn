@@ -6,7 +6,6 @@ import os
 import bs4
 import ebooklib
 from ebooklib import epub
-
 from novels_generator.code.constants import SpecialTokens
 
 

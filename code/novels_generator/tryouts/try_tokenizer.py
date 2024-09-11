@@ -1,7 +1,7 @@
+import os
+
 from novels_generator.code.epub_reader import EPubReader
 from novels_generator.code.tokenizer import BPETokenizer
-
-import os
 
 
 def read_books() -> list:

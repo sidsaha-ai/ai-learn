@@ -1,6 +1,7 @@
+import os
+
 from novels_generator.code.epub_reader import EPubReader
 
-import os
 
 def main():
     path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
