@@ -12,3 +12,4 @@ matplotlib
 pytest
 ebooklib
 beautifulsoup4
+tokenizers
