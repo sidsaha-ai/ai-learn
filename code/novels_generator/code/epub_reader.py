@@ -1,11 +1,11 @@
 """
 This contains a class that reads an ePub book.
 """
+import os
+
+import bs4
 import ebooklib
 from ebooklib import epub
-
-import os
-import bs4
 
 
 class EPubReader:
