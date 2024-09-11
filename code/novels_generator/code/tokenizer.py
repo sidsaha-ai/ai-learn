@@ -1,0 +1,39 @@
+"""
+This is the tokenizer class that we will use to train a BPE tokenizer on our data and then use it to feed to the neural net.
+"""
+
+from tokenizers import Tokenizer
+from tokenizers.models import BPE
+from tokenizers.trainers import BpeTrainer
+from tokenizers.pre_tokenizers import Whitespace
+
+from novels_generator.code.constants import SpecialTokens
+
+class BPETokenizer:
+
+    def __init__(self) -> None:
+        self.tokenizer = Tokenizer(BPE(unk_token=SpecialTokens.UNKNOWN))
+    
+    def train(self, book_texts: list) -> None:
+        """
+        Method to take the entire texts of the books and 
+        """
+        # pre-process
+        self.tokenizer.pre_tokenizer = Whitespace()
+
+        trainer = BpeTrainer(special_tokens=[
+            SpecialTokens.UNKNOWN,
+            SpecialTokens.CHAPTER_NAME_START, SpecialTokens.CHAPTER_NAME_END,
+            SpecialTokens.HEADING_START, SpecialTokens.HEADING_END,
+            SpecialTokens.PARAGRAPH_START, SpecialTokens.PARAGRAPH_END,
+            SpecialTokens.END,
+        ])
+
+        # train
+        self.tokenizer.train_from_iterator(book_texts, trainer=trainer)
+    
+    def encode(self, text: str):
+        """
+        Method to return the encoding of the passed text based on the tokenizer.
+        """
+        return self.tokenizer.encode(text)

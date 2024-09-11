@@ -28,21 +28,21 @@ class EPubReader:
                 match el.name:
                     # add special tokens so that tokenizers can handle them.
                     case 'h1':
-                        text_parts.append(SpecialTokens.CHAPTER)
-                        text_parts.append('\n\n')
+                        text_parts.append(SpecialTokens.CHAPTER_NAME_START)
                         text_parts.append(el.get_text(strip=True))
-                        text_parts.append('\n\n')
+                        text_parts.append(SpecialTokens.CHAPTER_NAME_END)
                     case 'h2':
-                        text_parts.append(SpecialTokens.HEADING)
+                        text_parts.append(SpecialTokens.HEADING_START)
                         text_parts.append(el.get_text(strip=True))
-                        text_parts.append('\n\n')
+                        text_parts.append(SpecialTokens.HEADING_END)
                     case 'p':
-                        text_parts.append(SpecialTokens.PARAGRAPH)
+                        text_parts.append(SpecialTokens.PARAGRAPH_START)
                         text_parts.append(el.get_text(strip=True))
-                        text_parts.append('\n')
+                        text_parts.append(SpecialTokens.PARAGRAPH_END)
 
             elif isinstance(el, bs4.element.NavigableString):
-                text_parts.append(el)
+                if el.strip():
+                    text_parts.append(el)
 
         return ''.join(text_parts)
 
