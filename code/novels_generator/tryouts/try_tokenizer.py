@@ -39,21 +39,31 @@ def main():
     tokenizer = BPETokenizer()
     tokenizer.train(book_texts)
 
-    output = tokenizer.encode('Hi, how are you doing?')
-    print(output.tokens)
-    print(output.ids)
+    # First case
+    text: str = 'Hi, how are you doing?'
+    output = tokenizer.encode(text)
+    sequences = tokenizer.encode_into_sequences(text, context_length=5)
+    print(f'Tokens: {output.tokens}')
+    print(f'IDs: {output.ids}')
+    print(f'Sequences: {sequences}')
 
     print()
 
-    output = tokenizer.encode('She thought to herself how much she wanted him, even though he gets on her nerves. She wanted to take him!')
-    print(output.tokens)
-    print(output.ids)
+    text = 'She thought to herself how much she wanted how much she wanted him, even though he gets on her nerves. She wanted to take him!'
+    output = tokenizer.encode(text)
+    sequences = tokenizer.encode_into_sequences(text, context_length=10)
+    print(f'Tokens: {output.tokens}')
+    print(f'IDs: {output.ids}')
+    print(f'Sequences: {sequences}')
 
     print()
 
-    output = tokenizer.encode("Hi, I'm Sid, the owner of this project.")
-    print(output.tokens)
-    print(output.ids)
+    text = "Hi, I'm Sid, the owner of this project."
+    output = tokenizer.encode(text)
+    sequences = tokenizer.encode_into_sequences(text, context_length=3)
+    print(f'Tokens: {output.tokens}')
+    print(f'IDs: {output.ids}')
+    print(f'Sequences: {sequences}')
 
 
 if __name__ == '__main__':

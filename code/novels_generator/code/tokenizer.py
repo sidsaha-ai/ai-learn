@@ -2,7 +2,7 @@
 This is the tokenizer class that we will use to train a BPE tokenizer on our data and then use it to feed to the neural net.
 """
 
-from novels_generator.code.constants import SpecialTokens
+from novels_generator.code.constants import SpecialTokens, Hyperparamters
 from tokenizers import Tokenizer
 from tokenizers.models import BPE
 from tokenizers.pre_tokenizers import Whitespace
@@ -44,3 +44,19 @@ class BPETokenizer:
         Method to return the encoding of the passed text based on the tokenizer.
         """
         return self.tokenizer.encode(text)
+
+    def encode_into_sequences(self, text: str, context_length: int = Hyperparamters.CONTEXT_LENGTH) -> list:
+        """
+        Method to encode the text into sequences of the context length.
+        """
+        encoded = self.tokenizer.encode(text)
+
+        sequences = []
+        for ix in range(0, len(encoded.ids), context_length):
+            s = encoded.ids[ix:ix + context_length]
+            if len(s) < context_length:
+                # pad if smaller than context length
+                s += [self.tokenizer.token_to_id(SpecialTokens.PAD)] * (context_length - len(s))
+            sequences.append(s)
+
+        return sequences
