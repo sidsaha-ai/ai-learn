@@ -48,6 +48,9 @@ from novels_generator.code.tokenizer import BPETokenizer
 
 
 def read_train_books() -> dict[str, str]:
+    """
+    Read all the training books.
+    """
     books_data: dict[str, str] = {}  # name vs content
 
     path = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -66,10 +69,14 @@ def read_train_books() -> dict[str, str]:
             continue
 
         books_data[f] = book_content
-    
+
     return books_data
 
+
 def read_test_book() -> tuple[str, str]:
+    """
+    Read a test book.
+    """
     path = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
     path = os.path.join(path, 'data')
     path = os.path.join(path, 'test')
@@ -87,38 +94,27 @@ def read_test_book() -> tuple[str, str]:
 
         return book_name, book_content
 
+
 def build_tokenizers(books_data: dict[str, str]) -> dict[str, BPETokenizer]:
     """
     Builds tokenizers of different vocab sizes.
     """
     res = {}
-    
+
     vocab_sizes: list = [10000, 15000, 20000, 30000, 40000, 50000, 60000, 80000, 100000]
     for size in vocab_sizes:
         t = BPETokenizer()
         t.train(books_data.values(), vocab_size=size)
-        
+
         res[size] = t
 
     return res
 
-def plot_vocab_size_vs_num_tokens(data: dict) -> None:
-    x = list(data.keys())
-    book_names = list(data.get(x[0]).keys())
 
-    for name in book_names:
-        num_tokens = [
-            len(d.get(name).tokens) for _, d in data.items()
-        ]
-        plt.plot(x, num_tokens, label=name)
-    
-    plt.xlabel('Vocab size')
-    plt.ylabel('Num tokens')
-    plt.title('Num tokens vs Vocab sizes')
-    plt.legend()
-    plt.show()
-
-def plot_unknown_tokens(tokenizers: dict) -> None:
+def expt_unknown_tokens(tokenizers: dict) -> None:
+    """
+    Runs the experiment on number of unknown tokens.
+    """
     x = []
     num_unknown_tokens = []
 
@@ -140,6 +136,9 @@ def plot_unknown_tokens(tokenizers: dict) -> None:
 
 
 def expt_token_count(tokenizers: dict[str, BPETokenizer], books_data: dict[str, str]) -> None:
+    """
+    Runs the experiment for token count.
+    """
     data: dict = {}
 
     for tokenizer_size, tokenizer in tokenizers.items():
@@ -148,18 +147,34 @@ def expt_token_count(tokenizers: dict[str, BPETokenizer], books_data: dict[str, 
         for book_name, book_content in books_data.items():
             encoded_book_content = tokenizer.encode(book_content)
             current_data[book_name] = encoded_book_content
-        
+
         data[tokenizer_size] = current_data
-    
-    # visualization in multiple ways
-    plot_vocab_size_vs_num_tokens(data)
-    plot_unknown_tokens(tokenizers)
-    
+
+    x = list(data.keys())
+    book_names = list(data.get(x[0]).keys())
+
+    for name in book_names:
+        num_tokens = [
+            len(d.get(name).tokens) for _, d in data.items()
+        ]
+        plt.plot(x, num_tokens, label=name)
+
+    plt.xlabel('Vocab size')
+    plt.ylabel('Num tokens')
+    plt.title('Num tokens vs Vocab sizes')
+    plt.legend()
+    plt.show()
+
+
 def main():
+    """
+    The main function where the execution starts.
+    """
     books_data: dict[str, str] = read_train_books()
     tokenizers: dict[str, BPETokenizer] = build_tokenizers(books_data)
 
     expt_token_count(tokenizers, books_data)
+    expt_unknown_tokens(tokenizers)
 
 
 if __name__ == '__main__':
