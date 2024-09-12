@@ -23,7 +23,7 @@ def main(book_name: str):
             continue
 
         filepath = os.path.join(path, f)
-        
+
         reader = EPubReader()
         print(f'=== Book {f} ===')
         reader.debug_chapter_names(filepath)
