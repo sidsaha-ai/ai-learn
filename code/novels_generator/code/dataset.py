@@ -2,14 +2,14 @@
 This is the Dataset class that contains the entire training dataset.
 """
 
-from torch.utils.data import Dataset
 import os
 
-from novels_generator.code.tokenizer import BPETokenizer
-from novels_generator.code.epub_reader import EPubReader
-
 import torch
+from novels_generator.code.epub_reader import EPubReader
+from novels_generator.code.tokenizer import BPETokenizer
 from torch import Tensor
+from torch.utils.data import Dataset
+
 
 class BooksDataset(Dataset):
 

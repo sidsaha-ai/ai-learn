@@ -2,10 +2,12 @@
 This script is for testing Dataset.
 """
 
-from novels_generator.code.dataset import BooksDataset
-from novels_generator.code.tokenizer import BPETokenizer
-from novels_generator.code.epub_reader import EPubReader
 import os
+
+from novels_generator.code.dataset import BooksDataset
+from novels_generator.code.epub_reader import EPubReader
+from novels_generator.code.tokenizer import BPETokenizer
+
 
 def read_books() -> list:
     """

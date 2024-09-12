@@ -1,12 +1,13 @@
 """
 This contains a class that reads an ePub book.
 """
+import warnings
+
 import bs4
 import ebooklib
 from ebooklib import epub
 from novels_generator.code.constants import SpecialTokens
 
-import warnings
 warnings.filterwarnings('ignore')
 
 
