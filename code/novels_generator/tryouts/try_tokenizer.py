@@ -44,7 +44,13 @@ def main():
 
     print()
 
-    output = tokenizer.encode('My name is Siddharth Saha!')
+    output = tokenizer.encode('She thought to herself how much she wanted him, even though he gets on her nerves.')
+    print(output.tokens)
+    print(output.ids)
+
+    print()
+    
+    output = tokenizer.encode("Hi, I'm Sid, the owner of this project.")
     print(output.tokens)
     print(output.ids)
 
