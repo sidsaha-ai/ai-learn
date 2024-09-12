@@ -135,10 +135,7 @@ def expt_unknown_tokens(tokenizers: dict) -> None:
     plt.show()
 
 
-def expt_token_count(tokenizers: dict[int, BPETokenizer], books_data: dict[str, str]) -> None:
-    """
-    Runs the experiment for token count.
-    """
+def _encode_books(tokenizers: dict[int, BPETokenizer], books_data: dict[str, str]) -> dict:
     data: dict = {}
 
     for tokenizer_size, tokenizer in tokenizers.items():
@@ -149,6 +146,15 @@ def expt_token_count(tokenizers: dict[int, BPETokenizer], books_data: dict[str, 
             current_data[book_name] = encoded_book_content
 
         data[tokenizer_size] = current_data
+    
+    return data
+
+
+def expt_token_count(tokenizers: dict[int, BPETokenizer], books_data: dict[str, str]) -> None:
+    """
+    Runs the experiment for token count.
+    """
+    data: dict = _encode_books(tokenizers, books_data)
 
     x = list(data.keys())
     book_names = list(data.get(x[0]).keys())
@@ -170,16 +176,7 @@ def expt_token_diversity(tokenizers: dict[int, BPETokenizer], books_data: dict[s
     """
     Runs the experiment to view token diversity for each book.
     """
-    data: dict = {}
-
-    for tokenizer_size, tokenizer in tokenizers.items():
-        current_data: dict = {}
-
-        for book_name, book_content in books_data.items():
-            encoded_book_content = tokenizer.encode(book_content)
-            current_data[book_name] = encoded_book_content
-
-        data[tokenizer_size] = current_data
+    data: dict = _encode_books(tokenizers, books_data)
 
     x = list(data.keys())
     book_names = list(data.get(x[0]).keys())
