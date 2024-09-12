@@ -48,7 +48,7 @@ from novels_generator.code.tokenizer import BPETokenizer
 from novels_generator.code.constants import SpecialTokens
 
 
-def read_books() -> dict[str, str]:
+def read_train_books() -> dict[str, str]:
     books_data: dict[str, str] = {}  # name vs content
 
     path = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -69,6 +69,24 @@ def read_books() -> dict[str, str]:
         books_data[f] = book_content
     
     return books_data
+
+def read_test_book() -> tuple[str, str]:
+    path = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+    path = os.path.join(path, 'data')
+    path = os.path.join(path, 'test')
+
+    reader = EPubReader()
+
+    for book_name in os.listdir(path):
+        if not book_name.endswith('.epub'):
+            continue
+
+        filepath = os.path.join(path, book_name)
+        book_content = reader.read(filepath)
+        if not book_content:
+            continue
+
+        return book_name, book_content
 
 def build_tokenizers(books_data: dict[str, str]) -> dict[str, BPETokenizer]:
     """
@@ -101,15 +119,25 @@ def plot_vocab_size_vs_num_tokens(data: dict) -> None:
     plt.legend()
     plt.show()
 
-def plot_unknown_tokens(data: dict) -> None:
-    x = list(data.keys())
-    book_names = list(data.get(x[0]).keys())
+def plot_unknown_tokens(tokenizers: dict) -> None:
+    x = []
+    num_unknown_tokens = []
 
-    for name in book_names:
-        num_unknown_tokens = [
-            d.get(name).tokens.count(SpecialTokens.UNKNOWN) for _, d in data.items()
-        ]
-        print(f'{name} : {num_unknown_tokens}')
+    book_name, book_content = read_test_book()
+
+    for vocab_size, tokenizer in tokenizers.items():
+        encoded_book = tokenizer.encode(book_content)
+        x.append(vocab_size)
+        num_unknown_tokens.append(
+            list(encoded_book.tokens).count(SpecialTokens.UNKNOWN),
+        )
+
+    plt.plot(x, num_unknown_tokens, label=book_name)
+    plt.xlabel('Vocab size')
+    plt.ylabel('Num unknown tokens')
+    plt.title('Num unknown tokens vs Vocab size')
+    plt.legend()
+    plt.show()
 
 
 def expt_token_count(tokenizers: dict[str, BPETokenizer], books_data: dict[str, str]) -> None:
@@ -126,10 +154,10 @@ def expt_token_count(tokenizers: dict[str, BPETokenizer], books_data: dict[str, 
     
     # visualization in multiple ways
     plot_vocab_size_vs_num_tokens(data)
-    plot_unknown_tokens(data)
+    plot_unknown_tokens(tokenizers)
     
 def main():
-    books_data: dict[str, str] = read_books()
+    books_data: dict[str, str] = read_train_books()
     tokenizers: dict[str, BPETokenizer] = build_tokenizers(books_data)
 
     expt_token_count(tokenizers, books_data)
