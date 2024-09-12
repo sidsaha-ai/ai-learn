@@ -213,8 +213,8 @@ def main():
 
 if __name__ == '__main__':
     main()
-
-"""
+    # pylint: disable=pointless-string-statement
+    """
     Experiment Results
     ==================
     From the results, it looks like 30K - 40K is a good enough vocab size. The number of tokens,
@@ -223,3 +223,4 @@ if __name__ == '__main__':
 
     Result - Let's use a vocab size of 40K.
     """
+    # pylint: enable=all
