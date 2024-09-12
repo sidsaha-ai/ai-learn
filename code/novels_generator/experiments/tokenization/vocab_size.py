@@ -208,6 +208,18 @@ def main():
     expt_unknown_tokens(tokenizers)
     expt_token_diversity(tokenizers, books_data)
 
+    # Check out the viz. in the results folder.
+
 
 if __name__ == '__main__':
     main()
+
+"""
+    Experiment Results
+    ==================
+    From the results, it looks like 30K - 40K is a good enough vocab size. The number of tokens,
+    the number of unique tokens, and the number of unknown tokens all stabilize after this threshold. So,
+    there is no point in increased the complexity by going beyond a vocab size of 40K.
+
+    Result - Let's use a vocab size of 40K.
+    """
