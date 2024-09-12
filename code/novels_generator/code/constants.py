@@ -17,6 +17,7 @@ class SpecialTokens:
     UNKNOWN = '<UNK>'
     PAD = '<PAD>'
 
+
 class Hyperparamters:
     """
     Hyperparameters used by the model.

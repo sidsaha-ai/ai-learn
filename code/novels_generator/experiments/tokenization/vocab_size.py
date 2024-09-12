@@ -146,7 +146,7 @@ def _encode_books(tokenizers: dict[int, BPETokenizer], books_data: dict[str, str
             current_data[book_name] = encoded_book_content
 
         data[tokenizer_size] = current_data
-    
+
     return data
 
 
