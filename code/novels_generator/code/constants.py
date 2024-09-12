@@ -23,3 +23,4 @@ class Hyperparamters:
     Hyperparameters used by the model.
     """
     CONTEXT_LENGTH = 512   # the block size that must be provided as an input to the model.
+    BATCH_SIZE = 32  # the mini-batch size
