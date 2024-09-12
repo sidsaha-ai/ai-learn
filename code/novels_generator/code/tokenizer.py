@@ -17,20 +17,23 @@ class BPETokenizer:
     def __init__(self) -> None:
         self.tokenizer = Tokenizer(BPE(unk_token=SpecialTokens.UNKNOWN))
 
-    def train(self, book_texts: list) -> None:
+    def train(self, book_texts: list, vocab_size: int = 30000) -> None:
         """
         Method to take the entire texts of the books and train the tokenizer.
         """
         # pre-process
         self.tokenizer.pre_tokenizer = Whitespace()
 
-        trainer = BpeTrainer(special_tokens=[
-            SpecialTokens.UNKNOWN,
-            SpecialTokens.CHAPTER_NAME_START, SpecialTokens.CHAPTER_NAME_END,
-            SpecialTokens.HEADING_START, SpecialTokens.HEADING_END,
-            SpecialTokens.PARAGRAPH_START, SpecialTokens.PARAGRAPH_END,
-            SpecialTokens.END,
-        ])
+        trainer = BpeTrainer(
+            special_tokens=[
+                SpecialTokens.UNKNOWN,
+                SpecialTokens.CHAPTER_NAME_START, SpecialTokens.CHAPTER_NAME_END,
+                SpecialTokens.HEADING_START, SpecialTokens.HEADING_END,
+                SpecialTokens.PARAGRAPH_START, SpecialTokens.PARAGRAPH_END,
+                SpecialTokens.END,
+            ],
+            vocab_size=vocab_size,
+        )
 
         # train
         self.tokenizer.train_from_iterator(book_texts, trainer=trainer)
