@@ -7,6 +7,7 @@ import os
 
 from novels_generator.code.epub_reader import EPubReader
 
+
 def main(book_name: str):
     """
     The main method that does the execution.
