@@ -42,10 +42,9 @@ diversity and utility of the vocabulary.
 import os
 
 from matplotlib import pyplot as plt
+from novels_generator.code.constants import SpecialTokens
 from novels_generator.code.epub_reader import EPubReader
 from novels_generator.code.tokenizer import BPETokenizer
-
-from novels_generator.code.constants import SpecialTokens
 
 
 def read_train_books() -> dict[str, str]:
