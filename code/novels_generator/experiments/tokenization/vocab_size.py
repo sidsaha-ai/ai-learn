@@ -39,10 +39,12 @@ diversity and utility of the vocabulary.
 5. UNK Token Positioning - Analyze where `<UNK>` tokens occur to determine if any critical or common terms are being represented by `<UNK>`.
 """
 
-from novels_generator.code.tokenizer import BPETokenizer
-from matplotlib import pyplot as plt
 import os
+
+from matplotlib import pyplot as plt
 from novels_generator.code.epub_reader import EPubReader
+from novels_generator.code.tokenizer import BPETokenizer
+
 
 def read_books() -> dict[str, str]:
     books_data: dict[str, str] = {}  # name vs content
