@@ -95,7 +95,7 @@ def read_test_book() -> tuple[str, str]:
         return book_name, book_content
 
 
-def build_tokenizers(books_data: dict[str, str]) -> dict[str, BPETokenizer]:
+def build_tokenizers(books_data: dict[str, str]) -> dict[int, BPETokenizer]:
     """
     Builds tokenizers of different vocab sizes.
     """
@@ -135,7 +135,7 @@ def expt_unknown_tokens(tokenizers: dict) -> None:
     plt.show()
 
 
-def expt_token_count(tokenizers: dict[str, BPETokenizer], books_data: dict[str, str]) -> None:
+def expt_token_count(tokenizers: dict[int, BPETokenizer], books_data: dict[str, str]) -> None:
     """
     Runs the experiment for token count.
     """
@@ -166,15 +166,46 @@ def expt_token_count(tokenizers: dict[str, BPETokenizer], books_data: dict[str, 
     plt.show()
 
 
+def expt_token_diversity(tokenizers: dict[int, BPETokenizer], books_data: dict[str, str]) -> None:
+    """
+    Runs the experiment to view token diversity for each book.
+    """
+    data: dict = {}
+
+    for tokenizer_size, tokenizer in tokenizers.items():
+        current_data: dict = {}
+
+        for book_name, book_content in books_data.items():
+            encoded_book_content = tokenizer.encode(book_content)
+            current_data[book_name] = encoded_book_content
+
+        data[tokenizer_size] = current_data
+
+    x = list(data.keys())
+    book_names = list(data.get(x[0]).keys())
+
+    for name in book_names:
+        num_unique_tokens = [
+            len(list(set(list(d.get(name).tokens)))) for _, d in data.items()
+        ]
+        plt.plot(x, num_unique_tokens, label=name)
+
+    plt.xlabel('Vocab size')
+    plt.ylabel('Num unique tokens')
+    plt.title('Num tokens vs Vocab sizes')
+    plt.legend()
+    plt.show()
+
 def main():
     """
     The main function where the execution starts.
     """
     books_data: dict[str, str] = read_train_books()
-    tokenizers: dict[str, BPETokenizer] = build_tokenizers(books_data)
+    tokenizers: dict[int, BPETokenizer] = build_tokenizers(books_data)
 
     expt_token_count(tokenizers, books_data)
     expt_unknown_tokens(tokenizers)
+    expt_token_diversity(tokenizers, books_data)
 
 
 if __name__ == '__main__':
