@@ -10,7 +10,7 @@ intact, but might increase model complexity.
 Experiment Setup
 ================
 
-Let's try with the following vocab sizes - 
+Let's try with the following vocab sizes -
 
 1. (Small) 10K tokens
 2. (Small) 15K tokens
@@ -27,7 +27,7 @@ What to measure
 
 For each vocab size, let's measure the following:
 
-1. Token Count - Pick one book (and potentially a subset of books), encode, and compare the number of tokens in 
+1. Token Count - Pick one book (and potentially a subset of books), encode, and compare the number of tokens in
 each setup to gauge compression efficiency.
 
 2. UNK Token Count - Pick the same book, encode, and compare the number of `<UNK>` tokens in each setup to see how well
