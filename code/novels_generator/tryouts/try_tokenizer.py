@@ -44,7 +44,7 @@ def main():
 
     print()
 
-    output = tokenizer.encode('She thought to herself how much she wanted him, even though he gets on her nerves.')
+    output = tokenizer.encode('She thought to herself how much she wanted him, even though he gets on her nerves. She wanted to take him!')
     print(output.tokens)
     print(output.ids)
 
