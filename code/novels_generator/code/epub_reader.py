@@ -60,7 +60,21 @@ class EPubReader:
                 span.unwrap()
 
         return str(soup)
+    
+    def is_chapter(self, item) -> bool:
+        if item.get_type() != ebooklib.ITEM_DOCUMENT or not item.is_chapter():
+            return False
+        
+        item_name: str = item.get_name()
 
+        if 'chapter' in item_name.lower():
+            return True
+        
+        if 'part' in item_name.lower():
+            return True
+        
+        return False
+    
     def read(self, epub_filepath: str) -> str:
         """
         Accpets a file path of an epub file, reads, and returns its content.
@@ -69,7 +83,7 @@ class EPubReader:
         text: list = []
 
         for item in book.get_items():
-            if item.get_type() == ebooklib.ITEM_DOCUMENT and item.is_chapter() and 'chapter' in item.get_name().lower():
+            if self.is_chapter(item):
                 content = item.get_content().decode('utf-8')
                 content = self.preprocess(content)
                 content = self.clean(content)
@@ -79,3 +93,25 @@ class EPubReader:
         text.append(SpecialTokens.END)
 
         return ''.join(text)
+
+    ## Debug methods
+    def debug_chapter_names(self, epub_filepath: str) -> str:
+        """
+        Prints all the chapter names that will be considered while reading.
+        """
+        book = epub.read_epub(epub_filepath)
+        chapter_names = []
+        non_chapter_names = []
+
+        for item in book.get_items():
+            if self.is_chapter(item):
+                chapter_names.append(item.get_name())
+            else:
+                non_chapter_names.append(item.get_name())
+        
+        print('--- Chapter Names ---')
+        for chapter in chapter_names:
+            print(chapter)
+        print('--- Non Chapter Names ---')
+        for non_chapter in non_chapter_names:
+            print(non_chapter)

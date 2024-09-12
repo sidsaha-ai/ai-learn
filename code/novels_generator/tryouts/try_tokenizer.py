@@ -35,6 +35,7 @@ def main():
     The main method to start the execution of this script.
     """
     book_texts: list = read_books()
+    print(f'Num Books: {len(book_texts)}')
 
     tokenizer = BPETokenizer()
     tokenizer.train(book_texts)
