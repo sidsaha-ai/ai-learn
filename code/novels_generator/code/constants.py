@@ -15,3 +15,4 @@ class SpecialTokens:
     PARAGRAPH_END = '<PARA_END>'
     END = '<END>'
     UNKNOWN = '<UNK>'
+    PAD = '<PAD>'

@@ -31,6 +31,7 @@ class BPETokenizer:
                 SpecialTokens.HEADING_START, SpecialTokens.HEADING_END,
                 SpecialTokens.PARAGRAPH_START, SpecialTokens.PARAGRAPH_END,
                 SpecialTokens.END,
+                SpecialTokens.PAD,
             ],
             vocab_size=vocab_size,
         )
