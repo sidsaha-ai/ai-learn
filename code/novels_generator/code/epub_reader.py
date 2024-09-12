@@ -6,6 +6,9 @@ import ebooklib
 from ebooklib import epub
 from novels_generator.code.constants import SpecialTokens
 
+import warnings
+warnings.filterwarnings('ignore')
+
 
 class EPubReader:
     """
