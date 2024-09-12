@@ -192,7 +192,7 @@ def expt_token_diversity(tokenizers: dict[int, BPETokenizer], books_data: dict[s
 
     plt.xlabel('Vocab size')
     plt.ylabel('Num unique tokens')
-    plt.title('Num tokens vs Vocab sizes')
+    plt.title('Num unique tokens vs Vocab sizes')
     plt.legend()
     plt.show()
 
