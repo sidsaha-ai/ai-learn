@@ -2,7 +2,7 @@
 This is the tokenizer class that we will use to train a BPE tokenizer on our data and then use it to feed to the neural net.
 """
 
-from novels_generator.code.constants import SpecialTokens, Hyperparamters
+from novels_generator.code.constants import Hyperparamters, SpecialTokens
 from tokenizers import Tokenizer
 from tokenizers.models import BPE
 from tokenizers.pre_tokenizers import Whitespace
