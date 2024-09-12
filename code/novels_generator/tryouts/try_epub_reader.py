@@ -13,6 +13,7 @@ def main(book_name: str):
     """
     path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     path = os.path.join(path, 'data')
+    path = os.path.join(path, 'train')
 
     files = [f for f in os.listdir(path) if f.endswith('.epub')]
     filepath = os.path.join(path, files[0])

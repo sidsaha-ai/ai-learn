@@ -13,6 +13,7 @@ def read_books() -> list:
     """
     path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     path = os.path.join(path, 'data')
+    path = os.path.join(path, 'train')
 
     book_texts: list = []
     reader = EPubReader()

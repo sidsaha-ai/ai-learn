@@ -30,7 +30,7 @@ For each vocab size, let's measure the following:
 1. Token Count - Pick one book (and potentially a subset of books), encode, and compare the number of tokens in
 each setup to gauge compression efficiency.
 
-2. UNK Token Count - Pick the same book, encode, and compare the number of `<UNK>` tokens in each setup to see how well
+2. UNK Token Count - Pick an unknown book (not used in training), encode, and compare the number of `<UNK>` tokens in each setup to see how well
 rare words are handled.
 
 3. Token Diversity - After each encoding, count how many distinct tokens were used in the book to understand the
@@ -45,12 +45,15 @@ from matplotlib import pyplot as plt
 from novels_generator.code.epub_reader import EPubReader
 from novels_generator.code.tokenizer import BPETokenizer
 
+from novels_generator.code.constants import SpecialTokens
+
 
 def read_books() -> dict[str, str]:
     books_data: dict[str, str] = {}  # name vs content
 
     path = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
     path = os.path.join(path, 'data')
+    path = os.path.join(path, 'train')
 
     reader = EPubReader()
 
@@ -88,7 +91,7 @@ def plot_vocab_size_vs_num_tokens(data: dict) -> None:
 
     for name in book_names:
         num_tokens = [
-            d.get(name) for _, d in data.items()
+            len(d.get(name).tokens) for _, d in data.items()
         ]
         plt.plot(x, num_tokens, label=name)
     
@@ -98,6 +101,17 @@ def plot_vocab_size_vs_num_tokens(data: dict) -> None:
     plt.legend()
     plt.show()
 
+def plot_unknown_tokens(data: dict) -> None:
+    x = list(data.keys())
+    book_names = list(data.get(x[0]).keys())
+
+    for name in book_names:
+        num_unknown_tokens = [
+            d.get(name).tokens.count(SpecialTokens.UNKNOWN) for _, d in data.items()
+        ]
+        print(f'{name} : {num_unknown_tokens}')
+
+
 def expt_token_count(tokenizers: dict[str, BPETokenizer], books_data: dict[str, str]) -> None:
     data: dict = {}
 
@@ -106,13 +120,13 @@ def expt_token_count(tokenizers: dict[str, BPETokenizer], books_data: dict[str, 
 
         for book_name, book_content in books_data.items():
             encoded_book_content = tokenizer.encode(book_content)
-            num_tokens = len(encoded_book_content.tokens)
-            current_data[book_name] = num_tokens
+            current_data[book_name] = encoded_book_content
         
         data[tokenizer_size] = current_data
     
     # visualization in multiple ways
     plot_vocab_size_vs_num_tokens(data)
+    plot_unknown_tokens(data)
     
 def main():
     books_data: dict[str, str] = read_books()
