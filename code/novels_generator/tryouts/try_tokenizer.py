@@ -49,7 +49,7 @@ def main():
     print(output.ids)
 
     print()
-    
+
     output = tokenizer.encode("Hi, I'm Sid, the owner of this project.")
     print(output.tokens)
     print(output.ids)

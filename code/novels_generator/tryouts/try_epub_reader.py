@@ -35,5 +35,5 @@ if __name__ == '__main__':
         '--book_name', type=str,
     )
     args = parser.parse_args()
-    
+
     main(args.book_name)
