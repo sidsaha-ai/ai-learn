@@ -12,6 +12,9 @@ from torch.utils.data import Dataset
 
 
 class BooksDataset(Dataset):
+    """
+    This is the books dataset.
+    """
 
     def __init__(self, tokenizer: BPETokenizer) -> None:
         """
@@ -24,7 +27,7 @@ class BooksDataset(Dataset):
         # the full dataset. the dataset is an array of all the tokens of all the training books
         self.data = []
         self.build()
-    
+
     def read_books(self) -> list:
         """
         Reads all the training books and returns the contents in a list.
@@ -46,8 +49,11 @@ class BooksDataset(Dataset):
                 books.append(book_content)
 
         return books
-    
+
     def build(self) -> None:
+        """
+        Builds the internals of this dataset.
+        """
         # read all the books
         books = self.read_books()
 
@@ -55,13 +61,13 @@ class BooksDataset(Dataset):
         for book_content in books:
             sequences = self.tokenizer.encode_into_sequences(book_content)
             self.data += sequences
-        
+
     def __len__(self) -> int:
         """
         Returns the total length of the data.
         """
         return len(self.data)
-    
+
     def __getitem__(self, ix) -> Tensor:
         """
         Returns the item at passed index from the data.

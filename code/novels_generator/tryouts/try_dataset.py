@@ -31,7 +31,11 @@ def read_books() -> list:
 
     return book_texts
 
+
 def main():
+    """
+    The main method to execute this script.
+    """
     tokenizer = BPETokenizer()
     tokenizer.train(read_books())
 
