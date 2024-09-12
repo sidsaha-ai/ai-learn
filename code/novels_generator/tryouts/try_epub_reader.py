@@ -1,12 +1,13 @@
 """
 Contains test script to try the EPUB reader.
 """
+import argparse
 import os
 
 from novels_generator.code.epub_reader import EPubReader
 
 
-def main():
+def main(book_name: str):
     """
     Main method where the execution starts for this script.
     """
@@ -15,6 +16,11 @@ def main():
 
     files = [f for f in os.listdir(path) if f.endswith('.epub')]
     filepath = os.path.join(path, files[0])
+    if book_name:
+        for f in files:
+            if book_name in f:
+                filepath = os.path.join(path, f)
+                break
 
     reader = EPubReader()
     book_text = reader.read(filepath)
@@ -24,4 +30,10 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        '--book_name', type=str,
+    )
+    args = parser.parse_args()
+    
+    main(args.book_name)
