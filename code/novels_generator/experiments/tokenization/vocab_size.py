@@ -196,6 +196,7 @@ def expt_token_diversity(tokenizers: dict[int, BPETokenizer], books_data: dict[s
     plt.legend()
     plt.show()
 
+
 def main():
     """
     The main function where the execution starts.
