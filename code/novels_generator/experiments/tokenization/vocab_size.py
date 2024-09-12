@@ -40,7 +40,7 @@ diversity and utility of the vocabulary.
 """
 
 from novels_generator.code.tokenizer import BPETokenizer
-from matplotlib import pyplot
+from matplotlib import pyplot as plt
 import os
 from novels_generator.code.epub_reader import EPubReader
 
@@ -76,29 +76,41 @@ def build_tokenizers(books_data: dict[str, str]) -> dict[str, BPETokenizer]:
         t = BPETokenizer()
         t.train(books_data.values(), vocab_size=size)
         
-        res[f'size_{size}'] = t
+        res[size] = t
 
     return res
+
+def plot_vocab_size_vs_num_tokens(data: dict) -> None:
+    x = list(data.keys())
+    book_names = list(data.get(x[0]).keys())
+
+    for name in book_names:
+        num_tokens = [
+            d.get(name) for _, d in data.items()
+        ]
+        plt.plot(x, num_tokens, label=name)
+    
+    plt.xlabel('Vocab size')
+    plt.ylabel('Num tokens')
+    plt.title('Num tokens vs Vocab sizes')
+    plt.legend()
+    plt.show()
 
 def expt_token_count(tokenizers: dict[str, BPETokenizer], books_data: dict[str, str]) -> None:
     data: dict = {}
 
-    for tokenizer_name, tokenizer in tokenizers.items():
+    for tokenizer_size, tokenizer in tokenizers.items():
         current_data: dict = {}
 
         for book_name, book_content in books_data.items():
-            book_length = len(book_content)
             encoded_book_content = tokenizer.encode(book_content)
             num_tokens = len(encoded_book_content.tokens)
-
-            current_data[book_name] = {
-                'book_length': book_length,
-                'num_tokens': num_tokens,
-            }
+            current_data[book_name] = num_tokens
         
-        data[tokenizer_name] = current_data
+        data[tokenizer_size] = current_data
     
-    print(data)
+    # visualization in multiple ways
+    plot_vocab_size_vs_num_tokens(data)
     
 def main():
     books_data: dict[str, str] = read_books()
