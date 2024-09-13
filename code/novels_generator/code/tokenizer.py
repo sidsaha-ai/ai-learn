@@ -17,7 +17,7 @@ class BPETokenizer:
     def __init__(self) -> None:
         self.tokenizer = Tokenizer(BPE(unk_token=SpecialTokens.UNKNOWN))
 
-    def train(self, book_texts: list, vocab_size: int = 40000) -> None:
+    def train(self, book_texts: list, vocab_size: int = Hyperparamters.VOCAB_SIZE) -> None:
         """
         Method to take the entire texts of the books and train the tokenizer.
         """
