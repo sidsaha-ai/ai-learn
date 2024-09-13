@@ -90,11 +90,15 @@ class EPubReader:
         text: list = []
 
         for item in book.get_items():
-            if self.is_chapter(item):
-                content = item.get_content().decode('utf-8')
-                content = self.preprocess(content)
-                content = self.clean(content)
-                text.append(content)
+            try:
+                if self.is_chapter(item):
+                    content = item.get_content().decode('utf-8')
+                    content = self.preprocess(content)
+                    content = self.clean(content)
+                    text.append(content)
+            except Exception as e:
+                print(f'Exception in {item.get_name()} : e')
+                continue
 
         # token to mark novel end
         text.append(SpecialTokens.END)
