@@ -99,7 +99,7 @@ def main(num_epochs: int) -> None:
             # backward pass
             loss.backward()
             optimizer.step()
-        
+
         print(f'Epoch: {epoch}, Loss: {loss.item():.4f}')
 
 
