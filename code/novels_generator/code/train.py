@@ -6,6 +6,7 @@ import argparse
 import os
 
 import torch
+from matplotlib import pyplot as plt
 from novels_generator.code.constants import Hyperparamters
 from novels_generator.code.dataset import BooksDataset
 from novels_generator.code.epub_reader import EPubReader
@@ -87,6 +88,22 @@ def validate(dataloader, model, loss_fn) -> float:
     return loss
 
 
+def plot_losses(train_losses: list, val_losses: list) -> None:
+    """
+    Function that plots losses.
+    """
+    x = [ix + 1 for ix, _ in enumerate(train_losses)]
+
+    plt.plot(x, train_losses, label='Train Loss')
+    plt.plot(x, val_losses, label='Val Loss')
+
+    plt.xlabel('Epoch')
+    plt.ylabel('Loss')
+    plt.title('Train and Val losses')
+    plt.legend()
+    plt.show()
+
+
 def main(num_epochs: int) -> None:  # pylint: disable=too-many-locals
     """
     The main function that trains the model.
@@ -115,6 +132,9 @@ def main(num_epochs: int) -> None:  # pylint: disable=too-many-locals
     num_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
     print(f'Num Parameters: {num_params:,}')
 
+    train_losses = []
+    val_losses = []
+
     for epoch in range(num_epochs):
         # run all the batches in one epoch
         for batch in books_train_dataloader:
@@ -138,7 +158,14 @@ def main(num_epochs: int) -> None:  # pylint: disable=too-many-locals
             optimizer.step()
 
         val_loss = validate(books_val_dataloader, model, loss_fn)
+
+        train_losses.append(loss.item())
+        val_losses.append(val_loss)
+
         print(f'Epoch: {epoch}, Train Loss: {loss.item():.4f}, Val Loss: {val_loss:.4f}')
+
+    # plot the losses
+    plot_losses(train_losses, val_losses)
 
 
 if __name__ == '__main__':
