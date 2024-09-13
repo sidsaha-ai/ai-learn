@@ -6,12 +6,12 @@ import argparse
 import os
 
 import torch
-import torch.nn as nn
 from novels_generator.code.constants import Hyperparamters
 from novels_generator.code.dataset import BooksDataset
 from novels_generator.code.epub_reader import EPubReader
 from novels_generator.code.model import BooksTransformerModel
 from novels_generator.code.tokenizer import BPETokenizer
+from torch import nn
 from torch.utils.data import DataLoader
 
 
@@ -34,7 +34,7 @@ def read_train_books() -> list:
         content = reader.read(filepath)
         if not content:
             continue
-        
+
         book_contents.append(content)
 
     return book_contents
@@ -55,6 +55,7 @@ def make_dataset() -> BooksDataset:
     books_dataset = BooksDataset(tokenizer)
 
     return books_dataset
+
 
 def main(num_epochs: int) -> None:
     """
@@ -83,13 +84,13 @@ def main(num_epochs: int) -> None:
             targets = batch[:, 1:]  # all but the first token
 
             logits = model(inputs)
-            
+
             # reshape for the loss function
             logits = logits.view(-1, Hyperparamters.VOCAB_SIZE) if logits.is_contiguous() else logits.reshape(-1, Hyperparamters.VOCAB_SIZE)
             targets = targets.view(-1) if targets.is_contiguous() else targets.reshape(-1)
 
             loss = loss_fn(logits, targets)
-            print(f'Epoch: {epoch}, Loss: {loss:.4f}')
+            print(f'Epoch: {epoch}, Num: {num}, Loss: {loss.item():.4f}')
 
             # backward pass
             loss.backward()

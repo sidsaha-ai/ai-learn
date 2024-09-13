@@ -3,8 +3,8 @@ This describes the Transformer model that will be used for training.
 """
 
 import torch
-import torch.nn as nn
 from novels_generator.code.constants import Hyperparamters
+from torch import nn
 
 
 class BooksTransformerModel(nn.Module):
@@ -12,7 +12,7 @@ class BooksTransformerModel(nn.Module):
     The transformer model for training on the novels.
     """
 
-    def __init__(
+    def __init__(  # pylint: disable=too-many-arguments
             self,
             vocab_size: int = Hyperparamters.VOCAB_SIZE,
             embedding_dim: int = Hyperparamters.EMBEDDING_SIZE,
@@ -31,13 +31,13 @@ class BooksTransformerModel(nn.Module):
 
         # transformer layers
         encoder_layer = nn.TransformerEncoderLayer(
-            d_model=embedding_dim, nhead=num_heads, dim_feedforward=ff_dim, 
+            d_model=embedding_dim, nhead=num_heads, dim_feedforward=ff_dim,
         )
         self.transformer_encoder = nn.TransformerEncoder(encoder_layer, num_layers=num_layers)
 
         # final linear layer
         self.output_layer = nn.Linear(embedding_dim, vocab_size)
-    
+
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         """
         The forward pass of the network.
