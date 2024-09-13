@@ -40,7 +40,7 @@ def read_train_books() -> list:
     return book_contents
 
 
-def make_dataset() -> BooksDataset:
+def make_dataset(folder: str) -> BooksDataset:
     """
     Function to create a dataset of all the training books.
     """
@@ -52,18 +52,51 @@ def make_dataset() -> BooksDataset:
     tokenizer.train(book_contents)
 
     # create the dataset
-    books_dataset = BooksDataset(tokenizer)
+    books_dataset = BooksDataset(tokenizer, folder)
 
     return books_dataset
+
+@torch.no_grad()
+def validate(dataloader, model, loss_fn) -> float:
+    device = torch.device('mps') if torch.has_mps else torch.device('cpu')
+
+    model.to(device)
+    model.eval()  # set the model to eval so that no gradient tracking happens
+
+    loss = 0
+
+    for batch in dataloader:
+        batch = batch.to(device)
+        inputs = batch[:, :-1]
+        targets = batch[:, 1:]
+
+        logits = model(inputs)
+
+        logits = logits.view(-1, Hyperparamters.VOCAB_SIZE) if logits.is_contiguous() else logits.reshape(-1, Hyperparamters.VOCAB_SIZE)
+        targets = targets.view(-1) if targets.is_contiguous() else targets.reshape(-1)
+
+        loss += loss_fn(logits, targets).item()
+    
+    loss = loss / len(dataloader)
+    model.train()  # set it back to training mode
+
+    return loss
 
 
 def main(num_epochs: int) -> None:
     """
     The main function that trains the model.
     """
-    books_dataset: BooksDataset = make_dataset()
-    books_dataloader: DataLoader = DataLoader(
-        books_dataset, batch_size=Hyperparamters.BATCH_SIZE, shuffle=True,
+    # make training dataset
+    books_train_dataset: BooksDataset = make_dataset('train')
+    books_train_dataloader: DataLoader = DataLoader(
+        books_train_dataset, batch_size=Hyperparamters.BATCH_SIZE, shuffle=True,
+    )
+
+    # validation dataset
+    books_val_dataset: BooksDataset = make_dataset('val')
+    books_val_dataloader: DataLoader = DataLoader(
+        books_val_dataset, batch_size=Hyperparamters.BATCH_SIZE, shuffle=True,
     )
 
     model = BooksTransformerModel()                             # create a model
@@ -80,7 +113,7 @@ def main(num_epochs: int) -> None:
 
     for epoch in range(num_epochs):
         # run all the batches in one epoch
-        for batch in books_dataloader:
+        for batch in books_train_dataloader:
             batch = batch.to(device)
             optimizer.zero_grad()
 
@@ -100,7 +133,8 @@ def main(num_epochs: int) -> None:
             loss.backward()
             optimizer.step()
 
-        print(f'Epoch: {epoch}, Loss: {loss.item():.4f}')
+        val_loss = validate(books_val_dataloader, model, loss_fn)
+        print(f'Epoch: {epoch}, Train Loss: {loss.item():.4f}, Val Loss: {val_loss:.4f}')
 
 
 if __name__ == '__main__':

@@ -16,13 +16,14 @@ class BooksDataset(Dataset):
     This is the books dataset.
     """
 
-    def __init__(self, tokenizer: BPETokenizer) -> None:
+    def __init__(self, tokenizer: BPETokenizer, folder: str = 'train') -> None:
         """
         The constructor takes the already trained tokenizer.
         """
         super().__init__()
 
         self.tokenizer = tokenizer
+        self.folder = folder
 
         # the full dataset. the dataset is an array of all the tokens of all the training books
         self.data = []
@@ -37,7 +38,7 @@ class BooksDataset(Dataset):
 
         path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
         path = os.path.join(path, 'data')
-        path = os.path.join(path, 'train')
+        path = os.path.join(path, self.folder)
 
         for f in os.listdir(path):
             if not f.endswith('.epub'):
