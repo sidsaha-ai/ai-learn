@@ -56,8 +56,12 @@ def make_dataset(folder: str) -> BooksDataset:
 
     return books_dataset
 
+
 @torch.no_grad()
 def validate(dataloader, model, loss_fn) -> float:
+    """
+    Find the validation loss.
+    """
     device = torch.device('mps') if torch.has_mps else torch.device('cpu')
 
     model.to(device)
@@ -76,14 +80,14 @@ def validate(dataloader, model, loss_fn) -> float:
         targets = targets.view(-1) if targets.is_contiguous() else targets.reshape(-1)
 
         loss += loss_fn(logits, targets).item()
-    
+
     loss = loss / len(dataloader)
     model.train()  # set it back to training mode
 
     return loss
 
 
-def main(num_epochs: int) -> None:
+def main(num_epochs: int) -> None:  # pylint: disable=too-many-locals
     """
     The main function that trains the model.
     """
