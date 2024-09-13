@@ -4,7 +4,6 @@ This describes the Transformer model that will be used for training.
 
 import torch
 import torch.nn as nn
-
 from novels_generator.code.constants import Hyperparamters
 
 

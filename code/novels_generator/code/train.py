@@ -3,18 +3,16 @@ This file trains the neural network.
 """
 
 import argparse
+import os
+
 import torch
 import torch.nn as nn
-
 from novels_generator.code.constants import Hyperparamters
 from novels_generator.code.dataset import BooksDataset
 from novels_generator.code.epub_reader import EPubReader
-from novels_generator.code.tokenizer import BPETokenizer
 from novels_generator.code.model import BooksTransformerModel
-
+from novels_generator.code.tokenizer import BPETokenizer
 from torch.utils.data import DataLoader
-
-import os
 
 
 def read_train_books() -> list:
