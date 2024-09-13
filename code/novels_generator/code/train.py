@@ -41,23 +41,6 @@ def read_train_books() -> list:
     return book_contents
 
 
-def make_dataset(folder: str) -> BooksDataset:
-    """
-    Function to create a dataset of all the training books.
-    """
-    # read all the books
-    book_contents = read_train_books()
-
-    # train a tokenizer
-    tokenizer = BPETokenizer()
-    tokenizer.train(book_contents)
-
-    # create the dataset
-    books_dataset = BooksDataset(tokenizer, folder)
-
-    return books_dataset
-
-
 @torch.no_grad()
 def validate(dataloader, model, loss_fn) -> float:
     """
@@ -108,14 +91,19 @@ def main(num_epochs: int) -> None:  # pylint: disable=too-many-locals
     """
     The main function that trains the model.
     """
+    # train tokenizer
+    tokenizer = BPETokenizer()
+    book_contents = read_train_books()
+    tokenizer.train(book_contents)
+
     # make training dataset
-    books_train_dataset: BooksDataset = make_dataset('train')
+    books_train_dataset: BooksDataset = BooksDataset(tokenizer, 'train')
     books_train_dataloader: DataLoader = DataLoader(
         books_train_dataset, batch_size=Hyperparamters.BATCH_SIZE, shuffle=True,
     )
 
     # validation dataset
-    books_val_dataset: BooksDataset = make_dataset('val')
+    books_val_dataset: BooksDataset = BooksDataset(tokenizer, 'val')
     books_val_dataloader: DataLoader = DataLoader(
         books_val_dataset, batch_size=Hyperparamters.BATCH_SIZE, shuffle=True,
     )
@@ -136,6 +124,8 @@ def main(num_epochs: int) -> None:  # pylint: disable=too-many-locals
     val_losses = []
 
     for epoch in range(num_epochs):
+        train_loss_sum = 0
+        
         # run all the batches in one epoch
         for batch in books_train_dataloader:
             batch = batch.to(device)
@@ -152,17 +142,19 @@ def main(num_epochs: int) -> None:  # pylint: disable=too-many-locals
             targets = targets.view(-1) if targets.is_contiguous() else targets.reshape(-1)
 
             loss = loss_fn(logits, targets)
+            train_loss_sum += loss.item()
 
             # backward pass
             loss.backward()
             optimizer.step()
 
+        avg_train_loss = train_loss_sum / len(books_train_dataloader)
         val_loss = validate(books_val_dataloader, model, loss_fn)
 
-        train_losses.append(loss.item())
+        train_losses.append(avg_train_loss)
         val_losses.append(val_loss)
 
-        print(f'Epoch: {epoch}, Train Loss: {loss.item():.4f}, Val Loss: {val_loss:.4f}')
+        print(f'Epoch: {epoch}, Train Loss: {avg_train_loss:.4f}, Val Loss: {val_loss:.4f}')
 
     # plot the losses
     plot_losses(train_losses, val_losses)
