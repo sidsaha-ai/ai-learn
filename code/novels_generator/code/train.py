@@ -66,17 +66,23 @@ def main(num_epochs: int) -> None:
         books_dataset, batch_size=Hyperparamters.BATCH_SIZE, shuffle=True,
     )
 
-    model = BooksTransformerModel()                           # create a model
-    loss_fn = nn.CrossEntropyLoss()                           # the loss function
-    optimizer = torch.optim.SGD(model.parameters(), lr=1e-4)  # the optimizer
+    model = BooksTransformerModel()                             # create a model
+    loss_fn = nn.CrossEntropyLoss()                             # the loss function
+    optimizer = torch.optim.AdamW(model.parameters(), lr=1e-4)  # the optimizer
 
-    num = 0
+    device = torch.device('mps') if torch.has_mps else torch.device('cpu')
+    # device = torch.device('cpu')
+
+    model = model.to(device)
+
+    num_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
+    print(f'Num Parameters: {num_params:,}')
+
     for epoch in range(num_epochs):
         # run all the batches in one epoch
         for batch in books_dataloader:
             num += 1
-            if num >= 5:
-                break
+            batch = batch.to(device)
             optimizer.zero_grad()
 
             # forward pass
@@ -90,11 +96,12 @@ def main(num_epochs: int) -> None:
             targets = targets.view(-1) if targets.is_contiguous() else targets.reshape(-1)
 
             loss = loss_fn(logits, targets)
-            print(f'Epoch: {epoch}, Num: {num}, Loss: {loss.item():.4f}')
 
             # backward pass
             loss.backward()
             optimizer.step()
+        
+        print(f'Epoch: {epoch}, Loss: {loss:.4f}')
 
 
 if __name__ == '__main__':
