@@ -97,7 +97,7 @@ class EPubReader:
                     content = self.clean(content)
                     text.append(content)
             except Exception as e:
-                print(f'Exception in {item.get_name()} : e')
+                print(f'Exception in {item.get_name()} : {e}')
                 continue
 
         # token to mark novel end
