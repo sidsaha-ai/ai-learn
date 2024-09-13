@@ -81,7 +81,6 @@ def main(num_epochs: int) -> None:
     for epoch in range(num_epochs):
         # run all the batches in one epoch
         for batch in books_dataloader:
-            num += 1
             batch = batch.to(device)
             optimizer.zero_grad()
 
@@ -101,7 +100,7 @@ def main(num_epochs: int) -> None:
             loss.backward()
             optimizer.step()
         
-        print(f'Epoch: {epoch}, Loss: {loss:.4f}')
+        print(f'Epoch: {epoch}, Loss: {loss.item():.4f}')
 
 
 if __name__ == '__main__':
