@@ -125,7 +125,7 @@ def main(num_epochs: int) -> None:  # pylint: disable=too-many-locals
 
     for epoch in range(num_epochs):
         train_loss_sum = 0
-        
+
         # run all the batches in one epoch
         for batch in books_train_dataloader:
             batch = batch.to(device)
