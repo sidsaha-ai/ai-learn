@@ -12,6 +12,7 @@ from novels_generator.code.epub_reader import EPubReader
 from novels_generator.code.model import BooksTransformerModel
 from novels_generator.code.tokenizer import BPETokenizer
 from torch import nn
+from torch.optim import lr_scheduler
 from torch.utils.data import DataLoader
 
 
@@ -86,7 +87,7 @@ def plot_losses(train_losses: list, val_losses: list) -> None:
     plt.show()
 
 
-def train_model(num_epochs: int) -> None:  # pylint: disable=too-many-locals
+def train_model(num_epochs: int, lr_scheduler_type=None, lr_lambda=None) -> None:  # pylint: disable=too-many-locals
     """
     The train function that trains the model.
     """
@@ -110,6 +111,12 @@ def train_model(num_epochs: int) -> None:  # pylint: disable=too-many-locals
     model = BooksTransformerModel()                             # create a model
     loss_fn = nn.CrossEntropyLoss()                             # the loss function
     optimizer = torch.optim.AdamW(model.parameters(), lr=1e-4)  # the optimizer
+    scheduler = None                                            # the learning rate scheduler
+
+    if lr_scheduler_type:
+        match lr_scheduler_type:
+            case 'LambdaLR':
+                scheduler = lr_scheduler.LambdaLR(optimizer, lr_lambda)
 
     device = torch.device('mps') if torch.has_mps else torch.device('cpu')
     # device = torch.device('cpu')
@@ -154,7 +161,14 @@ def train_model(num_epochs: int) -> None:  # pylint: disable=too-many-locals
         val_losses.append(val_loss)
 
         loss_diff = val_loss - avg_train_loss
-        print(f'Epoch: {epoch}, Train Loss: {avg_train_loss:.4f}, Val Loss: {val_loss:.4f}, Loss Diff: {loss_diff:.4f}')
+
+        # get current learning rate
+        current_lr = [group['lr'] for group in optimizer.param_groups][0]
+        print(f'Epoch: {epoch}, LR: {current_lr}, Train Loss: {avg_train_loss:.4f}, Val Loss: {val_loss:.4f}, Loss Diff: {loss_diff:.4f}')
+
+        # step the scheduler if available
+        if scheduler:
+            scheduler.step()
 
     # plot the losses
     plot_losses(train_losses, val_losses)

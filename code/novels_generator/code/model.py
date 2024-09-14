@@ -14,14 +14,21 @@ class BooksTransformerModel(nn.Module):
 
     def __init__(  # pylint: disable=too-many-arguments
             self,
-            vocab_size: int = Hyperparamters.VOCAB_SIZE,
-            embedding_dim: int = Hyperparamters.EMBEDDING_SIZE,
-            num_heads: int = Hyperparamters.SELF_ATTENTION_HEADS,
-            num_layers: int = Hyperparamters.NUM_LAYERS,
-            ff_dim: int = Hyperparamters.FEED_FORWARD_SIZE,
-            context_length: int = Hyperparamters.CONTEXT_LENGTH,
+            vocab_size: int = None,
+            embedding_dim: int = None,
+            num_heads: int = None,
+            num_layers: int = None,
+            ff_dim: int = None,
+            context_length: int = None,
     ) -> None:
         super().__init__()
+
+        vocab_size = vocab_size or Hyperparamters.VOCAB_SIZE
+        embedding_dim = embedding_dim or Hyperparamters.EMBEDDING_SIZE
+        num_heads = num_heads or Hyperparamters.SELF_ATTENTION_HEADS
+        num_layers = num_layers or Hyperparamters.NUM_LAYERS
+        ff_dim = ff_dim or Hyperparamters.FEED_FORWARD_SIZE
+        context_length = context_length or Hyperparamters.CONTEXT_LENGTH
 
         # token embeddings
         self.embeddings = nn.Embedding(vocab_size, embedding_dim)
