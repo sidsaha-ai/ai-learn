@@ -10,3 +10,6 @@ numpy
 scikit-learn
 matplotlib
 pytest
+ebooklib
+beautifulsoup4
+tokenizers
