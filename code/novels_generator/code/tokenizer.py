@@ -17,10 +17,12 @@ class BPETokenizer:
     def __init__(self) -> None:
         self.tokenizer = Tokenizer(BPE(unk_token=SpecialTokens.UNKNOWN))
 
-    def train(self, book_texts: list, vocab_size: int = Hyperparamters.VOCAB_SIZE) -> None:
+    def train(self, book_texts: list, vocab_size: int = None) -> None:
         """
         Method to take the entire texts of the books and train the tokenizer.
         """
+        vocab_size = vocab_size or Hyperparamters.VOCAB_SIZE
+
         # pre-process
         self.tokenizer.pre_tokenizer = Whitespace()
 
@@ -45,10 +47,12 @@ class BPETokenizer:
         """
         return self.tokenizer.encode(text)
 
-    def encode_into_sequences(self, text: str, context_length: int = Hyperparamters.CONTEXT_LENGTH) -> list:
+    def encode_into_sequences(self, text: str, context_length: int = None) -> list:
         """
         Method to encode the text into sequences of the context length.
         """
+        context_length = context_length or Hyperparamters.CONTEXT_LENGTH
+
         encoded = self.tokenizer.encode(text)
 
         sequences = []
