@@ -153,7 +153,8 @@ def train_model(num_epochs: int) -> None:  # pylint: disable=too-many-locals
         train_losses.append(avg_train_loss)
         val_losses.append(val_loss)
 
-        print(f'Epoch: {epoch}, Train Loss: {avg_train_loss:.4f}, Val Loss: {val_loss:.4f}')
+        loss_diff = val_loss - avg_train_loss
+        print(f'Epoch: {epoch}, Train Loss: {avg_train_loss:.4f}, Val Loss: {val_loss:.4f}, Loss Diff: {loss_diff:.4f}')
 
     # plot the losses
     plot_losses(train_losses, val_losses)
