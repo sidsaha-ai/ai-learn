@@ -2,7 +2,6 @@
 This file trains the neural network.
 """
 
-import argparse
 import os
 
 import torch
