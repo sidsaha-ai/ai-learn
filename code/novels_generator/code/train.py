@@ -87,9 +87,9 @@ def plot_losses(train_losses: list, val_losses: list) -> None:
     plt.show()
 
 
-def main(num_epochs: int) -> None:  # pylint: disable=too-many-locals
+def train_model(num_epochs: int) -> None:  # pylint: disable=too-many-locals
     """
-    The main function that trains the model.
+    The train function that trains the model.
     """
     # train tokenizer
     tokenizer = BPETokenizer()
@@ -158,15 +158,3 @@ def main(num_epochs: int) -> None:  # pylint: disable=too-many-locals
 
     # plot the losses
     plot_losses(train_losses, val_losses)
-
-
-if __name__ == '__main__':
-    parser = argparse.ArgumentParser()
-    parser.add_argument(
-        '--num_epochs', required=True, type=int,
-    )
-    args = parser.parse_args()
-
-    main(
-        args.num_epochs,
-    )
