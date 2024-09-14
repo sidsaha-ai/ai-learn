@@ -87,7 +87,7 @@ def plot_losses(train_losses: list, val_losses: list) -> None:
     plt.show()
 
 
-def train_model(num_epochs: int, lr_scheduler_type = None, lr_lambda = None) -> None:  # pylint: disable=too-many-locals
+def train_model(num_epochs: int, lr_scheduler_type=None, lr_lambda=None) -> None:  # pylint: disable=too-many-locals
     """
     The train function that trains the model.
     """
@@ -161,7 +161,7 @@ def train_model(num_epochs: int, lr_scheduler_type = None, lr_lambda = None) -> 
         val_losses.append(val_loss)
 
         loss_diff = val_loss - avg_train_loss
-        
+
         # get current learning rate
         current_lr = [group['lr'] for group in optimizer.param_groups][0]
         print(f'Epoch: {epoch}, LR: {current_lr}, Train Loss: {avg_train_loss:.4f}, Val Loss: {val_loss:.4f}, Loss Diff: {loss_diff:.4f}')

@@ -22,9 +22,9 @@ def main():
     Hyperparamters.FEED_FORWARD_SIZE = 1024
 
     # define the learning rate scheduler
-
-    # for 25 epochs, train usually (1e-4) and then muliply learning rate by 1e-2 to make it 1e-6
-    lr_lambda = lambda epoch: 1 if epoch < 1 else 1e-2
+    def lr_lambda(epoch):
+        # for 25 epochs, train usually (1e-4) and then muliply learning rate by 1e-2 to make it 1e-6
+        return 1 if epoch < 1 else 1e-2
 
     train.train_model(
         num_epochs,
