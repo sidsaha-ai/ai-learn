@@ -12,9 +12,8 @@ from novels_generator.code.epub_reader import EPubReader
 from novels_generator.code.model import BooksTransformerModel
 from novels_generator.code.tokenizer import BPETokenizer
 from torch import nn
-from torch.utils.data import DataLoader
-
 from torch.optim import lr_scheduler
+from torch.utils.data import DataLoader
 
 
 def read_train_books() -> list:
