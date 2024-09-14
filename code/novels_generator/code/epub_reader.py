@@ -21,10 +21,11 @@ class EPubReader:
         Processes the content of each chapter.
         """
         soup = bs4.BeautifulSoup(content, features='xml')
-        section = soup.body.section
+
+        body = soup.body.section if soup.body.section else soup.body
         text_parts = []
 
-        for el in section.contents:
+        for el in body.contents:
             if isinstance(el, bs4.element.Tag):
                 match el.name:
                     # add special tokens so that tokenizers can handle them.
@@ -98,7 +99,7 @@ class EPubReader:
                     text.append(content)
             except Exception as e:
                 print(f'Exception in {item.get_name()} : {e}')
-                continue
+                break
 
         # token to mark novel end
         text.append(SpecialTokens.END)
