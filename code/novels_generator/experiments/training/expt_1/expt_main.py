@@ -14,6 +14,7 @@ NUM_EPOCHS = 20
 
 from novels_generator.code import train
 
+
 def main():
     """
     The main function to start experiment execution.
