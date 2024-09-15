@@ -5,6 +5,7 @@ This script runs the experiment.
 from novels_generator.code import train
 from novels_generator.code.constants import Hyperparamters
 
+
 def main():
     """
     The main function to run this experiment.
