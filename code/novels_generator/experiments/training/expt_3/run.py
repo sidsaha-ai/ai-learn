@@ -1,8 +1,14 @@
+"""
+This script is to run the experiment.
+"""
 from novels_generator.code import train
 from novels_generator.code.constants import Hyperparamters
 
 
 def main():
+    """
+    The main function to runs the experiment.
+    """
     num_epochs: int = 20
 
     # hyperparameters
@@ -17,7 +23,7 @@ def main():
     def lr_lambda(epoch):
         # for 20 epochs, train usally and then at 1e-5
         return 1 if epoch < 20 else 1e-1
-    
+
     train.train_model(
         num_epochs, lr_scheduler_type='lambda', lr_lambda=lr_lambda,
     )
