@@ -15,7 +15,7 @@ As per the above, we will use the following hyperparameters for this experiment 
 - **Embeddings Size**: 512
 - **Number of self-attention heads**: 8
 - **Number of transformer block layers**: 4
-- **Feed Forward Size**: 1024
+- **Feed Forward Size**: 2048
 - **Number of epochs to train**: 30
 
 ## Results

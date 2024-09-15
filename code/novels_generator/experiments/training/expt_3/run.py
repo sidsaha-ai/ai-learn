@@ -25,7 +25,7 @@ def main():
         return 1 if epoch < 20 else 1e-1
 
     train.train_model(
-        num_epochs, lr_scheduler_type='lambda', lr_lambda=lr_lambda,
+        num_epochs, lr_scheduler_type='LambdaLR', lr_lambda=lr_lambda,
     )
 
 
