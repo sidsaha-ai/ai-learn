@@ -24,15 +24,12 @@ def main():
     def lr_lambda(epoch):
         # base LR in the model is 1e-4.
         # first 5 epochs, LR should be 1e-5. next 20 epochs, LR should be 1e-4. last 5 epochs, LR should be 1e-6.
-        res = 1
         if epoch < 5:
-            res = 1e-1
-        elif epoch < 20:
-            res = 1
-        else:
-            res = 1e-2
-        return res
-    
+            return 1e-1
+        if epoch < 20:
+            return 1
+        return 1e-2
+
     train.train_model(
         num_epochs, lr_scheduler_type='LambdaLR', lr_lambda=lr_lambda,
     )
