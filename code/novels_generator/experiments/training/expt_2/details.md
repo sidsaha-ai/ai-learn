@@ -16,7 +16,7 @@ As per the above, we will use the following hyperparameters for this experiment 
 - **Number of self-attention heads**: 6
 - **Number of transformer block layers**: 4
 - **Feed Forward Size**: 1024
-- **Number of epochs to train**: 20
+- **Number of epochs to train**: 30
 
 
 We are hoping to get a better training and validation loss as compared to experiment #1.
