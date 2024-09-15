@@ -13,7 +13,7 @@ As per the above, we will use the following hyperparameters for this experiment 
 - **Batch Size**: 32
 - **Vocab Size**: 40000
 - **Embeddings Size**: 256
-- **Number of self-attention heads**: 6
+- **Number of self-attention heads**: 8
 - **Number of transformer block layers**: 4
 - **Feed Forward Size**: 1024
 - **Number of epochs to train**: 30

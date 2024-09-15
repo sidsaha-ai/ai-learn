@@ -23,26 +23,27 @@ As per the above, we will use the following hyperparameters for this experiment 
 ## Results
 Below are the training and validation losses.
 ```
-Epoch: 0, LR: 0.0001, Train Loss: 7.6822, Val Loss: 6.4531, Loss Diff: -1.2291
-Epoch: 1, LR: 0.0001, Train Loss: 5.8468, Val Loss: 6.0024, Loss Diff: 0.1556
-Epoch: 2, LR: 0.0001, Train Loss: 5.4775, Val Loss: 5.7764, Loss Diff: 0.2989
-Epoch: 3, LR: 0.0001, Train Loss: 5.2644, Val Loss: 5.6449, Loss Diff: 0.3804
-Epoch: 4, LR: 0.0001, Train Loss: 5.1313, Val Loss: 5.5793, Loss Diff: 0.4480
-Epoch: 5, LR: 0.0001, Train Loss: 5.0400, Val Loss: 5.5575, Loss Diff: 0.5175
-Epoch: 6, LR: 0.0001, Train Loss: 4.9684, Val Loss: 5.4862, Loss Diff: 0.5178
-Epoch: 7, LR: 0.0001, Train Loss: 4.9094, Val Loss: 5.4766, Loss Diff: 0.5673
-Epoch: 8, LR: 0.0001, Train Loss: 4.8589, Val Loss: 5.4644, Loss Diff: 0.6055
-Epoch: 9, LR: 0.0001, Train Loss: 4.8131, Val Loss: 5.4375, Loss Diff: 0.6244
-Epoch: 10, LR: 0.0001, Train Loss: 4.7709, Val Loss: 5.4157, Loss Diff: 0.6448
-Epoch: 11, LR: 0.0001, Train Loss: 4.7322, Val Loss: 5.4069, Loss Diff: 0.6747
-Epoch: 12, LR: 0.0001, Train Loss: 4.6969, Val Loss: 5.4224, Loss Diff: 0.7255
-Epoch: 13, LR: 0.0001, Train Loss: 4.6634, Val Loss: 5.4074, Loss Diff: 0.7439
-Epoch: 14, LR: 0.0001, Train Loss: 4.6311, Val Loss: 5.4033, Loss Diff: 0.7721
-Epoch: 15, LR: 0.0001, Train Loss: 4.5998, Val Loss: 5.4104, Loss Diff: 0.8106
-Epoch: 16, LR: 0.0001, Train Loss: 4.5699, Val Loss: 5.3911, Loss Diff: 0.8212
-Epoch: 17, LR: 0.0001, Train Loss: 4.5407, Val Loss: 5.4041, Loss Diff: 0.8633
-Epoch: 18, LR: 0.0001, Train Loss: 4.5140, Val Loss: 5.4044, Loss Diff: 0.8904
-Epoch: 19, LR: 0.0001, Train Loss: 4.4860, Val Loss: 5.4186, Loss Diff: 0.9326
+Num Parameters: 25,813,056
+Epoch: 0, LR: 0.0001, Train Loss: 7.6700, Val Loss: 6.4625, Loss Diff: -1.2075
+Epoch: 1, LR: 0.0001, Train Loss: 5.8287, Val Loss: 5.9913, Loss Diff: 0.1626
+Epoch: 2, LR: 0.0001, Train Loss: 5.4533, Val Loss: 5.7724, Loss Diff: 0.3191
+Epoch: 3, LR: 0.0001, Train Loss: 5.2507, Val Loss: 5.6326, Loss Diff: 0.3819
+Epoch: 4, LR: 0.0001, Train Loss: 5.1236, Val Loss: 5.5818, Loss Diff: 0.4582
+Epoch: 5, LR: 0.0001, Train Loss: 5.0353, Val Loss: 5.5334, Loss Diff: 0.4981
+Epoch: 6, LR: 0.0001, Train Loss: 4.9651, Val Loss: 5.5196, Loss Diff: 0.5545
+Epoch: 7, LR: 0.0001, Train Loss: 4.9085, Val Loss: 5.4637, Loss Diff: 0.5552
+Epoch: 8, LR: 0.0001, Train Loss: 4.8573, Val Loss: 5.4478, Loss Diff: 0.5905
+Epoch: 9, LR: 0.0001, Train Loss: 4.8125, Val Loss: 5.4287, Loss Diff: 0.6162
+Epoch: 10, LR: 0.0001, Train Loss: 4.7715, Val Loss: 5.4402, Loss Diff: 0.6687
+Epoch: 11, LR: 0.0001, Train Loss: 4.7328, Val Loss: 5.4295, Loss Diff: 0.6968
+Epoch: 12, LR: 0.0001, Train Loss: 4.6970, Val Loss: 5.4015, Loss Diff: 0.7045
+Epoch: 13, LR: 0.0001, Train Loss: 4.6641, Val Loss: 5.4136, Loss Diff: 0.7495
+Epoch: 14, LR: 0.0001, Train Loss: 4.6315, Val Loss: 5.4091, Loss Diff: 0.7776
+Epoch: 15, LR: 1e-05, Train Loss: 4.5861, Val Loss: 5.4064, Loss Diff: 0.8203
+Epoch: 16, LR: 1e-05, Train Loss: 4.5799, Val Loss: 5.4138, Loss Diff: 0.8338
+Epoch: 17, LR: 1e-05, Train Loss: 4.5765, Val Loss: 5.4020, Loss Diff: 0.8254
+Epoch: 18, LR: 1e-05, Train Loss: 4.5724, Val Loss: 5.4080, Loss Diff: 0.8355
+Epoch: 19, LR: 1e-05, Train Loss: 4.5687, Val Loss: 5.4037, Loss Diff: 0.8350
 ```
 
 ## Findings
