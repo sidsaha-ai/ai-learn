@@ -29,7 +29,7 @@ def main():
         if epoch < 25:
             return 1
         return 1e-2
-    
+
     train.train_model(
         num_epochs, lr_scheduler_type='LambdaLR', lr_lambda=lr_lambda,
     )
