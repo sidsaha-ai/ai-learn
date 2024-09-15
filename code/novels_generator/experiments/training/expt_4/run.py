@@ -26,7 +26,7 @@ def main():
         # first 5 epochs, LR should be 1e-5. next 20 epochs, LR should be 1e-4. last 5 epochs, LR should be 1e-6.
         if epoch < 5:
             return 1e-1
-        if epoch < 20:
+        if epoch < 25:
             return 1
         return 1e-2
 
