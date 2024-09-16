@@ -18,8 +18,8 @@ def main():
     Hyperparamters.VOCAB_SIZE = 40000
     Hyperparamters.EMBEDDING_SIZE = 512
     Hyperparamters.SELF_ATTENTION_HEADS = 8
-    Hyperparamters.NUM_LAYERS = 4
-    Hyperparamters.FEED_FORWARD_SIZE = 2048
+    Hyperparamters.NUM_LAYERS = 8
+    Hyperparamters.FEED_FORWARD_SIZE = 4096
 
     def lr_lambda(epoch):
         if epoch < 5:
