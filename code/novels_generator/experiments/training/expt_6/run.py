@@ -56,6 +56,7 @@ def main():
     Hyperparamters.NUM_LAYERS = 8
     Hyperparamters.FEED_FORWARD_SIZE = 4096
     Hyperparamters.DROPOUT = 0.3
+    Hyperparamters.LAYER_DROP_PROB = 0.1
 
     train.train_model(
         total_num_epochs, lr_scheduler_type='LambdaLR', lr_lambda=lr_schedule,

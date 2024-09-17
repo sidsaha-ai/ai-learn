@@ -14,3 +14,6 @@ Let's also experiment with learning rate scheduling. Let's do the following thin
 
 #### Dropout
 To bring in a little more regularization, let's increase the dropout to `0.3`.
+
+#### Layer Drop
+To bring in more regularization, probabilitistically drop some layers from the tranformer layers during training. Let's set this probability to `0.1`.
