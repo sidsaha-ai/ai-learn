@@ -27,7 +27,7 @@ def lr_schedule(epoch: int) -> float:
         # learning rate should be 5e-4
         res = 5
 
-    if epoch > constant_lr_epochs:
+    if epoch > (warmup_epochs + constant_lr_epochs):
         # learning rate should be cosine annealing to 1e-6 from 5e-4
         num_cosine_epochs: int = total_num_epochs - warmup_epochs - constant_lr_epochs
         num_elapsed_epochs: int = current_epoch - warmup_epochs - constant_lr_epochs
