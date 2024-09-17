@@ -11,3 +11,6 @@ Let's also experiment with learning rate scheduling. Let's do the following thin
 - Like previous experiments, we will start warming up the learning rate from 1e-5 for the first 5 epochs, but with **cosine annealing**.
 - Then, we will increase the learning rate to 5e-4 (from previously of 1e-4) so that the model can converge a little faster than before.
 - Then, we will use **cosine annealing** to decay the learning rate more smoothly rather than abruptly changing it.
+
+#### Dropout
+To bring in a little more regularization, let's increase the dropout to `0.3`.
