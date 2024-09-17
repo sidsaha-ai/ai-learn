@@ -168,7 +168,9 @@ tomlkit==0.13.0
 torch==2.4.0
     # via -r requirements.in
 tqdm==4.66.5
-    # via huggingface-hub
+    # via
+    #   -r requirements.in
+    #   huggingface-hub
 traitlets==5.14.3
     # via
     #   ipython
