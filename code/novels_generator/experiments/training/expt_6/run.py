@@ -17,7 +17,7 @@ def lr_schedule(epoch: int) -> float:
 
     warmup_epochs: int = 5
     constant_lr_epochs: int = 5
-    total_num_epochs: int = 30
+    total_num_epochs: int = 35
 
     if current_epoch <= warmup_epochs:
         # learning rate should be 1e-5
@@ -45,7 +45,7 @@ def main():
     """
     The main function to run this experiment.
     """
-    total_num_epochs: int = 30
+    total_num_epochs: int = 35
 
     # hyperparameters
     Hyperparamters.CONTEXT_LENGTH = 256
