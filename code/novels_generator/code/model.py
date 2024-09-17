@@ -38,7 +38,7 @@ class BooksTransformerModel(nn.Module):
 
         # transformer layers
         encoder_layer = nn.TransformerEncoderLayer(
-            d_model=embedding_dim, nhead=num_heads, dim_feedforward=ff_dim,
+            d_model=embedding_dim, nhead=num_heads, dim_feedforward=ff_dim, dropout=Hyperparamters.DROPOUT,
         )
         self.transformer_encoder = nn.TransformerEncoder(encoder_layer, num_layers=num_layers)
 
