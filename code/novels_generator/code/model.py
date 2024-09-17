@@ -11,13 +11,13 @@ class LayerDropTransformerEncoderLayer(nn.Module):
     """
     Wrapper class to implement dropping transformer layers during training.
     """
-    
+
     def __init__(self, encoder_layer, drop_prob) -> None:
         super().__init__()
-        
+
         self.encoder_layer = encoder_layer
         self.drop_prob = drop_prob
-    
+
     def forward(self, inputs: torch.Tensor) -> torch.Tensor:
         """
         Skip this layer probabilisitcally during training.
@@ -25,9 +25,9 @@ class LayerDropTransformerEncoderLayer(nn.Module):
         if self.training and torch.rand(1).item() < self.drop_prob:
             # drop this layer
             return inputs
-        else:
-            # apply the layer
-            return self.encoder_layer(inputs)
+
+        # apply the layer
+        return self.encoder_layer(inputs)
 
 
 class BooksTransformerModel(nn.Module):
