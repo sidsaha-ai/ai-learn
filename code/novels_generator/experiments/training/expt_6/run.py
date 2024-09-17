@@ -8,10 +8,44 @@ from novels_generator.code import train
 from novels_generator.code.constants import Hyperparamters
 
 
+def lr_schedule(epoch: int) -> float:
+    """
+    Learning Rate scheduling multiplier.
+    """
+    res = 1
+    current_epoch = epoch + 1
+    
+    warmup_epochs: int = 5
+    constant_lr_epochs: int = 5
+    total_num_epochs: int = 30
+
+    if current_epoch <= warmup_epochs:
+        # learning rate should be 1e-5
+        res = 1e-1
+    
+    if warmup_epochs < current_epoch <= (warmup_epochs + constant_lr_epochs):
+        # learning rate should be 5e-4
+        res = 5
+    
+    if epoch > constant_lr_epochs:
+        # learning rate should be cosine annealing to 1e-6 from 5e-4
+        num_cosine_epochs: int = total_num_epochs - warmup_epochs - constant_lr_epochs
+        num_elapsed_epochs: int = current_epoch - warmup_epochs - constant_lr_epochs
+        min_lr = 1e-6
+        max_lr = 5e-4
+        base_lr = 1e-4
+
+        res = min_lr + 0.5 * (max_lr - min_lr) * (1 + math.cos(math.pi * num_elapsed_epochs / num_cosine_epochs))
+        res = res / base_lr
+
+    return res
+
+
 def main():
     """
     The main function to run this experiment.
     """
+    total_num_epochs: int = 30
 
     # hyperparameters
     Hyperparamters.CONTEXT_LENGTH = 256
@@ -22,32 +56,6 @@ def main():
     Hyperparamters.NUM_LAYERS = 8
     Hyperparamters.FEED_FORWARD_SIZE = 4096
 
-    warmup_epochs: int = 5
-    constant_lr_epochs: int = 5
-    total_num_epochs: int = 30
-
-    def lr_schedule(epoch):
-        current_epoch: int = epoch + 1
-
-        if current_epoch <= warmup_epochs:
-            # learning rate should be 1e-5
-            return 1e-1
-        
-        if warmup_epochs < current_epoch <= (warmup_epochs + constant_lr_epochs):
-            # learning rate should be 5e-4
-            return 5
-        
-        if epoch > constant_lr_epochs:
-            # learning rate should be cosine annealing to 1e-6 from 5e-4
-            num_cosine_epochs: int = total_num_epochs - warmup_epochs - constant_lr_epochs
-            num_elapsed_epochs: int = current_epoch - warmup_epochs - constant_lr_epochs
-            min_lr = 1e-6
-            max_lr = 5e-4
-            initial_lr = 1e-5
-
-            decay = 0.5 * (1 + math.cos(math.pi * num_elapsed_epochs / num_cosine_epochs))
-            return (min_lr + (max_lr - min_lr) * decay) / initial_lr
-    
     train.train_model(
         total_num_epochs, lr_scheduler_type='LambdaLR', lr_lambda=lr_schedule,
     )
