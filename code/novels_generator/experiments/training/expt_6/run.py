@@ -14,7 +14,7 @@ def lr_schedule(epoch: int) -> float:
     """
     res = 1
     current_epoch = epoch + 1
-    
+
     warmup_epochs: int = 5
     constant_lr_epochs: int = 5
     total_num_epochs: int = 30
@@ -22,11 +22,11 @@ def lr_schedule(epoch: int) -> float:
     if current_epoch <= warmup_epochs:
         # learning rate should be 1e-5
         res = 1e-1
-    
+
     if warmup_epochs < current_epoch <= (warmup_epochs + constant_lr_epochs):
         # learning rate should be 5e-4
         res = 5
-    
+
     if epoch > constant_lr_epochs:
         # learning rate should be cosine annealing to 1e-6 from 5e-4
         num_cosine_epochs: int = total_num_epochs - warmup_epochs - constant_lr_epochs
@@ -59,6 +59,7 @@ def main():
     train.train_model(
         total_num_epochs, lr_scheduler_type='LambdaLR', lr_lambda=lr_schedule,
     )
+
 
 if __name__ == '__main__':
     main()
