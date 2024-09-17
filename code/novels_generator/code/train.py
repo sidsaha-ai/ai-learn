@@ -136,7 +136,7 @@ def train_model(num_epochs: int, lr_scheduler_type=None, lr_lambda=None) -> None
         # add a progress bar
         with tqdm(books_train_dataloader, unit='batch', leave=False) as tqdm_dataloader:
             tqdm_dataloader.set_description(f'Epoch {epoch + 1}')
-            
+
             # run all the batches in one epoch
             for batch in tqdm_dataloader:
                 batch = batch.to(device)
