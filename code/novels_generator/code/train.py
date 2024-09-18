@@ -16,6 +16,8 @@ from torch.optim import lr_scheduler
 from torch.utils.data import DataLoader
 from tqdm import tqdm
 
+os.environ['TOKENIZERS_PARALLELISM'] = 'false'
+
 
 def read_train_books() -> list:
     """
@@ -88,7 +90,7 @@ def plot_losses(train_losses: list, val_losses: list) -> None:
     plt.show()
 
 
-def train_model(num_epochs: int, lr_scheduler_type=None, lr_lambda=None) -> None:  # pylint: disable=too-many-locals
+def train_model(num_epochs: int, lr_scheduler_type=None, lr_lambda=None) -> BooksTransformerModel:  # pylint: disable=too-many-locals
     """
     The train function that trains the model.
     """
@@ -178,3 +180,5 @@ def train_model(num_epochs: int, lr_scheduler_type=None, lr_lambda=None) -> None
 
     # plot the losses
     plot_losses(train_losses, val_losses)
+
+    return model

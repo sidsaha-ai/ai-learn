@@ -4,6 +4,9 @@ The script to run this experiment.
 from novels_generator.code import train
 from novels_generator.code.constants import Hyperparamters
 
+import os
+import torch
+
 
 def main():
     """
@@ -20,7 +23,13 @@ def main():
     Hyperparamters.NUM_LAYERS = 2
     Hyperparamters.FEED_FORWARD_SIZE = 1024
 
-    train.train_model(num_epochs)
+    model = train.train_model(num_epochs)
+    path = os.path.join(
+        os.path.dirname(os.path.abspath(__file__)),
+        'model.pth',
+    )
+    torch.save(model.state_dict(), path)
+
 
 
 if __name__ == '__main__':
