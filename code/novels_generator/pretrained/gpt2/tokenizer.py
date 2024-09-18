@@ -1,12 +1,18 @@
+"""
+Implements the tokenizer for finetuning the GPT2 model.
+"""
 from novels_generator.code.constants import SpecialTokens
 from transformers import AutoTokenizer
 
 
 class BooksTokenizer:
+    """
+    The books tokenizer to use for finetuning the model.
+    """
 
     def __init__(self) -> None:
         model_name = 'openai-community/gpt2'
-        
+
         self.tokenizer = AutoTokenizer.from_pretrained(model_name)
         special_tokens = {
             'additional_special_tokens': [
@@ -22,8 +28,11 @@ class BooksTokenizer:
             'pad_token': SpecialTokens.PAD,
         }
         self.tokenizer.add_special_tokens(special_tokens)
-    
+
     def encode_into_sequences(self, book_content: str) -> list:
+        """
+        Takes an entire book and returns context length wise encoded chunks.
+        """
         context_length: int = 1024
         sequences = []
 
@@ -35,11 +44,11 @@ class BooksTokenizer:
                 chunk, return_tensors='pt', max_length=context_length, truncation=True, padding='max_length', add_special_tokens=True,
             )
             tokenized_chunk = tokenized_chunk.get('input_ids')
-            
+
             sequences.append(tokenized_chunk)
             start_ix += context_length
 
         return sequences
-    
+
     def __len__(self) -> int:
         return len(self.tokenizer)

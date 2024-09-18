@@ -25,9 +25,12 @@ def _val_dataloader(tokenizer) -> DataLoader:
 
 
 def main():
-    tokenizer = BooksTokenizer()                                # the tokenizer
-    model = BooksGPTModel(tokenizer)                            # the model
-    optimizer = torch.optim.AdamW(model.model.parameters(), lr=5e-5)  # the optimizer
+    """
+    The main method that will fine tune the model.
+    """
+    tokenizer = BooksTokenizer()                                      # the tokenizer
+    model = BooksGPTModel(tokenizer)                                  # the model
+    optimizer = torch.optim.AdamW(model.parameters(), lr=5e-5)  # the optimizer
 
     num_epochs = 3
     train_dataloader = _train_dataloader(tokenizer)
@@ -35,7 +38,7 @@ def main():
     for epoch in range(num_epochs):
         model.model.train()
         total_loss = 0
-        
+
         with tqdm(train_dataloader, unit='batch', leave=False) as dataloader:
             dataloader.set_description(f'Epoch {epoch}')
             for batch in dataloader:
@@ -44,7 +47,7 @@ def main():
                 loss.backward()  # backprop
                 optimizer.step()
                 total_loss += loss.item()
-        
+
         avg_loss = total_loss / len(train_dataloader)
         print(f'Epoch: {epoch}, Train Loss: {avg_loss:.4f}')
 

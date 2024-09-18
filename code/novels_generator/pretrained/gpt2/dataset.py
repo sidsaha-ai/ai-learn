@@ -1,3 +1,6 @@
+"""
+Implements the dataset for the model to fine tune on.
+"""
 import os
 
 from novels_generator.code.epub_reader import EPubReader
@@ -7,6 +10,9 @@ from torch.utils.data import Dataset
 
 
 class BooksDataset(Dataset):
+    """
+    Defines the books dataset that will be used in finetuning.
+    """
 
     def __init__(self, tokenizer: BooksTokenizer, folder: str = 'train') -> None:
         super().__init__()
@@ -16,8 +22,11 @@ class BooksDataset(Dataset):
 
         self.data = []
         self.build()
-    
+
     def read_books(self) -> list:
+        """
+        Read all the books and returns the book contents.
+        """
         books = []
         reader = EPubReader()
 
@@ -33,17 +42,20 @@ class BooksDataset(Dataset):
             book_content = reader.read(filepath)
             if book_content:
                 books.append(book_content)
-        
+
         return books
-    
+
     def build(self) -> None:
+        """
+        Builds the dataset.
+        """
         # read all books
         books = self.read_books()
 
         for book_content in books:
             sequences = self.tokenizer.encode_into_sequences(book_content)
             self.data += sequences
-    
+
     def __len__(self) -> int:
         return len(self.data)
 
