@@ -2,7 +2,10 @@
 This is the tokenizer class that we will use to train a BPE tokenizer on our data and then use it to feed to the neural net.
 """
 
+import os
+
 from novels_generator.code.constants import Hyperparamters, SpecialTokens
+from novels_generator.code.epub_reader import EPubReader
 from tokenizers import Tokenizer
 from tokenizers.models import BPE
 from tokenizers.pre_tokenizers import Whitespace
@@ -64,3 +67,44 @@ class BPETokenizer:
             sequences.append(s)
 
         return sequences
+
+
+class BPETokenizerUtils:
+    """
+    Utils class to init and train the tokenizer.
+    """
+
+    @classmethod
+    def read_train_books(cls):
+        """
+        Read all the training books.
+        """
+        path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        path = os.path.join(path, 'data')
+        path = os.path.join(path, 'train')
+
+        book_contents = []
+        reader = EPubReader()
+
+        for f in os.listdir(path):
+            if not f.endswith('.epub'):
+                continue
+
+            filepath = os.path.join(path, f)
+            content = reader.read(filepath)
+            if not content:
+                continue
+
+            book_contents.append(content)
+        
+        return book_contents
+
+    @classmethod
+    def init(cls) -> BPETokenizer:
+        """
+        Initializes the tokenizer, trains it, and returns it.
+        """
+        tokenizer = BPETokenizer()
+        tokenizer.train(cls.read_train_books())
+
+        return tokenizer
