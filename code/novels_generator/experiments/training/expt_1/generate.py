@@ -26,7 +26,11 @@ def load_model() -> BooksTransformerModel:
 
     return model
 
+
 def main():
+    """
+    The main function where the execution starts.
+    """
     model = load_model()
     print(model)
 
