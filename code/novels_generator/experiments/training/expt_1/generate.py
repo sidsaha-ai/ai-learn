@@ -62,7 +62,7 @@ def main():
 
     # write to file
     filepath = os.path.join(
-        os.path.dirname(os.path.abspath(__file__)), 'model.pth',
+        os.path.dirname(os.path.abspath(__file__)), 'generated_text.txt',
     )
     GenUtils.write_text_to_file(text, filepath)
 
