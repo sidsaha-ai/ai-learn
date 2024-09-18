@@ -13,12 +13,20 @@ def load_model() -> BooksTransformerModel:
     path = os.path.join(
         os.path.dirname(os.path.abspath(__file__)), 'model.pth',
     )
-    print(f'Model Path: {path}')
 
-    return None
+    print(f'Loading model from {path}...')
+    model = BooksTransformerModel()
+    model.load_state_dict(torch.load(path))
+
+    # set the model to evaluation mode
+    model.eval()
+    print(f'Model loaded from path {path}.')
+
+    return model
 
 def main():
     model = load_model()
+    print(model)
 
 
 if __name__ == '__main__':
