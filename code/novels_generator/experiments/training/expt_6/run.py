@@ -3,12 +3,11 @@ This script runs the experiment.
 """
 
 import math
+import os
 
+import torch
 from novels_generator.code import train
 from novels_generator.code.constants import Hyperparamters
-
-import os
-import torch
 
 
 def lr_schedule(epoch: int) -> float:

@@ -1,11 +1,11 @@
 """
 This script is to run the experiment.
 """
+import os
+
+import torch
 from novels_generator.code import train
 from novels_generator.code.constants import Hyperparamters
-
-import os
-import torch
 
 
 def main():
