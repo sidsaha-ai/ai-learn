@@ -10,6 +10,9 @@ from tqdm import tqdm
 
 
 class GenUtils:
+    """
+    Utility functions for generating text from the models.
+    """
 
     @classmethod
     def load_model(cls, model_path: str) -> BooksTransformerModel:
@@ -17,13 +20,13 @@ class GenUtils:
         Loads the model from the model's path.
         """
         print(f'Loading model from path {model_path}')
-        
+
         model = BooksTransformerModel()
         model.load_state_dict(torch.load(model_path))
 
         print(f'Model loaded from path {model_path}')
         return model
-    
+
     @classmethod
     def generate_text(cls, model: BooksTransformerModel, max_text_length: int, context_length: int) -> str:
         """
@@ -42,14 +45,14 @@ class GenUtils:
             logits = None
             with torch.no_grad():
                 logits = model(inputs)
-            
+
             probs = torch.nn.functional.softmax(logits[:, -1, :], dim=-1)
             next_token = torch.multinomial(probs, num_samples=1, replacement=True).item()
             sequence.append(next_token)
 
             if next_token == end_token:
                 break
-        
+
         text = tokenizer.decode(sequence)
         return text
 
@@ -60,5 +63,5 @@ class GenUtils:
         """
         with open(path, 'w', encoding='utf-8') as f:
             f.write(text)
-        
+
         print(f'Wrote {len(text)} characters to file {path}')

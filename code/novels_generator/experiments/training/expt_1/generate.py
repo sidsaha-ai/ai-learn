@@ -5,12 +5,9 @@ The file generates the book from the model of this experiment.
 import os
 
 import torch
-from novels_generator.code.constants import SpecialTokens
 from novels_generator.code.model import BooksTransformerModel
-from novels_generator.code.tokenizer import BPETokenizer, BPETokenizerUtils
 from novels_generator.experiments.training.expt_1 import hyperparameters
 from novels_generator.experiments.training.generation_utils import GenUtils
-from tqdm import tqdm
 
 
 def load_model() -> BooksTransformerModel:

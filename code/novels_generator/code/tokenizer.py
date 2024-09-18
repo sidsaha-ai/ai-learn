@@ -49,7 +49,7 @@ class BPETokenizer:
         Method to return the encoding of the passed text based on the tokenizer.
         """
         return self.tokenizer.encode(text)
-    
+
     def decode(self, token_ids: list[int]) -> str:
         """
         Decodes the token IDs back to text.
