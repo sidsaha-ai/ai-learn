@@ -5,8 +5,11 @@ The file generates the book from the model of this experiment.
 import os
 
 import torch
+from novels_generator.code.constants import SpecialTokens
 from novels_generator.code.model import BooksTransformerModel
 from novels_generator.code.tokenizer import BPETokenizer, BPETokenizerUtils
+from novels_generator.experiments.training.expt_1 import hyperparameters
+from tqdm import tqdm
 
 
 def load_model() -> BooksTransformerModel:
@@ -32,11 +35,31 @@ def main():
     """
     The main function where the execution starts.
     """
+    hyperparameters.set_hyperparameters()
+
     model = load_model()
     tokenizer: BPETokenizer = BPETokenizerUtils.init()
 
-    print(model)
-    print(tokenizer)
+    start_token = tokenizer.encode(SpecialTokens.START).ids[0]
+    end_token = tokenizer.encode(SpecialTokens.END).ids[0]
+
+    sequence = [start_token]
+
+    for _ in tqdm(range(50000)):
+        inputs = torch.tensor(sequence[-hyperparameters.Hyperparamters.CONTEXT_LENGTH:]).unsqueeze(0)
+
+        logits = None
+        with torch.no_grad():
+            logits = model(inputs)
+
+        next_token = torch.argmax(logits[:, -1, :], dim=-1).item()
+        sequence.append(next_token)
+
+        if next_token == end_token:
+            break
+
+    text = tokenizer.tokenizer.decode(sequence)
+    print(text)
 
 
 if __name__ == '__main__':
