@@ -45,14 +45,15 @@ def main():
 
     sequence = [start_token]
 
-    for _ in tqdm(range(50000)):
+    for _ in tqdm(range(2000)):
         inputs = torch.tensor(sequence[-hyperparameters.Hyperparamters.CONTEXT_LENGTH:]).unsqueeze(0)
 
         logits = None
         with torch.no_grad():
             logits = model(inputs)
 
-        next_token = torch.argmax(logits[:, -1, :], dim=-1).item()
+        probs = torch.nn.functional.softmax(logits[:, -1, :], dim=-1)
+        next_token = torch.multinomial(probs, num_samples=1, replacement=True).item()
         sequence.append(next_token)
 
         if next_token == end_token:
