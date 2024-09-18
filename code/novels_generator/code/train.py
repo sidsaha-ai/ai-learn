@@ -8,38 +8,14 @@ import torch
 from matplotlib import pyplot as plt
 from novels_generator.code.constants import Hyperparamters
 from novels_generator.code.dataset import BooksDataset
-from novels_generator.code.epub_reader import EPubReader
 from novels_generator.code.model import BooksTransformerModel
-from novels_generator.code.tokenizer import BPETokenizer
+from novels_generator.code.tokenizer import BPETokenizer, BPETokenizerUtils
 from torch import nn
 from torch.optim import lr_scheduler
 from torch.utils.data import DataLoader
 from tqdm import tqdm
 
-
-def read_train_books() -> list:
-    """
-    This reads all the training books.
-    """
-    path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    path = os.path.join(path, 'data')
-    path = os.path.join(path, 'train')
-
-    book_contents = []
-    reader = EPubReader()
-
-    for f in os.listdir(path):
-        if not f.endswith('.epub'):
-            continue
-
-        filepath = os.path.join(path, f)
-        content = reader.read(filepath)
-        if not content:
-            continue
-
-        book_contents.append(content)
-
-    return book_contents
+os.environ['TOKENIZERS_PARALLELISM'] = 'false'
 
 
 @torch.no_grad()
@@ -88,14 +64,12 @@ def plot_losses(train_losses: list, val_losses: list) -> None:
     plt.show()
 
 
-def train_model(num_epochs: int, lr_scheduler_type=None, lr_lambda=None) -> None:  # pylint: disable=too-many-locals
+def train_model(num_epochs: int, lr_scheduler_type=None, lr_lambda=None) -> BooksTransformerModel:  # pylint: disable=too-many-locals
     """
     The train function that trains the model.
     """
     # train tokenizer
-    tokenizer = BPETokenizer()
-    book_contents = read_train_books()
-    tokenizer.train(book_contents)
+    tokenizer: BPETokenizer = BPETokenizerUtils.init()
 
     # make training dataset
     books_train_dataset: BooksDataset = BooksDataset(tokenizer, 'train')
@@ -178,3 +152,5 @@ def train_model(num_epochs: int, lr_scheduler_type=None, lr_lambda=None) -> None
 
     # plot the losses
     plot_losses(train_losses, val_losses)
+
+    return model

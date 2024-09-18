@@ -2,8 +2,11 @@
 This script runs the experiment.
 """
 
+import os
+
+import torch
 from novels_generator.code import train
-from novels_generator.code.constants import Hyperparamters
+from novels_generator.experiments.training.expt_5 import hyperparameters
 
 
 def main():
@@ -13,13 +16,7 @@ def main():
     num_epochs: int = 30
 
     # hyperparameters
-    Hyperparamters.CONTEXT_LENGTH = 256
-    Hyperparamters.BATCH_SIZE = 32
-    Hyperparamters.VOCAB_SIZE = 40000
-    Hyperparamters.EMBEDDING_SIZE = 512
-    Hyperparamters.SELF_ATTENTION_HEADS = 8
-    Hyperparamters.NUM_LAYERS = 4
-    Hyperparamters.FEED_FORWARD_SIZE = 2048
+    hyperparameters.set_hyperparameters()
 
     def lr_lambda(epoch):
         # base LR in the model is 1e-4.
@@ -30,9 +27,15 @@ def main():
             return 1
         return 1e-2
 
-    train.train_model(
+    model = train.train_model(
         num_epochs, lr_scheduler_type='LambdaLR', lr_lambda=lr_lambda,
     )
+
+    # save the model
+    path = os.path.join(
+        os.path.dirname(os.path.abspath(__file__)), 'model.pth',
+    )
+    torch.save(model.state_dict(), path)
 
 
 if __name__ == '__main__':
