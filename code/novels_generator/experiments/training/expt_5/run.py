@@ -6,7 +6,6 @@ import os
 
 import torch
 from novels_generator.code import train
-from novels_generator.code.constants import Hyperparamters
 from novels_generator.experiments.training.expt_5 import hyperparameters
 
 
