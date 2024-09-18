@@ -9,6 +9,7 @@ from novels_generator.code.constants import SpecialTokens
 from novels_generator.code.model import BooksTransformerModel
 from novels_generator.code.tokenizer import BPETokenizer, BPETokenizerUtils
 from novels_generator.experiments.training.expt_1 import hyperparameters
+from novels_generator.experiments.training.generation_utils import GenUtils
 from tqdm import tqdm
 
 
@@ -50,32 +51,23 @@ def main():
     """
     hyperparameters.set_hyperparameters()
 
-    model = load_model()
-    tokenizer: BPETokenizer = BPETokenizerUtils.init()
+    # load model
+    model_path = os.path.join(
+        os.path.dirname(os.path.abspath(__file__)), 'model.pth',
+    )
+    model = GenUtils.load_model(model_path)
+    model.eval()  # set model to evaluation model
 
-    start_token = tokenizer.encode(SpecialTokens.START).ids[0]
-    end_token = tokenizer.encode(SpecialTokens.END).ids[0]
+    max_text_length: int = 200000
+    text = GenUtils.generate_text(model, max_text_length, hyperparameters.Hyperparamters.CONTEXT_LENGTH)
 
-    sequence = [start_token]
-    max_text_length = 200000  # the maximum length to be generated
-
-    for _ in tqdm(range(max_text_length), leave=False):
-        inputs = torch.tensor(sequence[-hyperparameters.Hyperparamters.CONTEXT_LENGTH:]).unsqueeze(0)
-
-        logits = None
-        with torch.no_grad():
-            logits = model(inputs)
-
-        probs = torch.nn.functional.softmax(logits[:, -1, :], dim=-1)
-        next_token = torch.multinomial(probs, num_samples=1, replacement=True).item()
-        sequence.append(next_token)
-
-        if next_token == end_token:
-            break
-
-    text = tokenizer.tokenizer.decode(sequence, skip_special_tokens=False)
     print(text)
-    write_to_file(text)
+
+    # write to file
+    filepath = os.path.join(
+        os.path.dirname(os.path.abspath(__file__)), 'model.pth',
+    )
+    GenUtils.write_text_to_file(text, filepath)
 
 
 if __name__ == '__main__':

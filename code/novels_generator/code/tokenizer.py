@@ -49,6 +49,12 @@ class BPETokenizer:
         Method to return the encoding of the passed text based on the tokenizer.
         """
         return self.tokenizer.encode(text)
+    
+    def decode(self, token_ids: list[int]) -> str:
+        """
+        Decodes the token IDs back to text.
+        """
+        return self.tokenizer.decode(token_ids, skip_special_tokens=False)
 
     def encode_into_sequences(self, text: str, context_length: int = None) -> list:
         """
