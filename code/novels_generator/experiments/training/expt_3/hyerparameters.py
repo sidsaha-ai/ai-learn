@@ -4,6 +4,7 @@ This defines the hyperparameters for this experiment.
 
 from novels_generator.code.constants import Hyperparamters
 
+
 def set_hyperparameters() -> None:
     """
     Sets the hyperparameters for this experiment.
