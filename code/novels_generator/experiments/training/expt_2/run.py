@@ -6,7 +6,7 @@ import os
 
 import torch
 from novels_generator.code import train
-from novels_generator.code.constants import Hyperparamters
+from novels_generator.experiments.training.expt_2 import hyperparameters
 
 
 def main():
@@ -16,13 +16,7 @@ def main():
     num_epochs: int = 30
 
     # hyperparameters
-    Hyperparamters.CONTEXT_LENGTH = 128
-    Hyperparamters.BATCH_SIZE = 32
-    Hyperparamters.VOCAB_SIZE = 40000
-    Hyperparamters.EMBEDDING_SIZE = 256
-    Hyperparamters.SELF_ATTENTION_HEADS = 8
-    Hyperparamters.NUM_LAYERS = 4
-    Hyperparamters.FEED_FORWARD_SIZE = 1024
+    hyperparameters.set_hyperparameters()
 
     # define the learning rate scheduler
     def lr_lambda(epoch):

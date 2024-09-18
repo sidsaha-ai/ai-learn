@@ -7,7 +7,7 @@ import os
 
 import torch
 from novels_generator.code import train
-from novels_generator.code.constants import Hyperparamters
+from novels_generator.experiments.training.expt_6 import hyperparameters
 
 
 def lr_schedule(epoch: int) -> float:
@@ -50,15 +50,7 @@ def main():
     total_num_epochs: int = 35
 
     # hyperparameters
-    Hyperparamters.CONTEXT_LENGTH = 256
-    Hyperparamters.BATCH_SIZE = 32
-    Hyperparamters.VOCAB_SIZE = 40000
-    Hyperparamters.EMBEDDING_SIZE = 512
-    Hyperparamters.SELF_ATTENTION_HEADS = 8
-    Hyperparamters.NUM_LAYERS = 8
-    Hyperparamters.FEED_FORWARD_SIZE = 4096
-    Hyperparamters.DROPOUT = 0.3
-    Hyperparamters.LAYER_DROP_PROB = 0.1
+    hyperparameters.set_hyperparameters()
 
     model = train.train_model(
         total_num_epochs, lr_scheduler_type='LambdaLR', lr_lambda=lr_schedule,
