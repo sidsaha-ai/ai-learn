@@ -7,6 +7,9 @@ import math
 from novels_generator.code import train
 from novels_generator.code.constants import Hyperparamters
 
+import os
+import torch
+
 
 def lr_schedule(epoch: int) -> float:
     """
@@ -58,9 +61,15 @@ def main():
     Hyperparamters.DROPOUT = 0.3
     Hyperparamters.LAYER_DROP_PROB = 0.1
 
-    train.train_model(
+    model = train.train_model(
         total_num_epochs, lr_scheduler_type='LambdaLR', lr_lambda=lr_schedule,
     )
+
+    # save the model
+    path = os.path.join(
+        os.path.dirname(os.path.abspath(__file__)), 'model.pth',
+    )
+    torch.save(model.state_dict(), path)
 
 
 if __name__ == '__main__':

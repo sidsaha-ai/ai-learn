@@ -4,6 +4,8 @@ This script runs the experiment.
 
 from novels_generator.code import train
 from novels_generator.code.constants import Hyperparamters
+import os
+import torch
 
 
 def main():
@@ -30,9 +32,15 @@ def main():
             return 1
         return 1e-2
 
-    train.train_model(
+    model = train.train_model(
         num_epochs, lr_scheduler_type='LambdaLR', lr_lambda=lr_lambda,
     )
+
+    # save the model
+    path = os.path.join(
+        os.path.dirname(os.path.abspath(__file__)), 'model.pth',
+    )
+    torch.save(model.state_dict(), path)
 
 
 if __name__ == '__main__':
