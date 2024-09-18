@@ -31,6 +31,19 @@ def load_model() -> BooksTransformerModel:
     return model
 
 
+def write_to_file(text: str) -> None:
+    """
+    Write the generated text to file.
+    """
+    path = os.path.join(
+        os.path.dirname(os.path.abspath(__file__)), 'generated_text.txt',
+    )
+
+    with open(path, 'w', encoding='utf-8') as f:
+        f.write(text)
+    print(f'Wrote {len(text)} characters to file {path}')
+
+
 def main():
     """
     The main function where the execution starts.
@@ -44,8 +57,9 @@ def main():
     end_token = tokenizer.encode(SpecialTokens.END).ids[0]
 
     sequence = [start_token]
+    max_text_length = 200000  # the maximum length to be generated
 
-    for _ in tqdm(range(10000)):
+    for _ in tqdm(range(max_text_length), leave=False):
         inputs = torch.tensor(sequence[-hyperparameters.Hyperparamters.CONTEXT_LENGTH:]).unsqueeze(0)
 
         logits = None
@@ -59,8 +73,9 @@ def main():
         if next_token == end_token:
             break
 
-    text = tokenizer.tokenizer.decode(sequence)
+    text = tokenizer.tokenizer.decode(sequence, skip_special_tokens=False)
     print(text)
+    write_to_file(text)
 
 
 if __name__ == '__main__':
