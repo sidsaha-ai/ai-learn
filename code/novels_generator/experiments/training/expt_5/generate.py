@@ -4,7 +4,7 @@ The file generates the book from the model of this experiment.
 
 import os
 
-from novels_generator.experiments.training.expt_1 import hyperparameters
+from novels_generator.experiments.training.expt_5 import hyperparameters
 from novels_generator.experiments.training.generation_utils import GenUtils
 
 
