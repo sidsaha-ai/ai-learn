@@ -13,6 +13,7 @@ class SpecialTokens:
     HEADING_END = '<HEADING_END>'
     PARAGRAPH_START = '<PARA_START>'
     PARAGRAPH_END = '<PARA_END>'
+    START = '<START>'
     END = '<END>'
     UNKNOWN = '<UNK>'
     PAD = '<PAD>'

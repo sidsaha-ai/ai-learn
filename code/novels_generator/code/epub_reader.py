@@ -90,6 +90,9 @@ class EPubReader:
         book = epub.read_epub(epub_filepath)
         text: list = []
 
+        # token to mark novel start
+        text.append(SpecialTokens.START)
+
         for item in book.get_items():
             try:
                 if self.is_chapter(item):
