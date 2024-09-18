@@ -40,3 +40,6 @@ class BooksTokenizer:
             start_ix += context_length
 
         return sequences
+    
+    def __len__(self) -> int:
+        return len(self.tokenizer)
