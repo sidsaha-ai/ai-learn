@@ -32,7 +32,7 @@ class BPETokenizer:
                 SpecialTokens.CHAPTER_NAME_START, SpecialTokens.CHAPTER_NAME_END,
                 SpecialTokens.HEADING_START, SpecialTokens.HEADING_END,
                 SpecialTokens.PARAGRAPH_START, SpecialTokens.PARAGRAPH_END,
-                SpecialTokens.END,
+                SpecialTokens.START, SpecialTokens.END,
                 SpecialTokens.PAD,
             ],
             vocab_size=vocab_size,
