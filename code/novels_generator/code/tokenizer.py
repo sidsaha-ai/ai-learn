@@ -96,7 +96,7 @@ class BPETokenizerUtils:
                 continue
 
             book_contents.append(content)
-        
+
         return book_contents
 
     @classmethod

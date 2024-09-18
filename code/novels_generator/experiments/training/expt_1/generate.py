@@ -6,6 +6,7 @@ import os
 
 import torch
 from novels_generator.code.model import BooksTransformerModel
+from novels_generator.code.tokenizer import BPETokenizer, BPETokenizerUtils
 
 
 def load_model() -> BooksTransformerModel:
@@ -32,7 +33,10 @@ def main():
     The main function where the execution starts.
     """
     model = load_model()
+    tokenizer: BPETokenizer = BPETokenizerUtils.init()
+
     print(model)
+    print(tokenizer)
 
 
 if __name__ == '__main__':
