@@ -30,7 +30,7 @@ def main():
     model = train.train_model(
         num_epochs, lr_scheduler_type='LambdaLR', lr_lambda=lr_lambda,
     )
-    
+
     # save the model
     path = os.path.join(
         os.path.dirname(os.path.abspath(__file__)), 'model.pth',
