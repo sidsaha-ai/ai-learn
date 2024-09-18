@@ -45,7 +45,7 @@ def main():
 
     sequence = [start_token]
 
-    for _ in tqdm(range(2000)):
+    for _ in tqdm(range(10000)):
         inputs = torch.tensor(sequence[-hyperparameters.Hyperparamters.CONTEXT_LENGTH:]).unsqueeze(0)
 
         logits = None
