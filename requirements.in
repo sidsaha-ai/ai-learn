@@ -13,3 +13,4 @@ pytest
 ebooklib
 beautifulsoup4
 tokenizers
+tqdm

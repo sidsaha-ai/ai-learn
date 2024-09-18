@@ -14,6 +14,7 @@ from novels_generator.code.tokenizer import BPETokenizer
 from torch import nn
 from torch.optim import lr_scheduler
 from torch.utils.data import DataLoader
+from tqdm import tqdm
 
 
 def read_train_books() -> list:
@@ -132,27 +133,32 @@ def train_model(num_epochs: int, lr_scheduler_type=None, lr_lambda=None) -> None
     for epoch in range(num_epochs):
         train_loss_sum = 0
 
-        # run all the batches in one epoch
-        for batch in books_train_dataloader:
-            batch = batch.to(device)
-            optimizer.zero_grad()
+        # add a progress bar
+        with tqdm(books_train_dataloader, unit='batch', leave=False) as tqdm_dataloader:
+            tqdm_dataloader.set_description(f'Epoch {epoch}')
 
-            # forward pass
-            inputs = batch[:, :-1]  # all but the last token
-            targets = batch[:, 1:]  # all but the first token
+            # run all the batches in one epoch
+            for batch in tqdm_dataloader:
+                batch = batch.to(device)
+                optimizer.zero_grad()
 
-            logits = model(inputs)
+                # forward pass
+                inputs = batch[:, :-1]  # all but the last token
+                targets = batch[:, 1:]  # all but the first token
 
-            # reshape for the loss function
-            logits = logits.view(-1, Hyperparamters.VOCAB_SIZE) if logits.is_contiguous() else logits.reshape(-1, Hyperparamters.VOCAB_SIZE)
-            targets = targets.view(-1) if targets.is_contiguous() else targets.reshape(-1)
+                logits = model(inputs)
 
-            loss = loss_fn(logits, targets)
-            train_loss_sum += loss.item()
+                # reshape for the loss function
+                logits = logits.view(-1, Hyperparamters.VOCAB_SIZE) if logits.is_contiguous() else logits.reshape(-1, Hyperparamters.VOCAB_SIZE)
+                targets = targets.view(-1) if targets.is_contiguous() else targets.reshape(-1)
 
-            # backward pass
-            loss.backward()
-            optimizer.step()
+                loss = loss_fn(logits, targets)
+                train_loss_sum += loss.item()
+
+                # backward pass
+                loss.backward()
+                optimizer.step()
+                tqdm_dataloader.set_postfix(loss=loss.item())
 
         avg_train_loss = train_loss_sum / len(books_train_dataloader)
         val_loss = validate(books_val_dataloader, model, loss_fn)

@@ -29,3 +29,5 @@ class Hyperparamters:
     SELF_ATTENTION_HEADS = 4  # the number of self-attention heads
     NUM_LAYERS = 2            # the number of layers in the transformer model
     FEED_FORWARD_SIZE = 1024  # dimensions of the feed-forward layers
+    DROPOUT = 0.1             # the dropout for the transformer layer
+    LAYER_DROP_PROB = 0       # the probability to drop layers during training
