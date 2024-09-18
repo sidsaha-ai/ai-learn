@@ -2,9 +2,11 @@
 The file generates the book from the model of this experiment.
 """
 
-import torch
 import os
+
+import torch
 from novels_generator.code.model import BooksTransformerModel
+
 
 def load_model() -> BooksTransformerModel:
     """
