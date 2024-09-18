@@ -39,7 +39,7 @@ class GenUtils:
 
         sequence = [start_token]
 
-        for _ in tqdm(range(max_text_length), leave=False):
+        for _ in tqdm(range(max_text_length), leave=True):
             inputs = torch.tensor(sequence[-context_length:]).unsqueeze(0)
 
             logits = None
