@@ -1,6 +1,5 @@
-from transformers import AutoTokenizer
-
 from novels_generator.code.constants import SpecialTokens
+from transformers import AutoTokenizer
 
 
 class BooksTokenizer:

@@ -2,8 +2,9 @@ import os
 
 from novels_generator.code.epub_reader import EPubReader
 from novels_generator.pretrained.gpt2.tokenizer import BooksTokenizer
-from torch.utils.data import Dataset
 from torch import Tensor
+from torch.utils.data import Dataset
+
 
 class BooksDataset(Dataset):
 

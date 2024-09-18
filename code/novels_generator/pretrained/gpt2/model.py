@@ -1,6 +1,6 @@
+from novels_generator.pretrained.gpt2.tokenizer import BooksTokenizer
 from transformers import AutoModelForCausalLM
 
-from novels_generator.pretrained.gpt2.tokenizer import BooksTokenizer
 
 class BooksGPTModel:
 
