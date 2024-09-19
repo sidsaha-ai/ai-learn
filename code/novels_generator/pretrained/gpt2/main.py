@@ -47,6 +47,24 @@ class Trainer:
         )
         self.model.save(path)
     
+    @torch.no_grad()
+    def _val_loss(self, epoch: int) -> float:
+        # finds the validation loss after every epoch
+        total_loss = 0
+        self.model.eval()
+
+        with tqdm(self.val_dataloader, unit='batch', leave=False) as dataloader:
+            dataloader.set_description(f'Validation Epoch: {epoch}')
+
+            for batch in dataloader:
+                loss = self.model.forward(batch)
+                total_loss += loss.item()
+        
+        avg_loss = total_loss / len(self.val_dataloader)
+        self.model.train()
+
+        return avg_loss
+    
     def run(self) -> None:
         for epoch in range(self.num_epochs):
             self.model.train()
@@ -63,7 +81,8 @@ class Trainer:
                     total_loss += loss.item()
             
             avg_train_loss = total_loss / len(self.train_dataloader)
-            print(f'Epoch: {epoch}, Train Loss: {avg_train_loss:.4f}')
+            avg_val_loss = self._val_loss(epoch)
+            print(f'Epoch: {epoch}, Train Loss: {avg_train_loss:.4f}, Val Loss: {avg_val_loss:.4f}')
         
         self._save_model()
 
