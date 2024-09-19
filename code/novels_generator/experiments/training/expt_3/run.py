@@ -5,7 +5,7 @@ import os
 
 import torch
 from novels_generator.code import train
-from novels_generator.experiments.training.expt_3 import hyerparameters
+from novels_generator.experiments.training.expt_3 import hyperparameters
 
 
 def main():
@@ -15,7 +15,7 @@ def main():
     num_epochs: int = 20
 
     # hyperparameters
-    hyerparameters.set_hyperparameters()
+    hyperparameters.set_hyperparameters()
 
     def lr_lambda(epoch):
         # for 20 epochs, train usally and then at 1e-5
