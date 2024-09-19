@@ -30,8 +30,7 @@ class BooksGPTModel:
         input_ids = input_ids.to(self.device)
 
         outputs = self.model(input_ids, labels=input_ids)
-
-        return outputs.loss
+        return outputs
 
     def parameters(self):
         """

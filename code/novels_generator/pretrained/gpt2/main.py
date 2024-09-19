@@ -5,6 +5,7 @@ In this file, let's try finetuning GPT2 for novels generation.
 import os
 
 import torch
+from accelerate import Accelerator
 from novels_generator.pretrained.gpt2.dataset import BooksDataset
 from novels_generator.pretrained.gpt2.model import BooksGPTModel
 from novels_generator.pretrained.gpt2.tokenizer import BooksTokenizer
@@ -39,6 +40,14 @@ class Trainer:
         self.val_dataloader = DataLoader(
             val_dataset, batch_size=self.batch_size, shuffle=True,
         )
+
+        # accelerate
+        self.accelerator = Accelerator()
+        self.train_dataloader, self.val_dataloader, self.model, self.optimizer = self.accelerator.prepare(
+            self.train_dataloader, self.val_dataloader, self.model, self.optimizer,
+        )
+
+        self.device = torch.device('mps') if torch.has_mps else torch.device('cpu')
 
     def _save_model(self) -> None:
         # saves the model
@@ -77,9 +86,14 @@ class Trainer:
                 dataloader.set_description(f'Training Epoch: {epoch}')
 
                 for batch in dataloader:
+                    batch = batch.to(self.device)
+
                     self.optimizer.zero_grad()
-                    loss = self.model.forward(batch)  # forward pass
-                    loss.backward()                   # backward pass
+                    outputs = self.model.forward(batch)  # forward pass
+                    loss = outputs.loss
+
+                    self.accelerator.backward(loss)  # backward pass
+
                     self.optimizer.step()
                     total_loss += loss.item()
 
