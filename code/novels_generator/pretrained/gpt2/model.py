@@ -44,13 +44,13 @@ class BooksGPTModel:
         Saves the model as a file.
         """
         torch.save(self.model.state_dict(), path)
-    
+
     def train(self) -> None:
         """
         Put the model to training mode.
         """
         self.model.train()
-    
+
     def eval(self) -> None:
         """
         Put the model to evaluation mode.

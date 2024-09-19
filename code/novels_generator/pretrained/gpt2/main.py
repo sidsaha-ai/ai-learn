@@ -18,11 +18,11 @@ class Trainer:
     """
     Trainer class to finetune the model.
     """
-    
+
     def __init__(self) -> None:
         self.batch_size = 4
         self.lr = 5e-5
-        self.num_epochs = 3
+        self.num_epochs = 2
 
         self.tokenizer = BooksTokenizer()
         self.model = BooksGPTModel(self.tokenizer)
@@ -39,14 +39,14 @@ class Trainer:
         self.val_dataloader = DataLoader(
             val_dataset, batch_size=self.batch_size, shuffle=True,
         )
-    
+
     def _save_model(self) -> None:
         # saves the model
         path = os.path.join(
             os.path.dirname(os.path.abspath(__file__)), 'model.pth',
         )
         self.model.save(path)
-    
+
     @torch.no_grad()
     def _val_loss(self, epoch: int) -> float:
         # finds the validation loss after every epoch
@@ -59,13 +59,16 @@ class Trainer:
             for batch in dataloader:
                 loss = self.model.forward(batch)
                 total_loss += loss.item()
-        
+
         avg_loss = total_loss / len(self.val_dataloader)
         self.model.train()
 
         return avg_loss
-    
+
     def run(self) -> None:
+        """
+        Finetunes the model.
+        """
         for epoch in range(self.num_epochs):
             self.model.train()
             total_loss = 0
@@ -79,11 +82,11 @@ class Trainer:
                     loss.backward()                   # backward pass
                     self.optimizer.step()
                     total_loss += loss.item()
-            
+
             avg_train_loss = total_loss / len(self.train_dataloader)
             avg_val_loss = self._val_loss(epoch)
             print(f'Epoch: {epoch}, Train Loss: {avg_train_loss:.4f}, Val Loss: {avg_val_loss:.4f}')
-        
+
         self._save_model()
 
 
