@@ -56,6 +56,12 @@ def main():
 
         avg_loss = total_loss / len(train_dataloader)
         print(f'Epoch: {epoch}, Train Loss: {avg_loss:.4f}')
+    
+    # save the model
+    path = os.path.join(
+        os.path.dirname(os.path.abspath(__file__)), 'model.pth',
+    )
+    torch.save(model.state_dict(), path)
 
 
 if __name__ == '__main__':
