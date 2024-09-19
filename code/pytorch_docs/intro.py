@@ -7,22 +7,49 @@ from torch.utils.data import DataLoader
 from torchvision import datasets
 from torchvision.transforms import ToTensor, Lambda
 from matplotlib import pyplot as plt
+from torch import nn, Tensor
+
+
+def dataloader(train: bool, batch_size: int) -> DataLoader:
+    """
+    Makes the training or testing dataloader and returns it.
+    """
+    data = datasets.FashionMNIST(
+        root='data', train=train, download=True, transform=ToTensor(),
+        target_transform=Lambda(lambda y: torch.zeros(10, dtype=torch.float).scatter_(dim=0, index=torch.tensor(y), value=1)),
+    )
+    
+    dataloader = DataLoader(data, batch_size=batch_size, shuffle=True)
+    return dataloader
+
+
+class NeuralNetwork(nn.Module):
+    """
+    The neural network that we will train.
+    """
+    
+    def __init__(self, inputs_shape: tuple[int, int], outputs_shape: tuple[int, int]) -> None:
+        super().__init__()
+
+        self.flatten = nn.Flatten()
+        self.stack = nn.Sequential(
+            nn.Linear(inputs_shape[0] * inputs_shape[1], 512),
+            nn.ReLU(),
+            nn.Linear(512, 512),
+            nn.ReLU(),
+            nn.Linear(512, outputs_shape[1]),
+        )
+    
+    def forward(self, inputs: Tensor) -> Tensor:
+        inputs = self.flatten(inputs)
+        logits = self.stack(inputs)
+        return logits
+
 
 def main():
-    train_data = datasets.FashionMNIST(
-        root='data',
-        train=True,
-        download=True,
-        transform=ToTensor(),
-        target_transform=Lambda(lambda y: torch.zeros(10, dtype=torch.float).scatter_(dim=0, index=torch.tensor(y), value=1)),
-    )
-    test_data = datasets.FashionMNIST(
-        root='data',
-        train=False,
-        download=True,
-        transform=ToTensor(),
-        target_transform=Lambda(lambda y: torch.zeros(10, dtype=torch.float).scatter_(dim=0, index=torch.tensor(y), value=1)),
-    )
+    batch_size: int = 8
+    train_dataloader = dataloader(train=True, batch_size=batch_size)
+    test_dataloader = dataloader(train=False, batch_size=batch_size)
 
     labels_map = {
         0: 'T-Shirt',
@@ -37,31 +64,8 @@ def main():
         9: 'Ankle Boot',
     }
 
-    figure = plt.figure(figsize=(6, 6))
-    cols, rows = 3, 3
-
-    for ix in range(1, cols * rows + 1):
-        sample_ix = torch.randint(len(train_data), size=(1,)).item()
-        img, label = train_data[sample_ix]
-
-        figure.add_subplot(rows, cols, ix)
-        plt.title(
-            labels_map.get(label.argmax(dim=0).item()),
-        )
-        plt.axis('off')
-        plt.imshow(
-            img.squeeze(), cmap='gray',
-        )
-    
-    plt.show()
-
-    # dataloaders
-    batch_size = 8
-    train_dataloader = DataLoader(train_data, batch_size=batch_size, shuffle=True)
-    test_dataloader = DataLoader(test_data, batch_size=batch_size, shuffle=True)
-
+    # let's see an image from the input
     train_features, train_labels = next(iter(train_dataloader))  # fetch one batch from the dataloader
-
     random_ix = torch.randint(0, batch_size, (1,)).item()
     label = train_labels[random_ix]
     
