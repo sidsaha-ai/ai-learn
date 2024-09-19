@@ -13,56 +13,61 @@ from tqdm import tqdm
 
 os.environ['TOKENIZERS_PARALLELISM'] = 'false'
 
-BATCH_SIZE = 4
 
-
-def _train_dataloader(tokenizer) -> DataLoader:
-    dataset = BooksDataset(tokenizer, 'train')
-    return DataLoader(
-        dataset, batch_size=BATCH_SIZE, shuffle=True,
-    )
-
-
-def _val_dataloader(tokenizer) -> DataLoader:
-    dataset = BooksDataset(tokenizer, 'val')
-    return DataLoader(
-        dataset, batch_size=BATCH_SIZE, shuffle=True,
-    )
-
-
-def main():
+class Trainer:
     """
-    The main method that will fine tune the model.
+    Trainer class to finetune the model.
     """
-    tokenizer = BooksTokenizer()                                      # the tokenizer
-    model = BooksGPTModel(tokenizer)                                  # the model
-    optimizer = torch.optim.AdamW(model.parameters(), lr=5e-5)        # the optimizer
+    
+    def __init__(self) -> None:
+        self.batch_size = 4
+        self.lr = 5e-5
+        self.num_epochs = 3
 
-    num_epochs = 3
-    train_dataloader = _train_dataloader(tokenizer)
+        self.tokenizer = BooksTokenizer()
+        self.model = BooksGPTModel(self.tokenizer)
+        self.optimizer = torch.optim.AdamW(self.model.parameters(), lr=self.lr)
 
-    for epoch in range(num_epochs):
-        model.model.train()
-        total_loss = 0
+        # make training dataloader
+        train_dataset = BooksDataset(self.tokenizer, 'train')
+        self.train_dataloader = DataLoader(
+            train_dataset, batch_size=self.batch_size, shuffle=True,
+        )
 
-        with tqdm(train_dataloader, unit='batch', leave=False) as dataloader:
-            dataloader.set_description(f'Epoch {epoch}')
-            for batch in dataloader:
-                optimizer.zero_grad()
-                loss = model.forward(batch)  # forward pass
-                loss.backward()  # backprop
-                optimizer.step()
-                total_loss += loss.item()
+        # make validation dataloader
+        val_dataset = BooksDataset(self.tokenizer, 'val')
+        self.val_dataloader = DataLoader(
+            val_dataset, batch_size=self.batch_size, shuffle=True,
+        )
+    
+    def _save_model(self) -> None:
+        # saves the model
+        path = os.path.join(
+            os.path.dirname(os.path.abspath(__file__)), 'model.pth',
+        )
+        self.model.save(path)
+    
+    def run(self) -> None:
+        for epoch in range(self.num_epochs):
+            self.model.train()
+            total_loss = 0
 
-        avg_loss = total_loss / len(train_dataloader)
-        print(f'Epoch: {epoch}, Train Loss: {avg_loss:.4f}')
+            with tqdm(self.train_dataloader, unit='batch', leave=False) as dataloader:
+                dataloader.set_description(f'Training Epoch: {epoch}')
 
-    # save the model
-    path = os.path.join(
-        os.path.dirname(os.path.abspath(__file__)), 'model.pth',
-    )
-    model.save(path)
+                for batch in dataloader:
+                    self.optimizer.zero_grad()
+                    loss = self.model.forward(batch)  # forward pass
+                    loss.backward()                   # backward pass
+                    self.optimizer.step()
+                    total_loss += loss.item()
+            
+            avg_train_loss = total_loss / len(self.train_dataloader)
+            print(f'Epoch: {epoch}, Train Loss: {avg_train_loss:.4f}')
+        
+        self._save_model()
 
 
 if __name__ == '__main__':
-    main()
+    trainer = Trainer()
+    trainer.run()
