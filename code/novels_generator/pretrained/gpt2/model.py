@@ -38,3 +38,9 @@ class BooksGPTModel:
         Returns the parameters of the model.
         """
         return self.model.parameters()
+
+    def save(self, path: str) -> None:
+        """
+        Saves the model as a file.
+        """
+        torch.save(self.model.state_dict(), path)
