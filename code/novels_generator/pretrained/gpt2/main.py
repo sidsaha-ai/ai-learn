@@ -47,7 +47,7 @@ class Trainer:
             self.train_dataloader, self.val_dataloader, self.model, self.optimizer,
         )
 
-        self.device = torch.device('cuda') if torch.cuda.is_available() else torch.device('mps') if torch.backends.mps.is_available() else torch.device('cpu')
+        self.device = torch.device('cuda') if torch.cuda.is_available() else torch.device('mps') if torch.backends.mps.is_available() else torch.device('cpu')  # pylint: disable=line-too-long  # NOQA
         print(f'{self.device=}')
         self.model.to(self.device)
 

@@ -48,7 +48,7 @@ class BooksGPTModel:
         Put the model to evaluation mode.
         """
         self.model.eval()
-    
+
     def to(self, device) -> None:
         """
         Moves the model to the device.
