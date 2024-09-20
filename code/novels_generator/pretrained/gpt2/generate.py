@@ -59,8 +59,13 @@ def main():  # pylint: disable=too-many-locals
             outputs = model.forward(inputs)
 
         logits = outputs.logits
-        probs = torch.nn.functional.softmax(logits[:, -1, :], dim=-1)
-        next_token = torch.multinomial(probs, num_samples=1, replacement=True).item()
+
+        temp = 0.4
+        probs = torch.nn.functional.softmax(logits[:, -1, :] / temp, dim=-1)
+
+        top_k = 20
+        top_k_probs, top_k_indices = torch.topk(probs, top_k, dim=-1)
+        next_token = top_k_indices[torch.multinomial(top_k_probs, num_samples=1)].item()
         sequence.append(next_token)
 
         if next_token == end_token:
