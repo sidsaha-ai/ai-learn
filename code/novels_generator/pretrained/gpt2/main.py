@@ -70,7 +70,9 @@ class Trainer:
 
             for batch in dataloader:
                 batch = batch.to(self.device)
-                loss = self.model.forward(batch)
+                outputs = self.model.forward(batch)
+                
+                loss = outputs.loss
                 total_loss += loss.item()
 
         avg_loss = total_loss / len(self.val_dataloader)
