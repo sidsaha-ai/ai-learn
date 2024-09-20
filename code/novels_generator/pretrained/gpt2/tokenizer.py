@@ -1,7 +1,6 @@
 """
 Implements the tokenizer for finetuning the GPT2 model.
 """
-import torch
 from novels_generator.code.constants import SpecialTokens
 from transformers import AutoTokenizer
 
@@ -54,7 +53,7 @@ class BooksTokenizer:
 
     def __len__(self) -> int:
         return len(self.tokenizer)
-    
+
     def encode(self, text: str) -> list:
         """
         Encodes the text using the tokenizer.

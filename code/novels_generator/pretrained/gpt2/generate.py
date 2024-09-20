@@ -28,7 +28,7 @@ def load_model(tokenizer: BooksTokenizer) -> BooksGPTModel:
     return model
 
 
-def main():
+def main():  # pylint: disable=too-many-locals
     """
     The main function to start execution.
     """
@@ -58,14 +58,14 @@ def main():
         with torch.no_grad():
             outputs = model.forward(inputs)
 
-        logits = outputs.logits 
+        logits = outputs.logits
         probs = torch.nn.functional.softmax(logits[:, -1, :], dim=-1)
         next_token = torch.multinomial(probs, num_samples=1, replacement=True).item()
         sequence.append(next_token)
 
         if next_token == end_token:
             break
-    
+
     print(f'{len(sequence)=}')
     generated_text = tokenizer.decode(sequence)
     print(generated_text)
