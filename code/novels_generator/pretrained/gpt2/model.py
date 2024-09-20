@@ -36,6 +36,13 @@ class BooksGPTModel:
         Saves the model as a file.
         """
         torch.save(self.model.state_dict(), path)
+    
+    def load(self, path: str) -> None:
+        """
+        Loads the model from the path.
+        """
+        self.model = self.model.to(dtype=torch.bfloat16)
+        self.model.load_state_dict(torch.load(path))
 
     def train(self) -> None:
         """
