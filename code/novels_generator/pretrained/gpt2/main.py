@@ -2,6 +2,7 @@
 In this file, let's try finetuning GPT2 for novels generation.
 """
 
+import math
 import os
 
 import torch
@@ -21,13 +22,15 @@ class Trainer:
     """
 
     def __init__(self) -> None:
+        # hyperparameters
         self.batch_size = 4
-        self.lr = 5e-5
-        self.num_epochs = 2
+        self.base_lr = 1e-4
+        self.num_epochs = 10
 
         self.tokenizer = BooksTokenizer()
         self.model = BooksGPTModel(self.tokenizer)
-        self.optimizer = torch.optim.AdamW(self.model.parameters(), lr=self.lr)
+        self.optimizer = torch.optim.AdamW(self.model.parameters(), lr=self.base_lr)
+        self.scheduler = torch.optim.lr_scheduler.LambdaLR(self.optimizer, self.lr_schedule)
 
         # make training dataloader
         train_dataset = BooksDataset(self.tokenizer, 'train')
@@ -51,6 +54,31 @@ class Trainer:
         print(f'{self.device=}')
         self.model.to(self.device)
 
+    def lr_schedule(self, epoch: int) -> float:
+        """
+        Learning rate schedule function.
+        """
+        res = 1
+        current_epoch = epoch + 1
+
+        if current_epoch <= 2:
+            res = 1e-1  # LR should become 1e-5
+
+        if 3 <= current_epoch <= 5:
+            res = 5  # LR should become 5e-4
+
+        if current_epoch > 5:
+            # use cosine annealing to reduce LR from 5e-4 to 1e-6
+            num_cosine_epochs: int = 5
+            num_elapsed_epochs: int = current_epoch - 5
+            min_lr = 1e-6
+            max_lr = 5e-4
+
+            res = min_lr + 0.5 * (max_lr - min_lr) * (1 + math.cos(math.pi * num_elapsed_epochs / num_cosine_epochs))
+            res = res / self.base_lr
+
+        return res
+
     def _save_model(self) -> None:
         # saves the model
         path = os.path.join(
@@ -69,7 +97,9 @@ class Trainer:
 
             for batch in dataloader:
                 batch = batch.to(self.device)
-                loss = self.model.forward(batch)
+                outputs = self.model.forward(batch)
+
+                loss = outputs.loss
                 total_loss += loss.item()
 
         avg_loss = total_loss / len(self.val_dataloader)
@@ -102,7 +132,10 @@ class Trainer:
 
             avg_train_loss = total_loss / len(self.train_dataloader)
             avg_val_loss = self._val_loss(epoch)
-            print(f'Epoch: {epoch}, Train Loss: {avg_train_loss:.4f}, Val Loss: {avg_val_loss:.4f}')
+            current_lr = [group['lr'] for group in self.optimizer.param_groups][0]
+            print(f'Epoch: {epoch}, LR: {current_lr}, Train Loss: {avg_train_loss:.4f}, Val Loss: {avg_val_loss:.4f}')
+
+            self.scheduler.step()
 
         self._save_model()
 

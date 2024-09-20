@@ -37,6 +37,13 @@ class BooksGPTModel:
         """
         torch.save(self.model.state_dict(), path)
 
+    def load(self, path: str) -> None:
+        """
+        Loads the model from the path.
+        """
+        self.model = self.model.to(dtype=torch.bfloat16)
+        self.model.load_state_dict(torch.load(path))
+
     def train(self) -> None:
         """
         Put the model to training mode.
@@ -53,4 +60,4 @@ class BooksGPTModel:
         """
         Moves the model to the device.
         """
-        self.model = self.model.to(device)
+        self.model = self.model.to(device, dtype=torch.bfloat16)
