@@ -53,4 +53,4 @@ class BooksGPTModel:
         """
         Moves the model to the device.
         """
-        self.model = self.model.to(device)
+        self.model = self.model.to(device, dtype=torch.bfloat16)
