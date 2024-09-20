@@ -4,12 +4,11 @@ We use this script to generate text from the finetuned model.
 
 import os
 
+import torch
+from novels_generator.code.constants import SpecialTokens
 from novels_generator.pretrained.gpt2.model import BooksGPTModel
 from novels_generator.pretrained.gpt2.tokenizer import BooksTokenizer
-from novels_generator.code.constants import SpecialTokens
-
 from tqdm import tqdm
-import torch
 
 
 def load_model(tokenizer: BooksTokenizer) -> BooksGPTModel:

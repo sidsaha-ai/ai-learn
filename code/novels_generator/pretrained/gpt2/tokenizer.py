@@ -1,9 +1,9 @@
 """
 Implements the tokenizer for finetuning the GPT2 model.
 """
+import torch
 from novels_generator.code.constants import SpecialTokens
 from transformers import AutoTokenizer
-import torch
 
 
 class BooksTokenizer:
