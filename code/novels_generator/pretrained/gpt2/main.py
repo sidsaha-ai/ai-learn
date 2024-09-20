@@ -21,6 +21,7 @@ class Trainer:
     """
 
     def __init__(self) -> None:
+        # hyperparameters
         self.batch_size = 4
         self.lr = 5e-5
         self.num_epochs = 2
