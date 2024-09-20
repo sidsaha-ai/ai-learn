@@ -41,11 +41,11 @@ def main():  # pylint: disable=too-many-locals
     model.eval()  # set to eval mode
     model.to(device)
 
-    max_text_length: int = 500
+    max_text_length: int = 50
     context_length: int = 1024
     end_token = tokenizer.encode(SpecialTokens.END)[0]
 
-    story: str = 'Naina had set foot in New York for the first time in her life yesterday. And here she is today.'
+    story: str = 'Naina had set foot in New York for the first time in her life yesterday. She did not expect that'
     story = f'{SpecialTokens.START}{story}'
 
     sequence = tokenizer.encode(story)
@@ -60,12 +60,9 @@ def main():  # pylint: disable=too-many-locals
 
         logits = outputs.logits
 
-        temp = 0.4
+        temp = 1.3
         probs = torch.nn.functional.softmax(logits[:, -1, :] / temp, dim=-1)
-
-        top_k = 20
-        top_k_probs, top_k_indices = torch.topk(probs, top_k, dim=-1)
-        next_token = top_k_indices[torch.multinomial(top_k_probs, num_samples=1)].item()
+        next_token = torch.multinomial(probs, num_samples=1, replacement=True).item()
         sequence.append(next_token)
 
         if next_token == end_token:
