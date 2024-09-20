@@ -7,6 +7,7 @@ import os
 from novels_generator.pretrained.gpt2.model import BooksGPTModel
 from novels_generator.pretrained.gpt2.tokenizer import BooksTokenizer
 
+
 def load_model() -> BooksGPTModel:
     """
     This function loads and returns the finetuned model.
@@ -19,12 +20,16 @@ def load_model() -> BooksGPTModel:
     tokenizer = BooksTokenizer()
     model = BooksGPTModel(tokenizer)
     model.load(model_path)
-    
+
     print(f'Finished loading model from {model_path}.')
 
     return model
 
+
 def main():
+    """
+    The main function to start execution.
+    """
     model = load_model()
     print(model)
 
