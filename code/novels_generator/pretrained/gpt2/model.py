@@ -18,17 +18,10 @@ class BooksGPTModel:
         self.model = AutoModelForCausalLM.from_pretrained(model_name)
         self.model.resize_token_embeddings(len(tokenizer))
 
-        # move to GPU
-        self.device = torch.device('mps') if torch.has_mps else torch.device('cpu')
-
-        self.model = self.model.to(self.device)
-
     def forward(self, input_ids) -> Tensor:
         """
         Implements the forward pass.
         """
-        input_ids = input_ids.to(self.device)
-
         outputs = self.model(input_ids, labels=input_ids)
         return outputs
 
@@ -55,3 +48,9 @@ class BooksGPTModel:
         Put the model to evaluation mode.
         """
         self.model.eval()
+    
+    def to(self, device) -> None:
+        """
+        Moves the model to the device.
+        """
+        self.model = self.model.to(device)

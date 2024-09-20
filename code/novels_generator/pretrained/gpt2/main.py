@@ -47,7 +47,9 @@ class Trainer:
             self.train_dataloader, self.val_dataloader, self.model, self.optimizer,
         )
 
-        self.device = torch.device('mps') if torch.has_mps else torch.device('cpu')
+        self.device = torch.device('cuda') if torch.cuda.is_available() else torch.device('mps') if torch.backends.mps.is_available() else torch.device('cpu')
+        print(f'{self.device=}')
+        self.model.to(self.device)
 
     def _save_model(self) -> None:
         # saves the model
@@ -66,6 +68,7 @@ class Trainer:
             dataloader.set_description(f'Validation Epoch: {epoch}')
 
             for batch in dataloader:
+                batch = batch.to(self.device)
                 loss = self.model.forward(batch)
                 total_loss += loss.item()
 
