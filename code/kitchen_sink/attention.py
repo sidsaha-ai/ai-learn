@@ -27,8 +27,6 @@ def main_single_self_attention():
     """
     inputs = inputs_data()
 
-    # Task: apply the self-attention to 2nd element ("journey") and find the context vector
-
     # step - 1: find the attention score for 2nd element by taking the dot product with each input
     attention_scores = torch.empty(inputs.shape[0])
     for ix, vector in enumerate(inputs):
@@ -48,7 +46,52 @@ def main_single_self_attention():
     print(f'Context Vector: {context_vector}')
 
 
+def main_full():
+    """
+    This main function attempts to find the self-attention of the entire input.
+    """
+    inputs = inputs_data()
+
+    # step - 1: find attention scores for all the inputs
+    size = (
+        inputs.shape[0],  # each row (input) will have one vector of attention score
+        inputs.shape[0],  # each vector will have the number of attention scores as the number of inputs
+    )
+    attention_scores = torch.zeros(size)
+    for query_ix, query in enumerate(inputs):
+        # compute attention score for each input
+        for key_ix, key in enumerate(inputs):
+            # with each input
+            attention_scores[query_ix][key_ix] = torch.dot(query, key)
+    print('Attention Scores')
+    print('===============')
+    print(attention_scores)
+
+    # step - 2: find attention weights for all the inputs
+    attention_weights = torch.nn.functional.softmax(attention_scores, dim=1)
+    print('Attention Weights')
+    print('================')
+    print(attention_weights)
+
+    # step - 3: find the context vector of all the inputs
+    size = (
+        inputs.shape[0],  # the number of inputs
+        inputs.shape[1],  # the embedding size of each input
+    )
+    context_vector = torch.zeros(size)
+    for context_ix, _ in enumerate(context_vector):
+        for input_ix, input in enumerate(inputs):
+            context_vector[context_ix] += input * attention_weights[context_ix][input_ix]
+    print('Context Vectors')
+    print('==============')
+    print(context_vector)
+
+
 if __name__ == '__main__':
     print('--- Single Self Attention ---')
     main_single_self_attention()
+    print()
+
+    print('--- Full Self Attention ---')
+    main_full()
     print()
