@@ -80,8 +80,8 @@ def main_full():
     )
     context_vector = torch.zeros(size)
     for context_ix, _ in enumerate(context_vector):
-        for input_ix, input in enumerate(inputs):
-            context_vector[context_ix] += input * attention_weights[context_ix][input_ix]
+        for input_ix, el in enumerate(inputs):
+            context_vector[context_ix] += el * attention_weights[context_ix][input_ix]
     print('Context Vectors')
     print('==============')
     print(context_vector)
