@@ -87,6 +87,25 @@ def main_full():
     print(context_vector)
 
 
+def main_full_short_code():
+    """
+    This finds the full self-attention (like above main function), but with very short code.
+    """
+    inputs = inputs_data()
+
+    # step - 1: find attention scores for all inputs
+    attention_scores = inputs @ inputs.T
+
+    # step - 2: find attention weights
+    attention_weights = torch.nn.functional.softmax(attention_scores, dim=1)
+
+    # step - 3: find the context vector
+    context_vector = attention_weights @ inputs
+    print('Context Vectors')
+    print('===============')
+    print(context_vector)
+
+
 if __name__ == '__main__':
     print('--- Single Self Attention ---')
     main_single_self_attention()
@@ -94,4 +113,8 @@ if __name__ == '__main__':
 
     print('--- Full Self Attention ---')
     main_full()
+    print()
+
+    print('--- Full Self Attention Short Code ---')
+    main_full_short_code()
     print()
