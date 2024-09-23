@@ -15,7 +15,7 @@ def inputs_data() -> torch.Tensor:
     return inputs
 
 
-def main():
+def main_single_self_attention():
     inputs = inputs_data()
 
     # Task: apply the self-attention to 2nd element ("journey") and find the context vector
@@ -40,4 +40,6 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    print('--- Single Self Attention ---')
+    main_single_self_attention()
+    print()
