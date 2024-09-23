@@ -1,7 +1,13 @@
+"""
+Script to try manually coding a self-attention.
+"""
 import torch
 
 
 def inputs_data() -> torch.Tensor:
+    """
+    Returns the input data.
+    """
     inputs = [
         [0.43, 0.15, 0.89],  # your
         [0.55, 0.87, 0.66],  # journey
@@ -16,6 +22,9 @@ def inputs_data() -> torch.Tensor:
 
 
 def main_single_self_attention():
+    """
+    This main function finds the self-attention of the second element for illustration.
+    """
     inputs = inputs_data()
 
     # Task: apply the self-attention to 2nd element ("journey") and find the context vector
