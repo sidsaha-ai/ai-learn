@@ -6,6 +6,8 @@ import math
 
 import torch
 
+from kitchen_sink.attention_module import SelfAttention
+
 
 def inputs_data() -> torch.Tensor:
     """
@@ -103,8 +105,26 @@ def main():
     print(z)
 
 
+def main_with_attention_module():
+    """
+    Main method that finds self-attention using the module.
+    """
+    inputs = inputs_data()
+    hidden_dim: int = 2
+
+    torch.manual_seed(123)
+
+    m = SelfAttention(inputs.shape[1], hidden_dim)
+    z = m(inputs)
+
+    print(z)
+
+
 if __name__ == '__main__':
     main_one_input()
     print()
 
     main()
+    print()
+
+    main_with_attention_module()
