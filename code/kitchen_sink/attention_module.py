@@ -2,8 +2,9 @@
 This implements a module for the self-attention.
 """
 
-import torch
 import math
+
+import torch
 
 
 class SelfAttention(torch.nn.Module):

@@ -5,7 +5,6 @@ This script does an exercise to find the attention weights with trainable weight
 import math
 
 import torch
-
 from kitchen_sink.attention_module import SelfAttention
 
 
