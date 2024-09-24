@@ -59,6 +59,11 @@ class SelfAttentionV2(torch.nn.Module):
         value = self.value_weight(inputs)
 
         attn_scores = query @ key.T
+
+        # mask the attention scores
+        attn_scores = attn_scores.masked_fill(
+            ~torch.tril(torch.ones_like(attn_scores)).bool(), -torch.inf,
+        )
         attn_weights = torch.nn.functional.softmax(
             attn_scores / math.sqrt(key.shape[-1]), dim=-1,
         )
