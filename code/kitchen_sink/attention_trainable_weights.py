@@ -23,13 +23,17 @@ def inputs_data() -> torch.Tensor:
 
     return inputs
 
-def main():
+
+def main_one_input():
+    """
+    The main method to find the context vector for one input.
+    """
     inputs = inputs_data()
 
     x2 = inputs[1]                               # 1x3
 
     torch.manual_seed(123)  # reproducibility
-    
+
     # instantiate the trainable weights
     size = (inputs.shape[1], 2)  # 3x2
     wq2 = torch.rand(size)  # query weights      # 3x2
@@ -56,5 +60,6 @@ def main():
     z2 = alpha @ v
     print(z2)
 
+
 if __name__ == '__main__':
-    main()
+    main_one_input()
