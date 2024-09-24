@@ -29,12 +29,12 @@ class SelfAttentionV1(torch.nn.Module):
         key = inputs @ self.key_weight
         value = inputs @ self.value_weight
 
-        omega = query @ key.T
-        alpha = torch.nn.functional.softmax(
-            omega / math.sqrt(key.shape[-1]), dim=-1,
+        attn_scores = query @ key.T
+        attn_weights = torch.nn.functional.softmax(
+            attn_scores / math.sqrt(key.shape[-1]), dim=-1,
         )
 
-        outputs = alpha @ value
+        outputs = attn_weights @ value
 
         return outputs
 
@@ -58,11 +58,11 @@ class SelfAttentionV2(torch.nn.Module):
         key = self.key_weight(inputs)
         value = self.value_weight(inputs)
 
-        omega = query @ key.T
-        alpha = torch.nn.functional.softmax(
-            omega / math.sqrt(key.shape[-1]), dim=-1,
+        attn_scores = query @ key.T
+        attn_weights = torch.nn.functional.softmax(
+            attn_scores / math.sqrt(key.shape[-1]), dim=-1,
         )
 
-        outputs = alpha @ value
+        outputs = attn_weights @ value
 
         return outputs
