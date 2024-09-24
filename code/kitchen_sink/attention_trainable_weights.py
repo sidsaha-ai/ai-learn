@@ -26,30 +26,35 @@ def inputs_data() -> torch.Tensor:
 def main():
     inputs = inputs_data()
 
-    x2 = inputs[1]
+    x2 = inputs[1]                               # 1x3
 
     torch.manual_seed(123)  # reproducibility
     
     # instantiate the trainable weights
-    size = (inputs.shape[1], 2)
-    wq2 = torch.rand(size)  # query weights
-    wk2 = torch.rand(size)  # key weights
-    wv2 = torch.rand(size)  # value weights
+    size = (inputs.shape[1], 2)  # 3x2
+    wq2 = torch.rand(size)  # query weights      # 3x2
+    wk2 = torch.rand(size)  # key weights        # 3x2
+    wv2 = torch.rand(size)  # value weights      # 3x2
 
     # compute the query for x2
-    q2 = x2 @ wq2
+    q2 = x2 @ wq2                                # 1x2
 
     # compute the keys and values for all inputs with respect to x2
-    k = inputs @ wk2
-    v = inputs @ wv2
+    k = inputs @ wk2                             # 6x2
+    v = inputs @ wv2                             # 6x2
 
     # compute attention scores
-    omega = q2 @ k.T
+    omega = q2 @ k.T                             # 1x6
 
     # compute attention weights
     # before applying the softmax, scale omega.
-    alpha = torch.nn.functional.softmax(omega / math.sqrt(k.shape[-1]), dim=0)
-    print(alpha)
+    alpha = torch.nn.functional.softmax(         # 1x6
+        omega / math.sqrt(k.shape[-1]), dim=0,
+    )
+
+    # find the context vector
+    z2 = alpha @ v
+    print(z2)
 
 if __name__ == '__main__':
     main()
