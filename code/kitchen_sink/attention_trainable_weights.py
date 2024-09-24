@@ -5,7 +5,7 @@ This script does an exercise to find the attention weights with trainable weight
 import math
 
 import torch
-from kitchen_sink.attention_module import SelfAttention
+from kitchen_sink.attention_module import SelfAttentionV1, SelfAttentionV2
 
 
 def inputs_data() -> torch.Tensor:
@@ -104,16 +104,29 @@ def main():
     print(z)
 
 
-def main_with_attention_module():
+def main_with_attention_module_v1():
     """
-    Main method that finds self-attention using the module.
+    Main method that finds self-attention using the module version V1.
     """
     inputs = inputs_data()
     hidden_dim: int = 2
 
     torch.manual_seed(123)
 
-    m = SelfAttention(inputs.shape[1], hidden_dim)
+    m = SelfAttentionV1(inputs.shape[1], hidden_dim)
+    z = m(inputs)
+
+    print(z)
+
+
+def main_with_attention_module_v2():
+    """
+    Main method that uses the V2 of the self-attention module.
+    """
+    inputs = inputs_data()
+    hidden_dim: int = 2
+
+    m = SelfAttentionV2(inputs.shape[1], hidden_dim)
     z = m(inputs)
 
     print(z)
@@ -126,4 +139,7 @@ if __name__ == '__main__':
     main()
     print()
 
-    main_with_attention_module()
+    main_with_attention_module_v1()
+    print()
+
+    main_with_attention_module_v2()
