@@ -25,6 +25,8 @@ def main():
     inputs = inputs_data()
 
     x2 = inputs[1]
+
+    torch.manual_seed(123)  # reproducibility
     
     # instantiate the trainable weights
     size = (inputs.shape[1], 2)
@@ -34,15 +36,11 @@ def main():
 
     # compute the query for x2
     q2 = x2 @ wq2
+    print(q2)
 
     # compute the keys and values for all inputs with respect to x2
-    size = (inputs.shape[0], 2)
-    k = torch.empty(size)
-    v = torch.empty(size)
-    for ix, el in enumerate(inputs):
-        k[ix] = el @ wk2
-        v[ix] = el @ wv2
-
+    k = inputs @ wk2
+    v = inputs @ wv2
     print(k)
     print(v)
 
