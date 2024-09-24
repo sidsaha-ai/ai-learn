@@ -29,13 +29,14 @@ def main_one_input():
     The main method to find the context vector for one input.
     """
     inputs = inputs_data()
+    hidden_dim: int = 2
 
     x2 = inputs[1]                               # 1x3
 
     torch.manual_seed(123)  # reproducibility
 
     # instantiate the trainable weights
-    size = (inputs.shape[1], 2)  # 3x2
+    size = (inputs.shape[1], hidden_dim)  # 3x2
     wq2 = torch.rand(size)  # query weights      # 3x2
     wk2 = torch.rand(size)  # key weights        # 3x2
     wv2 = torch.rand(size)  # value weights      # 3x2
@@ -66,6 +67,7 @@ def main():
     The main method to find context vectors for all inputs.
     """
     inputs = inputs_data()                                 # 6x3
+    hidden_dim: int = 2
 
     torch.manual_seed(123)  # reproducibility
 
@@ -73,7 +75,7 @@ def main():
     # NOTE: there is no need to use individual weights
     # for each input row. We use one set of weights
     # for all input rows.
-    size = (inputs.shape[1], 2)                            # 3x2
+    size = (inputs.shape[1], hidden_dim)                            # 3x2
     wq = torch.rand(size)                                  # 3x2
     wk = torch.rand(size)                                  # 3x2
     wv = torch.rand(size)                                  # 3x2
