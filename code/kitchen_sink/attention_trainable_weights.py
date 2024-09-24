@@ -36,13 +36,14 @@ def main():
 
     # compute the query for x2
     q2 = x2 @ wq2
-    print(q2)
 
     # compute the keys and values for all inputs with respect to x2
     k = inputs @ wk2
     v = inputs @ wv2
-    print(k)
-    print(v)
+
+    # compute attention scores
+    omega = q2 @ k.T
+    print(omega)
 
 if __name__ == '__main__':
     main()
