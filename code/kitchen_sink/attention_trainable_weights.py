@@ -61,5 +61,48 @@ def main_one_input():
     print(z2)
 
 
+def main():
+    """
+    The main method to find context vectors for all inputs.
+    """
+    inputs = inputs_data()                                 # 6x3
+
+    torch.manual_seed(123)  # reproducibility
+
+    # instantiate the trainable weights
+    # NOTE: there is no need to use individual weights
+    # for each input row. We use one set of weights
+    # for all input rows.
+    size = (inputs.shape[1], 2)                            # 3x2
+    wq = torch.rand(size)                                  # 3x2
+    wk = torch.rand(size)                                  # 3x2
+    wv = torch.rand(size)                                  # 3x2
+
+    # compute queries for all inputs
+    q = inputs @ wq                                        # 6x2
+
+    # compute keys for all inputs
+    k = inputs @ wk                                        # 6x2
+
+    # compute values for all inputs
+    v = inputs @ wv                                        # 6x2
+
+    # compute attention scores
+    omega = q @ k.T                                        # 6x6
+
+    # compute attention weights
+    alpha = torch.nn.functional.softmax(                   # 6x6
+        omega / math.sqrt(k.shape[-1]), dim=-1,  # across the last dimension
+    )
+
+    # compute context vectors
+    z = alpha @ v                                          # 6x2
+    
+    print(z)
+
+
 if __name__ == '__main__':
     main_one_input()
+    print()
+
+    main()
