@@ -2,6 +2,8 @@
 This script does an exercise to find the attention weights with trainable weights.
 """
 
+import math
+
 import torch
 
 
@@ -43,7 +45,11 @@ def main():
 
     # compute attention scores
     omega = q2 @ k.T
-    print(omega)
+
+    # compute attention weights
+    # before applying the softmax, scale omega.
+    alpha = torch.nn.functional.softmax(omega / math.sqrt(k.shape[-1]), dim=0)
+    print(alpha)
 
 if __name__ == '__main__':
     main()
