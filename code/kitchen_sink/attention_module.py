@@ -16,11 +16,11 @@ class SelfAttention(torch.nn.Module):
         super().__init__()
 
         size = (in_dim, out_dim)
-        
+
         self.query_weight = torch.nn.Parameter(torch.rand(size))
         self.key_weight = torch.nn.Parameter(torch.rand(size))
         self.value_weight = torch.nn.Parameter(torch.rand(size))
-    
+
     def forward(self, inputs: torch.Tensor) -> torch.Tensor:
         """
         Makes the forward pass.
@@ -35,5 +35,5 @@ class SelfAttention(torch.nn.Module):
         )
 
         outputs = alpha @ value
-        
+
         return outputs
