@@ -4,6 +4,7 @@ This script does an exercise to find the attention weights with trainable weight
 
 import torch
 
+
 def inputs_data() -> torch.Tensor:
     """
     Returns the input data.
