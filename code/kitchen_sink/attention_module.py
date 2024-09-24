@@ -49,7 +49,7 @@ class SelfAttentionV2(torch.nn.Module):
         self.query_weight = torch.nn.Linear(in_dim, out_dim, bias=False)
         self.key_weight = torch.nn.Linear(in_dim, out_dim, bias=False)
         self.value_weight = torch.nn.Linear(in_dim, out_dim, bias=False)
-    
+
     def forward(self, inputs: torch.Tensor) -> torch.Tensor:
         """
         Makes the forward pass.
