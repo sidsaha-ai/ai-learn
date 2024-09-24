@@ -97,7 +97,7 @@ def main():
 
     # compute context vectors
     z = alpha @ v                                          # 6x2
-    
+
     print(z)
 
 
