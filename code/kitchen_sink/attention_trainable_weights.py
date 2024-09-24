@@ -132,6 +132,28 @@ def main_with_attention_module_v2():
     print(z)
 
 
+def main_weight_transfer():
+    """
+    Main method to try weight transfer.
+    """
+    inputs = inputs_data()
+    in_dim: int = inputs.shape[1]
+    out_dim: int = 2
+
+    m1 = SelfAttentionV1(in_dim, out_dim)
+    m2 = SelfAttentionV2(in_dim, out_dim)
+
+    m1.query_weight = torch.nn.Parameter(m2.query_weight.weight.T.detach().clone())
+    m1.key_weight = torch.nn.Parameter(m2.key_weight.weight.T.detach().clone())
+    m1.value_weight = torch.nn.Parameter(m2.value_weight.weight.T.detach().clone())
+
+    z1 = m1(inputs)
+    z2 = m2(inputs)
+
+    print(z1)
+    print(z2)
+
+
 if __name__ == '__main__':
     main_one_input()
     print()
@@ -143,3 +165,6 @@ if __name__ == '__main__':
     print()
 
     main_with_attention_module_v2()
+    print()
+
+    main_weight_transfer()
