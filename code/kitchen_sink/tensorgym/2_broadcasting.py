@@ -4,6 +4,7 @@ Exercise https://tensorgym.com/exercises/14
 
 import torch
 
+
 def fill_tensor_with_value(x: torch.Tensor, value: int) -> torch.Tensor:
     return x * 0 + value
 

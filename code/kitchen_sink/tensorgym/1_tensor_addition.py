@@ -4,6 +4,7 @@ Excerise: https://tensorgym.com/exercises/0
 
 import torch
 
+
 def add_tensors(x: torch.Tensor, y: torch.Tensor) -> torch.Tensor:
     return x + y
 

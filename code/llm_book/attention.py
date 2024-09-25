@@ -2,8 +2,10 @@
 The first version of attention mechanism.
 """
 
-import torch
 import math
+
+import torch
+
 
 class Attention(torch.nn.Module):
     """
