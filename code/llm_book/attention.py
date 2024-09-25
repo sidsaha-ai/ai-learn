@@ -38,6 +38,9 @@ class Attention(torch.nn.Module):
 
 
 def main():
+    """
+    The main method to test the attention module.
+    """
     inputs = [
         [0.43, 0.15, 0.89],  # your
         [0.55, 0.87, 0.66],  # journey
@@ -53,7 +56,7 @@ def main():
     out_dim: int = 2
 
     attention = Attention(in_dim, out_dim)
-    
+
     res = attention(inputs)
     print(res)
 
