@@ -12,5 +12,7 @@ matplotlib
 pytest
 ebooklib
 beautifulsoup4
-tokenizers
 tqdm
+gutenbergpy
+tokenizers
+transformers
