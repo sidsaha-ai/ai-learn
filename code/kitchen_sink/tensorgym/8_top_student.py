@@ -43,7 +43,7 @@ if __name__ == '__main__':
         'inputs_points': torch.tensor(inputs_points),
         'outputs': torch.tensor(outputs),
     })
-    
+
     for ix, c in enumerate(cases):
         res = solution(c.get('inputs_answers'), c.get('inputs_points'))
         message = f'PASS: test case {ix + 1}' if torch.equal(res, c.get('outputs')) else f'FAIL: test case {ix + 1}'
