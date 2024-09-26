@@ -46,6 +46,7 @@ class Attention(torch.nn.Module):
         outputs = attn_weights @ value  # 4x6x2
         return outputs
 
+
 def main():
     """
     The main method to test the attention module.
@@ -54,7 +55,7 @@ def main():
     inputs = [
         torch.randn(size), torch.randn(size), torch.randn(size), torch.randn(size),
     ]
-    batch = torch.stack([sample for sample in inputs])
+    batch = torch.stack(inputs)
 
     in_dim: int = batch.shape[-1]
     out_dim: int = 2

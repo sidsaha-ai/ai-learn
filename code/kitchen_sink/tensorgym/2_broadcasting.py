@@ -6,10 +6,16 @@ import torch
 
 
 def fill_tensor_with_value(x: torch.Tensor, value: int) -> torch.Tensor:
+    """
+    The exercise function to be implemented.
+    """
     return x * 0 + value
 
 
 def main():
+    """
+    The main function to run test cases.
+    """
     print('=== Test Case 1 ===')
     t = [
         [1, 2, 3],

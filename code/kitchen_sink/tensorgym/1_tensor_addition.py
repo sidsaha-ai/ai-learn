@@ -6,9 +6,16 @@ import torch
 
 
 def add_tensors(x: torch.Tensor, y: torch.Tensor) -> torch.Tensor:
+    """
+    The exercise function to be implemented.
+    """
     return x + y
 
+
 def main():
+    """
+    The main function to run test cases.
+    """
     print('==== Test case 1 ====')
     t1 = [
         [1, 2, 3],
