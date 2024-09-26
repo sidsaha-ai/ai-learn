@@ -5,17 +5,17 @@ This is the answer to exercise https://tensorgym.com/exercises/2
 import torch
 
 
-def solution(inputs: torch.Tensor) -> torch.Tensor:
+def solution(x: torch.Tensor) -> torch.Tensor:
     """
     The exercise function to be implemented.
     """
     num_rows: int = 2
-    num_cols: int = int(inputs.shape[0] / num_rows)
-    inputs = inputs.reshape(num_rows, num_cols)
+    num_cols: int = int(x.shape[0] / num_rows)
+    x = x.reshape(num_rows, num_cols)
 
-    res = inputs.transpose(0, 1)
+    result = x.transpose(0, 1)
 
-    return res
+    return result
 
 
 if __name__ == '__main__':

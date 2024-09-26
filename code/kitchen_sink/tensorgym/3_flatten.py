@@ -12,6 +12,7 @@ def flatten(x: torch.Tensor) -> torch.Tensor:
     y = m(x)
     return y
 
+
 if __name__ == '__main__':
     print('=== Test Case 1 ====')
     inputs = [
