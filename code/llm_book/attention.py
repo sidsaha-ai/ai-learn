@@ -51,19 +51,22 @@ class MultiHeadAttention(torch.nn.Module):
     """
     A simple multi-head attention module.
     """
-    
+
     def __init__(self, in_dim: int, out_dim: int, num_heads: int, dropout_percent: float = 0) -> None:
         super().__init__()
 
         self.heads = torch.nn.ModuleList(
             [Attention(in_dim, out_dim, dropout_percent) for _ in range(num_heads)]
         )
-        print(len(self.heads))
-    
+
     def forward(self, batch: torch.Tensor) -> torch.Tensor:
+        """
+        Implements the forward pass.
+        """
         outputs = [head(batch) for head in self.heads]
         outputs = torch.cat(outputs, dim=-1)
         return outputs
+
 
 def main():
     """
