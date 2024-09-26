@@ -28,6 +28,11 @@ class Attention(torch.nn.Module):
         value = self.w_value(inputs)
 
         attn_score = query @ key.T
+
+        # apply masking to attention scores
+        attn_score = attn_score.masked_fill(
+            ~torch.tril(torch.ones_like(attn_score)).bool(), -torch.inf,
+        )
         attn_weights = torch.nn.functional.softmax(
             attn_score / math.sqrt(key.shape[-1]), dim=-1,
         )
