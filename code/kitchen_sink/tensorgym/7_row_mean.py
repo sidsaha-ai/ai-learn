@@ -9,8 +9,8 @@ def solution(x: torch.Tensor) -> torch.Tensor:
     The function for the solution to be implemented.
     """
     means = torch.mean(x, dim=1, dtype=torch.float)
-    max = torch.argmax(means)
-    return max
+    max_col = torch.argmax(means)
+    return max_col
 
 
 if __name__ == '__main__':
