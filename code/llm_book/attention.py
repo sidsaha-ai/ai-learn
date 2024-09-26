@@ -12,7 +12,7 @@ class Attention(torch.nn.Module):
     The self attention module.
     """
 
-    def __init__(self, in_dim: int, out_dim: int, dropout_percent=0) -> None:
+    def __init__(self, in_dim: int, out_dim: int, dropout_percent: float = 0) -> None:
         super().__init__()
 
         self.w_query = torch.nn.Linear(in_dim, out_dim, bias=False)
@@ -47,6 +47,24 @@ class Attention(torch.nn.Module):
         return outputs
 
 
+class MultiHeadAttention(torch.nn.Module):
+    """
+    A simple multi-head attention module.
+    """
+    
+    def __init__(self, in_dim: int, out_dim: int, num_heads: int, dropout_percent: float = 0) -> None:
+        super().__init__()
+
+        self.heads = torch.nn.ModuleList(
+            [Attention(in_dim, out_dim, dropout_percent) for _ in range(num_heads)]
+        )
+        print(len(self.heads))
+    
+    def forward(self, batch: torch.Tensor) -> torch.Tensor:
+        outputs = [head(batch) for head in self.heads]
+        outputs = torch.cat(outputs, dim=-1)
+        return outputs
+
 def main():
     """
     The main method to test the attention module.
@@ -59,11 +77,13 @@ def main():
 
     in_dim: int = batch.shape[-1]
     out_dim: int = 2
+    num_heads: int = 2
     dropout_percent: float = 0.2
 
-    attn = Attention(in_dim, out_dim, dropout_percent)
-    res = attn(batch)
-    print(res)
+    attn = MultiHeadAttention(in_dim, out_dim, num_heads, dropout_percent)
+    outputs = attn(batch)
+    print(outputs)
+    print(f'{outputs.shape=}')
 
 
 if __name__ == '__main__':
