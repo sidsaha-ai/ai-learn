@@ -54,9 +54,12 @@ class MultiHeadAttention(torch.nn.Module):
 
     def __init__(self, in_dim: int, out_dim: int, num_heads: int, dropout_percent: float = 0) -> None:
         super().__init__()
+        assert out_dim % num_heads == 0, 'output dimension and number of heads do not work'
+
+        head_dim: int = int(out_dim / num_heads)
 
         self.heads = torch.nn.ModuleList(
-            [Attention(in_dim, out_dim, dropout_percent) for _ in range(num_heads)]
+            [Attention(in_dim, head_dim, dropout_percent) for _ in range(num_heads)]
         )
 
     def forward(self, batch: torch.Tensor) -> torch.Tensor:
@@ -79,7 +82,7 @@ def main():
     batch = torch.stack(inputs)
 
     in_dim: int = batch.shape[-1]
-    out_dim: int = 2
+    out_dim: int = 4
     num_heads: int = 2
     dropout_percent: float = 0.2
 
