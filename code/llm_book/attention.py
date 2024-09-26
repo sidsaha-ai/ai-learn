@@ -12,12 +12,13 @@ class Attention(torch.nn.Module):
     The self attention module.
     """
 
-    def __init__(self, in_dim: int, out_dim: int) -> None:
+    def __init__(self, in_dim: int, out_dim: int, dropout_percent=0) -> None:
         super().__init__()
 
         self.w_query = torch.nn.Linear(in_dim, out_dim, bias=False)
         self.w_key = torch.nn.Linear(in_dim, out_dim, bias=False)
         self.w_value = torch.nn.Linear(in_dim, out_dim, bias=False)
+        self.dropout = torch.nn.Dropout(dropout_percent)
 
     def forward(self, inputs: torch.Tensor) -> torch.Tensor:
         """
@@ -33,9 +34,13 @@ class Attention(torch.nn.Module):
         attn_score = attn_score.masked_fill(
             ~torch.tril(torch.ones_like(attn_score)).bool(), -torch.inf,
         )
+
+        # find weights
         attn_weights = torch.nn.functional.softmax(
             attn_score / math.sqrt(key.shape[-1]), dim=-1,
         )
+        # apply dropout to weights
+        attn_weights = self.dropout(attn_weights)
 
         outputs = attn_weights @ value
 
@@ -59,8 +64,9 @@ def main():
 
     in_dim: int = inputs.shape[1]
     out_dim: int = 2
+    dropout_percent: float = 0.2
 
-    attention = Attention(in_dim, out_dim)
+    attention = Attention(in_dim, out_dim, dropout_percent)
 
     res = attention(inputs)
     print(res)
