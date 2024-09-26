@@ -29,7 +29,7 @@ class MultiHeadAttention(torch.nn.Module):
         self.w_value = torch.nn.Linear(self.in_dim, self.out_dim, bias=False)
         self.dropout = torch.nn.Dropout(self.dropout_percent)
         self.out_proj = torch.nn.Linear(self.out_dim, self.out_dim)
-    
+
     def forward(self, batch: torch.Tensor) -> torch.Tensor:
         """
         Implements the forward pass for the multi-attention.
@@ -63,7 +63,7 @@ class MultiHeadAttention(torch.nn.Module):
         outputs = outputs.reshape(batch.shape[0], batch.shape[1], self.out_dim)
         outputs = self.out_proj(outputs)
         return outputs
-        
+
 
 def main():
     """
