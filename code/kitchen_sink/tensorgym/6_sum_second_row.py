@@ -3,6 +3,7 @@ This is the solution to exercise https://tensorgym.com/exercises/3
 """
 import torch
 
+
 def solution(matrix: torch.Tensor) -> torch.Tensor:
     """
     This implements the solution function to the exercise.

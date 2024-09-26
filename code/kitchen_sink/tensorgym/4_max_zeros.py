@@ -3,6 +3,7 @@ Script for the exercise https://tensorgym.com/exercises/18
 """
 import torch
 
+
 def drop_column(inputs: torch.Tensor) -> torch.Tensor:
     """
     The exercise function to be implemented.

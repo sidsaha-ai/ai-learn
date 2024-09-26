@@ -3,6 +3,7 @@ Script for exercise https://tensorgym.com/exercises/1
 """
 import torch
 
+
 def flatten(x: torch.Tensor) -> torch.Tensor:
     """
     The exercise function to be implemented.

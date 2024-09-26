@@ -4,6 +4,7 @@ This is the answer to exercise https://tensorgym.com/exercises/2
 
 import torch
 
+
 def solution(inputs: torch.Tensor) -> torch.Tensor:
     """
     The exercise function to be implemented.
