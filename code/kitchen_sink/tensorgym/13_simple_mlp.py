@@ -3,6 +3,7 @@ This implements the solution for the exercise https://tensorgym.com/exercises/13
 """
 import torch
 
+
 class SimpleMLP(torch.nn.Module):
     """
     This implements a simple MLP with 3 layers.
@@ -20,7 +21,7 @@ class SimpleMLP(torch.nn.Module):
             torch.nn.ReLU(),
             torch.nn.Linear(self.in_dim // 2, self.out_dim),
         )
-    
+
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         """
         Implements the forward pass.
@@ -44,7 +45,10 @@ def compute_simple_mlp(x: torch.Tensor) -> torch.Tensor:
     return res
 
 
-if __name__ == '__main__':
+def main():
+    """
+    The main function that runs the test cases.
+    """
     cases = []
 
     # test case 1
@@ -62,8 +66,8 @@ if __name__ == '__main__':
     })
 
     # test case 2
-    inputs =[
-        [0.8, 0,7, 0.6, 0.5, 0.4, 0.3, 0.2, 0.1],
+    inputs = [
+        [0.8, 0.7, 0.6, 0.5, 0.4, 0.3, 0.2, 0.1],
     ]
     inputs = torch.tensor(inputs)
     outputs = [
@@ -77,6 +81,9 @@ if __name__ == '__main__':
 
     for ix, c in enumerate(cases):
         res = compute_simple_mlp(c.get('inputs'))
-        print(res)
         message = f'PASS: test case {ix + 1}' if torch.equal(res, c.get('outputs')) else f'FAIL: test case {ix + 1}'
         print(message)
+
+
+if __name__ == '__main__':
+    main()
