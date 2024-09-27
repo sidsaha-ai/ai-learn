@@ -13,7 +13,10 @@ def solution(scores: torch.Tensor) -> torch.Tensor:
     return res
 
 
-if __name__ == '__main__':
+def main():
+    """
+    The main function running the test cases.
+    """
     cases = []
     # test case 1
     inputs = [
@@ -43,3 +46,7 @@ if __name__ == '__main__':
         res = solution(c.get('inputs'))
         message = f'PASS: test case {ix + 1}' if torch.equal(res, c.get('outputs')) else f'FAIL: test case {ix + 1}'
         print(message)
+
+
+if __name__ == '__main__':
+    main()
