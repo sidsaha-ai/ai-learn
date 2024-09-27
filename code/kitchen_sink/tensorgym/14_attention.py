@@ -24,7 +24,7 @@ def check_equal(x: torch.Tensor, y: torch.Tensor) -> bool:
     """
     if x.shape != y.shape:
         return False
-    
+
     for row in range(x.shape[0]):
         for col in range(x.shape[1]):
             el1 = f'{x[row, col].item():.4f}'
@@ -40,7 +40,7 @@ def main():
     The main function that runs the test cases.
     """
     cases = []
-    
+
     # test case 1
     query = [
         [1, 2],
