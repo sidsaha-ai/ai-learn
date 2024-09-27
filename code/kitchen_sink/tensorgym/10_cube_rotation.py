@@ -10,14 +10,15 @@ def rotate(A: torch.Tensor, axes: str) -> torch.Tensor:
     """
     if axes == 'x':
         return torch.rot90(A, 1, (1, 2))
-    
+
     if axes == 'y':
         return torch.rot90(A, 1, (0, 2))
-    
+
     if axes == 'z':
         return torch.rot90(A, 1, (0, 1))
-    
+
     raise Exception('axes is incorrect')
+
 
 def generate_rotations(A: torch.Tensor) -> list[torch.Tensor]:
     """
@@ -46,13 +47,15 @@ def optimal_rotation(A: torch.tensor, B: torch.Tensor) -> torch.Tensor:
 
     for rot in rotations:
         dot_prod = torch.sum(rot * B).item()
-        if dot_prod > max_dot_val:
-            max_dot_val = dot_prod
-    
+        max_dot_val = max(max_dot_val, dot_prod)
+
     return torch.tensor(max_dot_val)
 
 
 def main():
+    """
+    The main function that runs the test cases.
+    """
     size = (3, 3, 3)
     A = torch.randint(0, size[0] * size[1], size)
     B = torch.randint(0, size[0] * size[1], size)
