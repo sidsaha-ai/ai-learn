@@ -1,8 +1,10 @@
 """
 This implements the solution to the exercise https://tensorgym.com/exercises/8
 """
-import torch
 import math
+
+import torch
+
 
 def attention(query: torch.Tensor, key: torch.Tensor, value: torch.Tensor) -> torch.Tensor:
     """
