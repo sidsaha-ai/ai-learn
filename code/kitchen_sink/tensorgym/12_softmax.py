@@ -3,6 +3,7 @@ This implements the solution for the exercise https://tensorgym.com/exercises/7
 """
 import torch
 
+
 def softmax(logits: torch.Tensor) -> torch.Tensor:
     """
     The implementation of the solution for the exercise.
