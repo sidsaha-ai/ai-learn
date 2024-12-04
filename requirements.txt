@@ -139,6 +139,8 @@ pycodestyle==2.12.1
     # via flake8
 pydantic==2.8.2
     # via -r requirements.in
+pydantic-ai==0.0.0
+    # via -r requirements.in
 pydantic-core==2.20.1
     # via pydantic
 pyflakes==3.2.0

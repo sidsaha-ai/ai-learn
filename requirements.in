@@ -16,3 +16,4 @@ tqdm
 gutenbergpy
 tokenizers
 transformers
+pydantic-ai
